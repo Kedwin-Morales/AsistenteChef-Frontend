@@ -19,7 +19,7 @@ export default function AppLayout({ children }: Props) {
   return (
     <div
       className={`min-h-screen flex transition-colors duration-300 relative
-        ${isDarkMode ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-900"}
+        ${isDarkMode ? "bg-(--color-bg) text-white" : "bg-(--color-bg) text-slate-900"}
       `}
     >
       {isSidebarOpen && (
@@ -31,28 +31,16 @@ export default function AppLayout({ children }: Props) {
 
       {/* SIDEBAR */}
       <div
-        className={`
-    fixed md:relative
-    inset-y-0 left-0
-     w-full md:w-72
-    z-50
-    transform transition-transform duration-300
-    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-    md:translate-x-0
-  `}>
-      </div>
+        className={`fixed md:relative inset-y-0 left-0 w-full md:w-72 z-50
+          transform transition-transform duration-300    
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}    
+          md:translate-x-0`}
+      ></div>
 
       {/* RIGHT COLUMN */}
       <div className="flex-1 flex flex-col">
         {/* TOP BAR */}
-        <header
-          className={`h-16 border-b flex items-center px-6
-    ${isDarkMode
-              ? "bg-slate-900 border-slate-800"
-              : "bg-white border-slate-200"
-            }
-  `}
-        >
+        <header className={`h-16 flex items-center px-6`}>
           {/* ESPACIO IZQUIERDO VACÍO */}
           <div className="flex items-center gap-4 flex-1">
             {/* BOTÓN HAMBURGUESA (solo móvil) */}
@@ -68,25 +56,15 @@ export default function AppLayout({ children }: Props) {
           <div className="flex items-center gap-4">
             {/* USER INFO */}
             <div className="flex flex-col text-center leading-tight">
-              <span className="text-base font-semibold">
-                {user?.nombre}
-              </span>
-              <span className="text-xs text-slate-500">
-                {user?.role}
-              </span>
+              <span className="text-base font-semibold">{user?.nombre}</span>
+              <span className="text-xs text-slate-500">{user?.role}</span>
             </div>
-
-            
 
             {/* DARK MODE BUTTON */}
             <button
               onClick={toggleDarkMode}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition
-        ${isDarkMode
-                  ? "bg-slate-800 hover:bg-slate-700"
-                  : "bg-slate-100 hover:bg-slate-200"
-                }
-      `}
+              ${isDarkMode ? 'bg-yellow-600 text-slate-900 hover:bg-(--secondary)' : 'bg-neutral-700 text-white hover:bg-neutral-500'}`}
               aria-label="Cambiar modo"
             >
               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -98,10 +76,9 @@ export default function AppLayout({ children }: Props) {
                 logout();
                 navigate("/login");
               }}
-              className={`flex items-center gap-2 text-sm  hover:text-red-600   ${isDarkMode
-                ? "text-blue-600"
-                : "text-slate-600"
-                }
+              className={`flex items-center gap-2 text-sm  hover:text-red-600   ${
+                isDarkMode ? "text-(--primary)" : "text-(--primary)"
+              }
       `}
             >
               <LogOut size={18} />
@@ -109,11 +86,9 @@ export default function AppLayout({ children }: Props) {
             </button>
           </div>
         </header>
-        
+
         {/* CONTENT */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

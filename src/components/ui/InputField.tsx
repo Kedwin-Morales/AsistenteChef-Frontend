@@ -39,7 +39,7 @@ const InputField = forwardRef<HTMLInputElement, Props>(
       <div className="w-full">
         <label
           className={`block mb-1 font-semibold text-md ${
-            isDarkMode ? "text-amber-500" : "text-amber-900"
+            isDarkMode ? "text-(--primary)" : "text-(--primary)"
           }`}
         >
           {label}
@@ -49,9 +49,8 @@ const InputField = forwardRef<HTMLInputElement, Props>(
         <div
           className={`
             relative rounded-xl border transition-all duration-300
-            ${isDarkMode ? "border-slate-700 bg-slate-800" : "border-slate-300 bg-white"}
-            focus-within:ring-2 focus-within:ring-orange-500/50 focus-within:border-orange-500
-          `}
+            {/*${isDarkMode ? "border-slate-700 bg-(--color-bg)" : "border-slate-300 bg-(--color-bg)"}*/}
+            focus-within:ring-2 focus-within:ring-(--secondary) focus-within:border-(--secondary)`}
         >
           {Icon && (
             <Icon

@@ -4,15 +4,31 @@
 @tailwind utilities;
 
 @theme {
-  --color-accent: #aa3bff;
-  --color-accent-bg: rgba(170, 59, 255, 0.1);
+  --color-accent: #F9F6EE;
+  --color-accent-bg: yellow;
   --color-accent-border: rgba(170, 59, 255, 0.5);
 }
 
 /* ---------- VARIABLES DE MARCA ---------- */
-:root {
+/* :root {
   --brand-blue: #0047AB;
   --brand-teal: #4FD1C5;
+} */
+
+/* ---------- PALETA DE COLORES - TEMA CLARO ---------- */
+:root {
+  --color-bg: theme('colors.olive.100');
+  --color-bg-secondary: #FDFCFB;
+  --primary: theme('colors.green.800');
+  --secondary: theme('colors.emerald.500');
+}
+
+/* ---------- PALETA DE COLORES - TEMA OSCURO ---------- */
+:root.dark {
+  --color-bg: theme('colors.neutral.800');
+  --color-bg-secondary: #232323;
+  --primary: theme('colors.amber.800');
+  --secondary: #CFB53B;
 }
 
 /* ---------- TRANSICIONES GLOBALES ---------- */

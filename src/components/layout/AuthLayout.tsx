@@ -22,7 +22,7 @@ export default function AuthLayout({
         toggleDarkMode={toggleDarkMode}
       />
 
-      <main className="flex-1 flex items-center justify-center p-6">
+      <main className="flex-1 flex items-center justify-center p-6 bg-(--color-bg)">
         {children}
       </main>
     </div>
