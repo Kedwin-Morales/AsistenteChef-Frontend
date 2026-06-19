@@ -7,8 +7,7 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        
+        <Route path="/login" element={<LoginPage />} />        
         <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomePage />} />
         </Route>

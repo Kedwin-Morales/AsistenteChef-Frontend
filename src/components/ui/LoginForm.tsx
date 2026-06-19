@@ -29,14 +29,14 @@ export default function LoginForm({ isDarkMode }: Props) {
 
       setTokens(res.token);
 
-      toast.success("¡Bienvenido! Has iniciado sesión exitosamente.");
+      toast.success("¡Bienvenido!");
 
       setTimeout(() => {
         navigate("/");
       }, 500);
     } catch {
       toast.error(
-        "Error al iniciar sesión. Revisa tus credenciales e intenta nuevamente.",
+        "Error al iniciar sesión. Credenciales incorrectas.",
       );
     } finally {
       setIsSubmitting(false);
@@ -44,13 +44,15 @@ export default function LoginForm({ isDarkMode }: Props) {
   };
 
   return (
-    <div className="bg-white/80 dark:bg-stone-800/80 backdrop-blur-xl w-full  rounded-[2.5rem] shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.3)] border border-white dark:border-stone-700/50 
-      p-8 sm:p-10">
+    <div
+      className="bg-(--bg-form) dark:bg-stone-800/80 backdrop-blur-xl w-full rounded-[2 rem] shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.3)] border-none
+      p-8 sm:p-10"
+    >
       <div className="flex flex-col items-center text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-tr from-(--primary) to-(--secondary) rounded-2xl flex items-center justify-center shadow-lg shadow-(--secondary) mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+        <div className="w-16 h-16 bg-linear-to-tr from-(--primary) to-(--secondary) rounded-2xl flex items-center justify-center shadow-(--secondary) mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
           <ChefHat size={32} className="text-white" />
         </div>
-        <h1 className="text-3xl font-extrabold text-(--primary) dark:text-white tracking-tight">
+        <h1 className="text-3xl font-extrabold text-(--primary) tracking-tight">
           AsistentePRO
         </h1>
       </div>
@@ -65,7 +67,7 @@ export default function LoginForm({ isDarkMode }: Props) {
           disabled={isSubmitting}
           {...register("documento")}
         />
-        <br/>
+        <br />
         <InputField
           label="Contraseña:"
           icon={Lock}
@@ -88,11 +90,11 @@ export default function LoginForm({ isDarkMode }: Props) {
           type="submit"
           disabled={isSubmitting}
           className={`
-            w-full py-3 flex items-center justify-center gap-2 bg-gradient-to-r from-(--primary) to-(--secondary) hover:from-(--primary) hover:to-(--primary) 
+            w-full py-3 flex items-center justify-center gap-2 bg-linear-to-r from-(--primary) to-(--secondary) hover:from-(--primary) hover:to-(--primary) 
             text-white font-bold rounded-2xl shadow-lg shadow-(--primary)/50 transform active:scale-[0.98] transition-all duration-200    
             ${isSubmitting ? "opacity-80 cursor-not-allowed" : ""}  
             `}
-            >                             
+        >
           {isSubmitting ? (
             <>
               <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -108,8 +110,7 @@ export default function LoginForm({ isDarkMode }: Props) {
         <p
           className={`text-[10px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
         >
-          © Elaborado por Kedwin Morales - 2026. Todos los derechos
-          reservados.
+          © Elaborado por Kedwin Morales - 2026. Todos los derechos reservados.
         </p>
       </footer>
     </div>
