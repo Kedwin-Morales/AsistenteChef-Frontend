@@ -1,0 +1,939 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { X, Trash2, Pencil } from "lucide-react";
+import { useState } from "react";
+import InputField from "@/components/ui/InputField";
+import type { LucideIcon } from "lucide-react";
+import type { InputHTMLAttributes } from "react";
+import AutocompleteField from "@/components/ui/AutocompleteField";
+import { useToast } from "./toast/useToast";
+
+export type ModalMode = "create" | "edit" | "view";
+
+export type FieldType = "text" | "password" | "number" | "email" | "date" | "boolean" | "select" | "autocomplete";
+
+interface ModalAction<T> {
+  label: string;
+  modulo: string;
+  codigo: string;
+  allowedStatuses?: (string | number)[];
+  getStatus: (item: T) => string | number | undefined;
+  onClick: (item: T) => void;
+  className?: string;
+}
+export interface ModalField<T> {
+  name: keyof T;
+  label: string;
+  icon?: LucideIcon;
+  type?: FieldType;
+  colSpan?: 1 | 2 | 3 | 4 | 5 | 6;
+  required?: boolean;
+  readOnly?: boolean;
+  content?: string
+  inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
+
+  options?: {
+    label?: string;
+    value?: string | number;
+    [key: string]: any;
+  }[];
+
+  dependsOn?: keyof T;
+  filterOptions?: (
+    parentValue: any,
+    options: any[]
+  ) => { label?: string; value?: string | number }[];
+
+  permission?: {
+    modulo: string;
+    codigo: string;
+  };
+}
+
+export interface ModalDetailField<T> {
+  name: keyof T;
+  label: string;
+  type?: FieldType;
+  colSpan?: 1 | 2 | 3 | 4 | 5 | 6;
+  icon?: LucideIcon;
+  required?: boolean;
+  options?: {
+    label: string;
+    value: string | number;
+  }[];
+
+  dependsOn?: keyof T;
+  filterOptions?: (
+    parentValue: any,
+    options: any[]
+  ) => { label: string; value: string | number }[];
+
+  permission?: {
+    modulo: string;
+    codigo: string;
+  };
+}
+
+interface Props<T extends object, D extends object = any> {
+  open: boolean;
+  title: string;
+  mode: ModalMode;
+  data?: T | null;
+  fields: ModalField<T>[];
+  headerIcon?: LucideIcon;
+  readOnly?: boolean;
+
+  /**  DETALLE */
+  detailKey?: keyof T;
+  detailFields?: ModalDetailField<D>[];
+  detailColumns?: { key: keyof D; label: string }[];
+
+  isDarkMode: boolean;
+  onClose: () => void;
+  onSubmit?: (data: Partial<T>) => void;
+
+  isSubmitting?: boolean;
+  viewActions?: ModalAction<T>[];
+  mergeDetailBy?: keyof D;
+  accumulateField?: keyof D;
+}
+
+const COL_SPAN_CLASS: Record<number, string> = {
+  1: "md:col-span-1",
+  2: "md:col-span-2",
+  3: "md:col-span-3",
+  4: "md:col-span-4",
+  5: "md:col-span-5",
+  6: "md:col-span-6",
+};
+
+export default function EntityModal<T extends object, D extends object = any>({
+  open,
+  title,
+  mode,
+  data,
+  fields,
+  headerIcon: HeaderIcon,
+  detailKey,
+  detailFields,
+  detailColumns,
+  isDarkMode,
+  onClose,
+  onSubmit,
+  viewActions,
+  isSubmitting = false,
+  mergeDetailBy,
+  accumulateField,
+}: Props<T, D>) {
+  const isReadOnly = mode === "view";
+
+  const [form, setForm] = useState<Partial<T>>(data ?? {});
+  const [detailForm, setDetailForm] = useState<Partial<D>>({});
+  const [detailErrors, setDetailErrors] = useState<Record<string, boolean>>({});
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const toast = useToast();
+
+  const visibleFields = fields.filter((field) => {
+    if (!field.permission) return true;
+  });
+
+  const visibleFieldsDetails = detailFields?.filter((field) => {
+    if (!field.permission) return true;
+  });
+
+  const [details, setDetails] = useState<D[]>(
+    (data?.[detailKey as keyof T] as D[]) ?? []
+  );
+
+  if (!open) return null;
+
+  const handleChange = <K extends keyof T>(name: K, value: T[K]) => {
+    setForm((prev) => {
+      const updated: Partial<T> = {
+        ...prev,
+        [name]: value,
+      };
+
+      fields.forEach((f) => {
+        if (f.dependsOn === name) {
+          updated[f.name] = undefined;
+        }
+      });
+
+      return updated;
+    });
+  };
+
+  const handleDetailChange = <K extends keyof D>(
+    name: K,
+    rawValue: any
+  ) => {
+    const field = detailFields?.find((f) => f.name === name);
+
+    let value: any = rawValue;
+
+    if (field?.type === "number") {
+      value = rawValue === "" ? undefined : Number(rawValue);
+    }
+
+    if (field?.type === "boolean") {
+      value = Boolean(rawValue);
+    }
+
+    setDetailForm((prev) => {
+      const updated: Partial<D> = {
+        ...prev,
+        [name]: value,
+      };
+
+      // limpiar dependientes
+      detailFields?.forEach((f) => {
+        if (f.dependsOn === name) {
+          updated[f.name] = undefined;
+        }
+      });
+
+      return updated;
+    });
+  };
+
+  const addDetail = () => {
+    if (!detailFields || detailFields.length === 0) return;
+
+    // 🔎 Validar si hay algún valor real
+    const hasAnyValue = Object.values(detailForm).some((v) => {
+      if (typeof v === "string") return v.trim() !== "";
+      return v !== undefined && v !== null;
+    });
+
+    if (!hasAnyValue) return;
+
+    // 🔥 Validar required dinámico
+    const missingRequired = detailFields.find((f) => {
+      if (!f.required) return false;
+
+      const value = detailForm[f.name];
+
+      if (typeof value === "string") return value.trim() === "";
+      return value === undefined || value === null;
+    });
+
+    if (missingRequired) {
+      setDetailErrors({ [String(missingRequired.name)]: true });
+
+      toast.warning(`El campo "${missingRequired.label}" es obligatorio`);
+
+      const element = document.querySelector(
+        `[name="${String(missingRequired.name)}"]`
+      );
+
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        (element as HTMLElement).focus();
+      }
+
+      return;
+    }
+
+    setDetailErrors({});
+
+    const newItem = detailForm as D;
+
+    setDetails((prev) => {
+      // ✏️ Si estamos editando
+      if (editingIndex !== null) {
+        const updated = [...prev];
+        updated[editingIndex] = newItem;
+        return updated;
+      }
+
+      // 🧠 Si no hay merge configurado
+      if (!mergeDetailBy) {
+        return [...prev, newItem];
+      }
+
+      const existingIndex = prev.findIndex(
+        (item) => item[mergeDetailBy] === newItem[mergeDetailBy]
+      );
+
+      if (existingIndex === -1) {
+        return [...prev, newItem];
+      }
+
+      if (!accumulateField) {
+        const updated = [...prev];
+        updated[existingIndex] = newItem;
+        return updated;
+      }
+
+      const updated = [...prev];
+
+      updated[existingIndex] = {
+        ...updated[existingIndex],
+        [accumulateField]:
+          Number(updated[existingIndex][accumulateField] ?? 0) +
+          Number(newItem[accumulateField] ?? 0),
+      };
+
+      return updated;
+    });
+
+    setDetailForm({});
+    setEditingIndex(null);
+  };
+
+  const removeDetail = (index: number) => {
+    setDetails((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const editDetail = (index: number) => {
+    const cloned = JSON.parse(JSON.stringify(details[index]));
+    setDetailForm(cloned);
+    setEditingIndex(index);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload: any = {
+      ...form,
+      ...(detailKey ? { [detailKey]: details } : {}),
+    };
+
+    // 🔥 Inyectar campos con content
+    fields.forEach((f) => {
+      if (f.content !== undefined) {
+        payload[f.name] = f.content;
+      }
+    });
+
+    onSubmit?.(payload);
+  };
+
+  return (
+    <div className={`fixed inset-0 z-100 flex items-end md:items-center justify-center ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/70"}`}>
+      <div
+        className={`
+    w-full
+    md:max-w-3xl
+    h-[95vh] md:h-auto
+    md:max-h-[90vh]
+    rounded-t-3xl md:rounded-3xl
+    overflow-hidden
+    flex flex-col
+    ${isDarkMode ? "bg-(--bg-form)" : "bg-(--bg-form)"}
+  `}
+      >
+        {/* HEADER */}
+        <div className="p-6 flex justify-between items-center bg-linear-to-r from-(--primary) to-(--secondary) text-neutral-200">
+          <div className="justify-between flex gap-4 items-center">
+            {HeaderIcon && (
+              <HeaderIcon size={30} className="text-neutral-200" />
+            )}
+            <div>
+              <h2 className="text-xl font-bold">{title}</h2>
+              <p className="text-sm">Información del sistema.</p>
+            </div>
+          </div>
+          <button onClick={onClose}>
+            <X />
+          </button>
+        </div>
+
+        {/* BODY */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto"
+        >
+          {/* MAIN FIELDS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+            {visibleFields.map((field) => {
+              const value =
+                field.content !== undefined
+                  ? field.content
+                  : form[field.name];
+
+              const colSpan = field.colSpan ?? 1;
+              const colSpanClass = COL_SPAN_CLASS[colSpan];
+
+              if (field.type === "select") {
+                const Icon = field.icon;
+
+                const parentValue = field.dependsOn
+                  ? form[field.dependsOn]
+                  : undefined;
+
+                const finalOptions =
+                  field.dependsOn && field.filterOptions
+                    ? field.filterOptions(parentValue, field.options ?? [])
+                    : field.options;
+
+                const isDisabled =
+                  isReadOnly ||
+                  (field.dependsOn && !parentValue);
+
+                return (
+                    <div key={String(field.name)} className={colSpanClass}>
+                    <label className="block mb-1 font-semibold text-gray-900 dark:text-gray-100">
+                      {field.label}
+                      {field.required && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}
+                    </label>
+
+                    <div className="relative">
+                      {Icon && (
+                        <Icon
+                          size={18}
+                          className={`absolute left-3 top-1/2 -translate-y-1/2
+              ${isDarkMode ? "text-gray-400" : "text-gray-500"}
+            `}
+                        />
+                      )}
+
+                      <select
+                        disabled={isDisabled}
+                        required={field.required}
+                        value={String(value ?? "")}
+                        onChange={(e) =>
+                          handleChange(
+                            field.name,
+                            e.target.value as unknown as T[keyof T]
+                          )
+                        }
+                        className={`
+            w-full py-3 rounded-xl border appearance-none transition-all duration-300
+            focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+            ${Icon ? "pl-10" : "pl-4"} pr-10
+            ${isDarkMode
+                            ? "bg-slate-800 border-slate-700 text-gray-100"
+                            : "bg-white border-slate-300 text-gray-900"}
+            ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
+          `}
+                      >
+                        <option value="">Seleccione...</option>
+
+                        {finalOptions?.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (field.type === "boolean") {
+                const checked = Boolean(value);
+
+                return (
+                  <div key={String(field.name)} className={colSpanClass}>
+                    {/* LABEL */}
+                    <label className="block mb-1 font-semibold text-md text-gray-900 dark:text-gray-100">
+                      {field.label}
+                      {field.required && (
+                        <span className="text-red-500 ml-1 text-md">*</span>
+                      )}
+                    </label>
+
+                    {/* CONTROL */}
+                    <button
+                      type="button"
+                      disabled={isReadOnly}
+                      onClick={() =>
+                        handleChange(
+                          field.name,
+                          (!checked) as T[keyof T]
+                        )
+                      }
+                      className={`
+      w-full flex items-center justify-between px-4 py-3
+      rounded-xl border transition-all duration-300
+      focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+      ${isDarkMode
+                          ? "bg-slate-800 border-slate-700 text-gray-100"
+                          : "bg-slate-100 border-slate-300 text-gray-900"
+                        }
+    `}
+                    >
+                      {/* LEFT */}
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`
+          w-6 h-6 rounded-full flex items-center justify-center text-sm
+          ${checked ? "bg-amber-500 text-white" : "bg-slate-400 text-white"}
+        `}
+                        >
+                          ✓
+                        </span>
+                        <span className="font-medium text-md text-gray-900 dark:text-gray-100">
+                          {checked ? "Activo" : "Inactivo"}
+                        </span>
+                      </div>
+
+                      {/* SWITCH */}
+                      <div
+                        className={`
+        w-12 h-7 rounded-full relative transition-colors
+        ${checked ? "bg-amber-500" : "bg-slate-400"}
+      `}
+                      >
+                        <span
+                          className={`
+          absolute top-1 left-1 w-5 h-5 bg-white rounded-full
+          transition-transform
+          ${checked ? "translate-x-5" : ""}
+        `}
+                        />
+                      </div>
+                    </button>
+                  </div>
+                );
+              }
+
+              if (field.type === "autocomplete") {
+                const Icon = field.icon;
+
+                const parentValue = field.dependsOn
+                  ? form[field.dependsOn]
+                  : undefined;
+
+                const finalOptions =
+                  field.dependsOn && field.filterOptions
+                    ? field.filterOptions(parentValue, field.options ?? [])
+                    : field.options ?? [];
+
+                const isDisabled =
+                  isReadOnly ||
+                  (field.dependsOn && !parentValue);
+
+                return (
+                  <div key={String(field.name)} className={colSpanClass}>
+                    <AutocompleteField
+                      label={field.label}
+                      value={value as any}
+                      options={finalOptions as any}
+                      required={field.required}
+                      disabled={isDisabled}
+                      icon={Icon}
+                      isDarkMode={isDarkMode}
+                      onChange={(val) =>
+                        handleChange(
+                          field.name,
+                          val as unknown as T[keyof T]
+                        )
+                      }
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <div className={colSpanClass} key={String(field.name)}>
+                  <InputField
+                    label={field.label}
+                    type={field.type ?? "text"}
+                    value={String(value ?? "")}
+                    disabled={isReadOnly}
+                    icon={field.icon}
+                    isDarkMode={isDarkMode}
+                    required={field.required}
+                    inputMode={field.inputMode}
+                    onChange={(e) =>
+                      handleChange(
+                        field.name,
+                        e.target.value as unknown as T[keyof T]
+                      )
+                    }
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* DETAIL FORM */}
+          {visibleFieldsDetails && !isReadOnly && (
+            <>
+              <hr className={`${isDarkMode ? "border-slate-700" : "border-slate-200"}`} />
+              <h3 className="font-bold text-lg">Detalle</h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+                {visibleFieldsDetails.map((f) => {
+                  const value = detailForm[f.name];
+                  const colSpan = f.colSpan ?? 1;
+                  const colSpanClass = COL_SPAN_CLASS[colSpan];
+                  const hasError = detailErrors[String(f.name)];
+
+                  /* SELECT */
+                  if (f.type === "select") {
+                    const Icon = f.icon;
+
+                    const parentValue = f.dependsOn
+                      ? detailForm[f.dependsOn]
+                      : undefined;
+
+                    const finalOptions =
+                      f.dependsOn && f.filterOptions
+                        ? f.filterOptions(parentValue, f.options ?? [])
+                        : f.options;
+
+                    const isDisabled =
+                      isReadOnly ||
+                      (f.dependsOn && !parentValue);
+
+                    return (
+                      <div key={String(f.name)} className={colSpanClass}>
+                        <label className="block mb-1 font-semibold">
+                          {f.label}
+                        </label>
+
+                        <div className="relative">
+                          {Icon && (
+                            <Icon
+                              size={18}
+                              className={`absolute left-3 top-1/2 -translate-y-1/2
+              ${isDarkMode ? "text-gray-400" : "text-gray-500"}
+            `}
+                            />
+                          )}
+
+                          <select
+                            disabled={isDisabled}
+                            value={String(value ?? "")}
+                            onChange={(e) =>
+                              handleDetailChange(
+                                f.name,
+                                e.target.value as unknown as D[keyof D]
+                              )
+                            }
+                            className={`
+            w-full py-3 rounded-xl border appearance-none transition-all duration-300
+            focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+            ${Icon ? "pl-10" : "pl-4"} pr-10
+            ${isDarkMode
+                                ? "bg-slate-800 border-slate-700 text-gray-100"
+                                : "bg-white border-slate-300 text-gray-900"}
+            ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
+                ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
+          `}
+                          >
+                            <option value="">Seleccione...</option>
+                            {finalOptions?.map((o) => (
+                              <option key={o.value} value={o.value}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  /* BOOLEAN */
+                  if (f.type === "boolean") {
+                    const checked = Boolean(value);
+
+                    return (
+                      <div key={String(f.name)} className={colSpanClass}>
+                        {/* LABEL */}
+                        <label className="block mb-1 font-semibold">
+                          {f.label}
+                        </label>
+
+                        {/* CONTROL */}
+                        <button
+                          type="button"
+                          disabled={isReadOnly}
+                          onClick={() =>
+                            handleDetailChange(
+                              f.name,
+                              (!checked) as T[keyof T]
+                            )
+                          }
+                          className={`
+          w-full h-[52px] flex items-center justify-between px-4
+          rounded-xl border transition-all duration-300
+          focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+          ${isDarkMode
+                              ? "bg-slate-800 border-slate-700 text-gray-100"
+                              : "bg-slate-100 border-slate-300 text-gray-900"}
+
+                                  ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
+        `}
+                        >
+                          {/* LEFT */}
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={`
+              w-6 h-6 rounded-full flex items-center justify-center text-sm
+              ${checked ? "bg-emerald-500 text-white" : "bg-slate-400 text-white"}
+            `}
+                            >
+                              ✓
+                            </span>
+                            <span className="font-medium">
+                              {checked ? "Activo" : "Inactivo"}
+                            </span>
+                          </div>
+
+                          {/* SWITCH */}
+                          <div
+                            className={`
+            w-12 h-7 rounded-full relative transition-colors
+            ${checked ? "bg-emerald-500" : "bg-slate-400"}
+          `}
+                          >
+                            <span
+                              className={`
+              absolute top-1 left-1 w-5 h-5 bg-white rounded-full
+              transition-transform
+              ${checked ? "translate-x-5" : ""}
+            `}
+                            />
+                          </div>
+                        </button>
+                      </div>
+                    );
+                  }
+
+                  /* AUTOCOMPLETE */
+                  if (f.type === "autocomplete") {
+                    const Icon = f.icon;
+
+                    const parentValue = f.dependsOn
+                      ? detailForm[f.dependsOn]
+                      : undefined;
+
+                    const finalOptions =
+                      f.dependsOn && f.filterOptions
+                        ? f.filterOptions(parentValue, f.options ?? [])
+                        : f.options ?? [];
+
+                    const isDisabled =
+                      isReadOnly ||
+                      (f.dependsOn && !parentValue);
+
+                    return (
+                      <div key={String(f.name)} className={colSpanClass}>
+                        <AutocompleteField
+                          label={f.label}
+                          value={value as any}
+                          options={finalOptions as any}
+                          disabled={isDisabled}
+                          icon={Icon}
+                          isDarkMode={isDarkMode}
+                          onChange={(val) =>
+                            handleDetailChange(
+                              f.name,
+                              val as unknown as D[keyof D]
+                            )
+                          }
+                        />
+                      </div>
+                    );
+                  }
+
+                  /* DEFAULT INPUT */
+                  return (
+                    <div className={colSpanClass} key={String(f.name)}>
+                      <InputField
+                        label={f.label}
+                        type={f.type ?? "text"}
+                        value={String(value ?? "")}
+                        isDarkMode={isDarkMode}
+                        icon={f.icon}
+                        onChange={(e) =>
+                          handleDetailChange(
+                            f.name,
+                            e.target.value as unknown as D[keyof D]
+                          )
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={addDetail}
+                disabled={
+                  !Object.values(detailForm).some((v) => {
+                    if (typeof v === "string") return v.trim() !== "";
+                    return v !== undefined && v !== null;
+                  })
+                }
+                className={`
+    px-4 py-2 rounded-lg font-bold text-white transition-all duration-200
+    bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2
+    hover:scale-[1.03]
+    active:scale-[0.97]
+    disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100
+  `}
+              >
+                {editingIndex !== null ? "Actualizar" : "Agregar"}
+              </button>
+            </>
+          )}
+
+          {/* DETAIL TABLE */}
+          {detailColumns && details.length > 0 && (
+            <div className="overflow-x-auto">
+              <table
+                className={`
+        w-full mt-4 border rounded-xl overflow-hidden
+        ${isDarkMode
+                    ? "border-slate-700 text-gray-100"
+                    : "border-slate-300 text-gray-900"}
+      `}
+              >
+                <thead
+                  className={`
+          ${isDarkMode
+                      ? "bg-slate-800"
+                      : "bg-slate-100"}
+        `}
+                >
+                  <tr>
+                    {detailColumns.map((c) => (
+                      <th
+                        key={String(c.key)}
+                        className="p-3 text-left font-semibold"
+                      >
+                        {c.label}
+                      </th>
+                    ))}
+                    {!isReadOnly && <th className="p-3 text-center">Acciones</th>}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {details.map((row, i) => (
+                    <tr
+                      key={i}
+                      className={`
+              border-t
+              ${isDarkMode
+                          ? "border-slate-700 hover:bg-slate-800"
+                          : "border-slate-200 hover:bg-slate-50"}
+            `}
+                    >
+                      {detailColumns.map((c) => (
+                        <td key={String(c.key)} className="p-3">
+                          {(() => {
+                            const field = detailFields?.find(
+                              (f) => f.name === c.key
+                            );
+
+                            if (field?.type === "select") {
+                              const option = field.options?.find(
+                                (o) => o.value === row[c.key]
+                              );
+                              return option?.label ?? "-";
+                            }
+
+                            if (field?.type === "autocomplete") {
+                              const option = field.options?.find(
+                                (o) => o.value === row[c.key]
+                              );
+                              return option?.label ?? `${option?.value}`;
+                            }
+
+                            if (field?.type === "boolean") {
+                              return row[c.key] ? "Sí" : "No";
+                            }
+
+                            return String(row[c.key] ?? "");
+                          })()}
+                        </td>
+                      ))}
+
+                      {!isReadOnly && (
+                        <td className="p-3 flex gap-2 justify-center">
+                          <button
+                            type="button"
+                            onClick={() => editDetail(i)}
+                            className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
+      ${isDarkMode
+                                ? "hover:bg-blue-500/20 text-blue-400"
+                                : "hover:bg-blue-100 text-blue-600"}
+    `}
+                          >
+                            <Pencil size={16} />
+                          </button>
+
+                          <button
+                            onClick={() => removeDetail(i)}
+                            type="button"
+                            className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
+      ${isDarkMode
+                                ? "hover:bg-red-500/20 text-red-400"
+                                : "hover:bg-red-100 text-red-600"}
+    `}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ACTIONS */}
+          <div className="flex flex-col items-center justify-center md:flex-row gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-30 py-3 rounded-xl bg-neutral-400 hover:bg-neutral-600 text-white font-bold focus:outline-none focus:ring-2 focus:ring-slate-500/50"
+            >
+              Cerrar
+            </button>
+
+            {mode !== "view" && (
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`
+      w-30 py-3 flex items-center justify-center gap-2 bg-linear-to-r from-(--primary) to-(--secondary) hover:from-(--primary) hover:to-(--primary) text-white font-bold rounded-2xl shadow-xl-secondary transform active:scale-[0.98] transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:ring-offset-2
+      ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}
+    `}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Guardando...
+                  </>
+                ) : (
+                  "Guardar"
+                )}
+              </button>
+            )}
+
+            {/* VIEW ACTIONS */}
+            {mode === "view" &&
+              data &&
+              viewActions?.map((action) => {
+                return (
+                  <button
+                    key={action.label}
+                    type="button"
+                    onClick={() => action.onClick(data)}
+                    className="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                  >
+                    {action.label}
+                  </button>
+                );
+              })}
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

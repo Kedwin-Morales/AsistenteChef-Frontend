@@ -18,10 +18,10 @@ export default function AuthTopBar({
         `}
         >
             <div className="flex items-center gap-2">
-                <div className="bg-gradient-to-tr from-(--primary) to-(--secondary) p-2 rounded-xl shadow-sm text-white">
+                <div className="bg-linear-to-tr from-(--primary) to-(--secondary) shadow-xl-secondary p-2 rounded-xl shadow-sm text-white">
                     <ChefHat size={24} />
                 </div>
-                <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">AsistentePRO</span>
+                <span className="font-extrabold text-xl tracking-tight bg-linear-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">AsistentePRO</span>
             </div>
 
             <div className="flex items-center gap-3">

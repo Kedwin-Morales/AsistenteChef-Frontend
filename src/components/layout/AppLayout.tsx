@@ -4,13 +4,14 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu } from "lucide-react";
+import AppSidebar from "@/components/layout/appSidebar";
 interface Props {
   children: React.ReactNode;
 }
 
 export default function AppLayout({ children }: Props) {
   const logout = useAuthStore((s) => s.logout);
-  const { isDarkMode, toggleDarkMode } = useLoginUI();
+  const { isDarkMode,viewMode, toggleDarkMode } = useLoginUI();
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -18,15 +19,13 @@ export default function AppLayout({ children }: Props) {
   return (
     <div
       className={`min-h-screen flex transition-colors duration-300 relative
-        ${isDarkMode ? "bg-(--color-bg) text-white" : "bg-(--color-bg) text-slate-900"}
-      `}
-    >
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black z-40 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+        ${isDarkMode ? "bg-(--color-bg) text-white" : "bg-(--color-bg) text-slate-900"}`}>
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
       {/* SIDEBAR */}
       <div
@@ -34,7 +33,13 @@ export default function AppLayout({ children }: Props) {
           transform transition-transform duration-300    
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}    
           md:translate-x-0`}
-      ></div>
+      >
+        <AppSidebar
+          isDarkMode={isDarkMode}
+          viewMode={viewMode}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+      </div>
 
       {/* RIGHT COLUMN */}
       <div className="flex-1 flex flex-col">
@@ -45,15 +50,14 @@ export default function AppLayout({ children }: Props) {
             {/* BOTÓN HAMBURGUESA (solo móvil) */}
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800"
+              className="md:hidden p-2 rounded-lg text-(--primary) hover:bg-slate-200 dark:hover:bg-slate-800"
             >
               <Menu size={22} />
             </button>
           </div>
-          {/* RIGHT ACTIONS */}
-
-          {/* USER INFO */}
+          {/* RIGHT ACTIONS */}          
           <div className="flex items-center gap-4">
+            {/* USER INFO */}
             <div className="relative inline-block">
               <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
                 <span className="text-xl font-semibold text-emerald-800">
@@ -66,7 +70,7 @@ export default function AppLayout({ children }: Props) {
             </div>
             <div className="flex flex-col text-center leading-tight">
               <span className="text-sm font-bold">{user?.nombre}</span>
-              <span className="text-xs text-slate-500">{user?.role}</span>
+              <span className="text-xs text-neutral-400">{user?.role}</span>
             </div>
 
             {/* DARK MODE BUTTON */}

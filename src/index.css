@@ -2,25 +2,51 @@
 @tailwind utilities;
 
 @theme {
-  --color-accent: #F9F6EE;
+  --color-accent: #f9f6ee;
   --color-accent-bg: yellow;
   --color-accent-border: rgba(170, 59, 255, 0.5);
 }
 
 /* ---------- PALETA DE COLORES - TEMA CLARO ---------- */
 :root {
-  --color-bg: theme('colors.olive.100');
-  --bg-form: theme('colors.gray.50');
-  --primary: theme('colors.green.800');
-  --secondary: theme('colors.emerald.500');
+  --color-bg: theme("colors.olive.100");
+  --bg-form: theme("colors.olive.50");
+  --primary: theme("colors.green.700");
+  --secondary: theme("colors.emerald.500");
+  --texto: theme("colors.neutral-900")
 }
 
 /* ---------- PALETA DE COLORES - TEMA OSCURO ---------- */
 :root.dark {
-  --color-bg: theme('colors.neutral.800');
-  --bg-form: theme('colors.gray.300');
-  --primary: theme('colors.amber.800');
-  --secondary: #CFB53B;
+  --color-bg: theme("colors.neutral.900");
+  --bg-form: theme("colors.neutral.800");
+  --primary: theme("colors.amber.700");
+  --secondary: #cfb53b;
+  --texto: theme("colors.neutral-100")
+
+}
+
+select,
+::picker(select){
+  appearance: base-select;  
+} 
+
+::picker(select) {
+  border: none;
+  border-radius: 0.5rem;
+  margin-top: 0.2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  background: var(--bg-form);
+}
+
+select option {
+  border-radius: 4px;
+  padding: 0.5rem;
+  color: var(--texto);
+}
+
+select option:hover {
+  color: var(--secondary);
 }
 
 /* ---------- TRANSICIONES GLOBALES ---------- */
@@ -35,4 +61,12 @@
 ::-webkit-scrollbar-thumb {
   background-color: rgba(100, 116, 139, 0.4);
   border-radius: 9999px;
+}
+
+@layer utilities {
+  .shadow-xl-secondary {
+    box-shadow:
+      0 2px 10px -5px var(--secondary),
+      0 5px 10px -5px var(--secondary);
+  }
 }

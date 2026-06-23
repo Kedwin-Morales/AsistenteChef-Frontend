@@ -2,14 +2,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import HomePage from "@/features/home/page/HomePage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import RolePage from "@/features/role/pages/RolePage";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />        
+        <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/roles" element={<RolePage />} />
         </Route>
       </Routes>
     </BrowserRouter>
