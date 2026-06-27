@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { X, Trash2, Pencil } from "lucide-react";
+import { X, Trash2, Pencil, SaveIcon, CloudCheck, BanIcon } from "lucide-react";
 import { useState } from "react";
 import InputField from "@/components/ui/InputField";
 import type { LucideIcon } from "lucide-react";
@@ -899,9 +899,10 @@ export default function EntityModal<T extends object, D extends object = any>({
             <button
               type="button"
               onClick={onClose}
-              className="w-30 py-3 rounded-xl bg-neutral-400 hover:bg-neutral-600 text-white font-bold focus:outline-none focus:ring-2 focus:ring-slate-500/50"
+              className="w-30 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-orange-500/50 hover:bg-orange-500/70 text-white font-bold"
             >
-              Cerrar
+              <BanIcon size={18} />
+              Cancelar
             </button>
 
             {mode !== "view" && (
@@ -909,11 +910,11 @@ export default function EntityModal<T extends object, D extends object = any>({
                 type="submit"
                 disabled={isSubmitting}
                 className={`
-      w-30 py-3 flex items-center justify-center gap-2 bg-linear-to-r from-(--primary) to-(--secondary) hover:from-(--primary) hover:to-(--primary) text-white font-bold rounded-2xl shadow-xl-secondary transform active:scale-[0.98] transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:ring-offset-2
+      w-30 py-3 flex items-center justify-center gap-2 bg-neutral-500 hover:bg-sky-600 text-white font-bold rounded-2xl shadow-lg shadow-sky-500/50 transform active:scale-[0.98] transition-all duration-200
       ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}
     `}
               >
+                <CloudCheck size={18} />
                 {isSubmitting ? (
                   <>
                     <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
