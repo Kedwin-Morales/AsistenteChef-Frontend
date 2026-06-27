@@ -33,16 +33,15 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
   return (
     <aside
       className={`w-full h-full border-r flex flex-col p-6 transition-colors duration-300 relative 
-        ${isDarkMode ? "bg-(--color-bg) border-(--secondary)/50" : "bg-(--color-bg) border-(--secondary)/50"}`}
+        ${isDarkMode ? "bg-(--color-bg) border-(--secondary)/20" : "bg-(--color-bg) border-(--secondary)/20"}`}
     >
       <div className="flex items-center gap-3 justify-center mb-10">
         <div
-          className="p-2 bg-linear-to-tr from-(--primary) to-(--secondary) rounded-2xl flex items-center justify-center 
-            shadow-xl-secondary transform -rotate-3 hover:rotate-0 transition-transform duration-300"
+          className="p-2 rounded-2xl flex items-center justify-center bg-gradient shadow-xl-secondary transform -rotate-3 hover:rotate-0 transition-transform duration-300"
         >
           <ChefHat color="white" size={24} />
         </div>
-        <span className="font-extrabold bg-linear-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent text-xl flex items-center">
+        <span className="font-extrabold bg-gradient bg-clip-text text-transparent text-xl flex items-center">
           AsistentePRO
         </span>
       </div>
@@ -170,9 +169,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           logout();
         }}
         className={`flex items-center gap-6 text-sm hover:text-red-600 
-               ${isDarkMode ? "text-(--primary)" : "text-(--primary)"}`}
-        data-bs-toggle="tooltip"
-        title="Cerrar Sesión"
+               ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
       >
         <LogOut size={25} />
         Cerrar Sesión

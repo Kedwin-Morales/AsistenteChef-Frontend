@@ -59,7 +59,7 @@ const InputField = forwardRef<HTMLInputElement, Props>(
       <div className="w-full">
         <label
           className={`block mb-1 font-semibold text-md ${
-            isDarkMode ? "text-(--primary)" : "text-(--primary)"
+            isDarkMode ? "text-(--texto)" : "text-(--texto)"
           }`}
         >
           {label}
@@ -67,7 +67,7 @@ const InputField = forwardRef<HTMLInputElement, Props>(
         </label>
 
         <div
-          className={`relative rounded-xl border transition-all duration-300 border-neutral-300
+          className={`relative rounded-xl border transition-all duration-300 border-neutral-700/30
             ${isDarkMode ? "bg-(--bg-form)" : "bg-(--bg-form)"}
             focus-within:ring-2 focus-within:ring-(--secondary) focus-within:border-(--secondary)`}>
           {Icon && (
@@ -94,7 +94,7 @@ const InputField = forwardRef<HTMLInputElement, Props>(
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-500 hover:text-slate-800"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-neutral-500 hover:text-(--secondary)"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>

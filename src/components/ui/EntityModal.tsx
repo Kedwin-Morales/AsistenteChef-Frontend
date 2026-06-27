@@ -9,7 +9,15 @@ import { useToast } from "./toast/useToast";
 
 export type ModalMode = "create" | "edit" | "view";
 
-export type FieldType = "text" | "password" | "number" | "email" | "date" | "boolean" | "select" | "autocomplete";
+export type FieldType =
+  | "text"
+  | "password"
+  | "number"
+  | "email"
+  | "date"
+  | "boolean"
+  | "select"
+  | "autocomplete";
 
 interface ModalAction<T> {
   label: string;
@@ -28,7 +36,7 @@ export interface ModalField<T> {
   colSpan?: 1 | 2 | 3 | 4 | 5 | 6;
   required?: boolean;
   readOnly?: boolean;
-  content?: string
+  content?: string;
   inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
 
   options?: {
@@ -40,7 +48,7 @@ export interface ModalField<T> {
   dependsOn?: keyof T;
   filterOptions?: (
     parentValue: any,
-    options: any[]
+    options: any[],
   ) => { label?: string; value?: string | number }[];
 
   permission?: {
@@ -64,7 +72,7 @@ export interface ModalDetailField<T> {
   dependsOn?: keyof T;
   filterOptions?: (
     parentValue: any,
-    options: any[]
+    options: any[],
   ) => { label: string; value: string | number }[];
 
   permission?: {
@@ -141,7 +149,7 @@ export default function EntityModal<T extends object, D extends object = any>({
   });
 
   const [details, setDetails] = useState<D[]>(
-    (data?.[detailKey as keyof T] as D[]) ?? []
+    (data?.[detailKey as keyof T] as D[]) ?? [],
   );
 
   if (!open) return null;
@@ -163,10 +171,7 @@ export default function EntityModal<T extends object, D extends object = any>({
     });
   };
 
-  const handleDetailChange = <K extends keyof D>(
-    name: K,
-    rawValue: any
-  ) => {
+  const handleDetailChange = <K extends keyof D>(name: K, rawValue: any) => {
     const field = detailFields?.find((f) => f.name === name);
 
     let value: any = rawValue;
@@ -223,7 +228,7 @@ export default function EntityModal<T extends object, D extends object = any>({
       toast.warning(`El campo "${missingRequired.label}" es obligatorio`);
 
       const element = document.querySelector(
-        `[name="${String(missingRequired.name)}"]`
+        `[name="${String(missingRequired.name)}"]`,
       );
 
       if (element) {
@@ -255,7 +260,7 @@ export default function EntityModal<T extends object, D extends object = any>({
       }
 
       const existingIndex = prev.findIndex(
-        (item) => item[mergeDetailBy] === newItem[mergeDetailBy]
+        (item) => item[mergeDetailBy] === newItem[mergeDetailBy],
       );
 
       if (existingIndex === -1) {
@@ -313,7 +318,9 @@ export default function EntityModal<T extends object, D extends object = any>({
   };
 
   return (
-    <div className={`fixed inset-0 z-100 flex items-end md:items-center justify-center ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/70"}`}>
+    <div
+      className={`fixed inset-0 z-100 flex items-end md:items-center justify-center ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/70"}`}
+    >
       <div
         className={`
     w-full
@@ -323,11 +330,11 @@ export default function EntityModal<T extends object, D extends object = any>({
     rounded-t-3xl md:rounded-3xl
     overflow-hidden
     flex flex-col
-    ${isDarkMode ? "bg-(--bg-form)" : "bg-(--bg-form)"}
+    ${isDarkMode ? "bg-(--color-bg)" : "bg-(--color-bg)"}
   `}
       >
         {/* HEADER */}
-        <div className="p-6 flex justify-between items-center bg-linear-to-r from-(--primary) to-(--secondary) text-neutral-200">
+        <div className="p-6 flex justify-between items-center bg-gradient text-neutral-200">
           <div className="justify-between flex gap-4 items-center">
             {HeaderIcon && (
               <HeaderIcon size={30} className="text-neutral-200" />
@@ -351,9 +358,7 @@ export default function EntityModal<T extends object, D extends object = any>({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
             {visibleFields.map((field) => {
               const value =
-                field.content !== undefined
-                  ? field.content
-                  : form[field.name];
+                field.content !== undefined ? field.content : form[field.name];
 
               const colSpan = field.colSpan ?? 1;
               const colSpanClass = COL_SPAN_CLASS[colSpan];
@@ -371,12 +376,11 @@ export default function EntityModal<T extends object, D extends object = any>({
                     : field.options;
 
                 const isDisabled =
-                  isReadOnly ||
-                  (field.dependsOn && !parentValue);
+                  isReadOnly || (field.dependsOn && !parentValue);
 
                 return (
-                    <div key={String(field.name)} className={colSpanClass}>
-                    <label className="block mb-1 font-semibold text-gray-900 dark:text-gray-100">
+                  <div key={String(field.name)} className={colSpanClass}>
+                    <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
                       {field.label}
                       {field.required && (
                         <span className="text-red-500 ml-1">*</span>
@@ -388,7 +392,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                         <Icon
                           size={18}
                           className={`absolute left-3 top-1/2 -translate-y-1/2
-              ${isDarkMode ? "text-gray-400" : "text-gray-500"}
+              ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
             `}
                         />
                       )}
@@ -400,16 +404,18 @@ export default function EntityModal<T extends object, D extends object = any>({
                         onChange={(e) =>
                           handleChange(
                             field.name,
-                            e.target.value as unknown as T[keyof T]
+                            e.target.value as unknown as T[keyof T],
                           )
                         }
                         className={`
             w-full py-3 rounded-xl border appearance-none transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+            focus:outline-none focus:ring-2 focus:ring-(--secondary)/50 focus:border-(--secondary)
             ${Icon ? "pl-10" : "pl-4"} pr-10
-            ${isDarkMode
-                            ? "bg-slate-800 border-slate-700 text-gray-100"
-                            : "bg-white border-slate-300 text-gray-900"}
+            ${
+              isDarkMode
+                ? "bg-(--form) border-neutral-700/30 text-(--texto)"
+                : "bg-(--form) border-slate-700/30 text-(--texto)"
+            }
             ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
           `}
                       >
@@ -432,7 +438,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                 return (
                   <div key={String(field.name)} className={colSpanClass}>
                     {/* LABEL */}
-                    <label className="block mb-1 font-semibold text-md text-gray-900 dark:text-gray-100">
+                    <label className="block mb-1 font-semibold text-md text-(--texto)">
                       {field.label}
                       {field.required && (
                         <span className="text-red-500 ml-1 text-md">*</span>
@@ -444,19 +450,17 @@ export default function EntityModal<T extends object, D extends object = any>({
                       type="button"
                       disabled={isReadOnly}
                       onClick={() =>
-                        handleChange(
-                          field.name,
-                          (!checked) as T[keyof T]
-                        )
+                        handleChange(field.name, !checked as T[keyof T])
                       }
                       className={`
       w-full flex items-center justify-between px-4 py-3
       rounded-xl border transition-all duration-300
       focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-      ${isDarkMode
-                          ? "bg-slate-800 border-slate-700 text-gray-100"
-                          : "bg-slate-100 border-slate-300 text-gray-900"
-                        }
+      ${
+        isDarkMode
+          ? "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
+          : "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
+      }
     `}
                     >
                       {/* LEFT */}
@@ -464,12 +468,12 @@ export default function EntityModal<T extends object, D extends object = any>({
                         <span
                           className={`
           w-6 h-6 rounded-full flex items-center justify-center text-sm
-          ${checked ? "bg-amber-500 text-white" : "bg-slate-400 text-white"}
+          ${checked ? "bg-emerald-500 text-white" : "bg-neutral-400 text-white"}
         `}
                         >
                           ✓
                         </span>
-                        <span className="font-medium text-md text-gray-900 dark:text-gray-100">
+                        <span className="font-medium text-md text-(--texto)">
                           {checked ? "Activo" : "Inactivo"}
                         </span>
                       </div>
@@ -478,7 +482,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                       <div
                         className={`
         w-12 h-7 rounded-full relative transition-colors
-        ${checked ? "bg-amber-500" : "bg-slate-400"}
+        ${checked ? "bg-emerald-500" : "bg-neutral-400"}
       `}
                       >
                         <span
@@ -504,11 +508,10 @@ export default function EntityModal<T extends object, D extends object = any>({
                 const finalOptions =
                   field.dependsOn && field.filterOptions
                     ? field.filterOptions(parentValue, field.options ?? [])
-                    : field.options ?? [];
+                    : (field.options ?? []);
 
                 const isDisabled =
-                  isReadOnly ||
-                  (field.dependsOn && !parentValue);
+                  isReadOnly || (field.dependsOn && !parentValue);
 
                 return (
                   <div key={String(field.name)} className={colSpanClass}>
@@ -521,10 +524,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                       icon={Icon}
                       isDarkMode={isDarkMode}
                       onChange={(val) =>
-                        handleChange(
-                          field.name,
-                          val as unknown as T[keyof T]
-                        )
+                        handleChange(field.name, val as unknown as T[keyof T])
                       }
                     />
                   </div>
@@ -545,7 +545,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                     onChange={(e) =>
                       handleChange(
                         field.name,
-                        e.target.value as unknown as T[keyof T]
+                        e.target.value as unknown as T[keyof T],
                       )
                     }
                   />
@@ -557,7 +557,9 @@ export default function EntityModal<T extends object, D extends object = any>({
           {/* DETAIL FORM */}
           {visibleFieldsDetails && !isReadOnly && (
             <>
-              <hr className={`${isDarkMode ? "border-slate-700" : "border-slate-200"}`} />
+              <hr
+                className={`${isDarkMode ? "border-slate-700" : "border-slate-200"}`}
+              />
               <h3 className="font-bold text-lg">Detalle</h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
@@ -581,8 +583,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                         : f.options;
 
                     const isDisabled =
-                      isReadOnly ||
-                      (f.dependsOn && !parentValue);
+                      isReadOnly || (f.dependsOn && !parentValue);
 
                     return (
                       <div key={String(f.name)} className={colSpanClass}>
@@ -606,16 +607,18 @@ export default function EntityModal<T extends object, D extends object = any>({
                             onChange={(e) =>
                               handleDetailChange(
                                 f.name,
-                                e.target.value as unknown as D[keyof D]
+                                e.target.value as unknown as D[keyof D],
                               )
                             }
                             className={`
             w-full py-3 rounded-xl border appearance-none transition-all duration-300
             focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
             ${Icon ? "pl-10" : "pl-4"} pr-10
-            ${isDarkMode
-                                ? "bg-slate-800 border-slate-700 text-gray-100"
-                                : "bg-white border-slate-300 text-gray-900"}
+            ${
+              isDarkMode
+                ? "bg-slate-800 border-slate-700 text-gray-100"
+                : "bg-white border-slate-300 text-gray-900"
+            }
             ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
                 ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
           `}
@@ -648,18 +651,17 @@ export default function EntityModal<T extends object, D extends object = any>({
                           type="button"
                           disabled={isReadOnly}
                           onClick={() =>
-                            handleDetailChange(
-                              f.name,
-                              (!checked) as T[keyof T]
-                            )
+                            handleDetailChange(f.name, !checked as T[keyof T])
                           }
                           className={`
-          w-full h-[52px] flex items-center justify-between px-4
+          w-full h-13 flex items-center justify-between px-4
           rounded-xl border transition-all duration-300
           focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-          ${isDarkMode
-                              ? "bg-slate-800 border-slate-700 text-gray-100"
-                              : "bg-slate-100 border-slate-300 text-gray-900"}
+          ${
+            isDarkMode
+              ? "bg-slate-800 border-slate-700 text-gray-100"
+              : "bg-slate-100 border-slate-300 text-gray-900"
+          }
 
                                   ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
         `}
@@ -710,11 +712,10 @@ export default function EntityModal<T extends object, D extends object = any>({
                     const finalOptions =
                       f.dependsOn && f.filterOptions
                         ? f.filterOptions(parentValue, f.options ?? [])
-                        : f.options ?? [];
+                        : (f.options ?? []);
 
                     const isDisabled =
-                      isReadOnly ||
-                      (f.dependsOn && !parentValue);
+                      isReadOnly || (f.dependsOn && !parentValue);
 
                     return (
                       <div key={String(f.name)} className={colSpanClass}>
@@ -728,7 +729,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                           onChange={(val) =>
                             handleDetailChange(
                               f.name,
-                              val as unknown as D[keyof D]
+                              val as unknown as D[keyof D],
                             )
                           }
                         />
@@ -748,7 +749,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                         onChange={(e) =>
                           handleDetailChange(
                             f.name,
-                            e.target.value as unknown as D[keyof D]
+                            e.target.value as unknown as D[keyof D],
                           )
                         }
                       />
@@ -785,16 +786,16 @@ export default function EntityModal<T extends object, D extends object = any>({
               <table
                 className={`
         w-full mt-4 border rounded-xl overflow-hidden
-        ${isDarkMode
-                    ? "border-slate-700 text-gray-100"
-                    : "border-slate-300 text-gray-900"}
+        ${
+          isDarkMode
+            ? "border-slate-700 text-gray-100"
+            : "border-slate-300 text-gray-900"
+        }
       `}
               >
                 <thead
                   className={`
-          ${isDarkMode
-                      ? "bg-slate-800"
-                      : "bg-slate-100"}
+          ${isDarkMode ? "bg-slate-800" : "bg-slate-100"}
         `}
                 >
                   <tr>
@@ -806,7 +807,9 @@ export default function EntityModal<T extends object, D extends object = any>({
                         {c.label}
                       </th>
                     ))}
-                    {!isReadOnly && <th className="p-3 text-center">Acciones</th>}
+                    {!isReadOnly && (
+                      <th className="p-3 text-center">Acciones</th>
+                    )}
                   </tr>
                 </thead>
 
@@ -816,28 +819,30 @@ export default function EntityModal<T extends object, D extends object = any>({
                       key={i}
                       className={`
               border-t
-              ${isDarkMode
-                          ? "border-slate-700 hover:bg-slate-800"
-                          : "border-slate-200 hover:bg-slate-50"}
+              ${
+                isDarkMode
+                  ? "border-slate-700 hover:bg-slate-800"
+                  : "border-slate-200 hover:bg-slate-50"
+              }
             `}
                     >
                       {detailColumns.map((c) => (
                         <td key={String(c.key)} className="p-3">
                           {(() => {
                             const field = detailFields?.find(
-                              (f) => f.name === c.key
+                              (f) => f.name === c.key,
                             );
 
                             if (field?.type === "select") {
                               const option = field.options?.find(
-                                (o) => o.value === row[c.key]
+                                (o) => o.value === row[c.key],
                               );
                               return option?.label ?? "-";
                             }
 
                             if (field?.type === "autocomplete") {
                               const option = field.options?.find(
-                                (o) => o.value === row[c.key]
+                                (o) => o.value === row[c.key],
                               );
                               return option?.label ?? `${option?.value}`;
                             }
@@ -857,9 +862,11 @@ export default function EntityModal<T extends object, D extends object = any>({
                             type="button"
                             onClick={() => editDetail(i)}
                             className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
-      ${isDarkMode
-                                ? "hover:bg-blue-500/20 text-blue-400"
-                                : "hover:bg-blue-100 text-blue-600"}
+      ${
+        isDarkMode
+          ? "hover:bg-blue-500/20 text-blue-400"
+          : "hover:bg-blue-100 text-blue-600"
+      }
     `}
                           >
                             <Pencil size={16} />
@@ -869,9 +876,11 @@ export default function EntityModal<T extends object, D extends object = any>({
                             onClick={() => removeDetail(i)}
                             type="button"
                             className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
-      ${isDarkMode
-                                ? "hover:bg-red-500/20 text-red-400"
-                                : "hover:bg-red-100 text-red-600"}
+      ${
+        isDarkMode
+          ? "hover:bg-red-500/20 text-red-400"
+          : "hover:bg-red-100 text-red-600"
+      }
     `}
                           >
                             <Trash2 size={16} />

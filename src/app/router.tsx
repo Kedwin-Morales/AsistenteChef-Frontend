@@ -3,6 +3,8 @@ import LoginPage from "@/features/auth/pages/LoginPage";
 import HomePage from "@/features/home/page/HomePage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RolePage from "@/features/role/pages/RolePage";
+import UserPage from "@/features/user/pages/UserPage";
+
 
 export default function AppRouter() {
   return (
@@ -12,6 +14,7 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/roles" element={<RolePage />} />
+          <Route path="/usuario" element={<UserPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

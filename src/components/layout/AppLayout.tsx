@@ -76,8 +76,7 @@ export default function AppLayout({ children }: Props) {
             {/* DARK MODE BUTTON */}
             <button
               onClick={toggleDarkMode}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition
-              ${isDarkMode ? "bg-yellow-600 text-slate-900 hover:bg-(--secondary)" : "bg-neutral-700 text-white hover:bg-neutral-500"}`}
+              className={`p-3 rounded-full transition-all ${isDarkMode ? 'bg-olive-100 text-slate-900 hover:bg-(--secondary)' : 'bg-neutral-700 text-white hover:bg-(--secondary)'}`}          
               aria-label="Cambiar modo"
             >
               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -91,7 +90,7 @@ export default function AppLayout({ children }: Props) {
                 navigate("/login");
               }}
               className={`flex items-center gap-2 text-sm hover:text-red-600 
-               ${isDarkMode ? "text-(--primary)" : "text-(--primary)"}`}
+               ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
               data-bs-toggle="tooltip"
               title="Cerrar Sesión"
             >

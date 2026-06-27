@@ -43,11 +43,11 @@ export default function LoginForm({ isDarkMode }: Props) {
 
   return (
     <div
-      className="bg-(--bg-form) dark:bg-stone-800/80 backdrop-blur-xl w-full rounded-[2 rem] shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.3)] border-none
+      className="bg-(--bg-form) backdrop-blur-xl w-full rounded-[2 rem] shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.3)] border-none
       p-8 sm:p-10"
     >
       <div className="flex flex-col items-center text-center mb-8">
-        <div className="w-16 h-16 bg-linear-to-tr from-(--primary) to-(--secondary) shadow-xl-secondary rounded-2xl flex items-center justify-center shadow-(--secondary) mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+        <div className="w-16 h-16 bg-gradient shadow-xl-secondary rounded-2xl flex items-center justify-center mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
           <ChefHat size={32} className="text-white" />
         </div>
         <h1 className="text-3xl font-extrabold text-(--primary) tracking-tight">
@@ -88,8 +88,7 @@ export default function LoginForm({ isDarkMode }: Props) {
           type="submit"
           disabled={isSubmitting}
           className={`
-            w-full py-3 flex items-center justify-center gap-2 bg-linear-to-r from-(--primary) to-(--secondary) hover:from-(--primary) hover:to-(--primary) 
-            text-white font-bold rounded-2xl shadow-xl-secondary transform active:scale-[0.98] transition-all duration-200    
+            w-full bg-gradient btn-gradient shadow-xl-secondary transform active:scale-[0.98] transition-all duration-200    
             ${isSubmitting ? "opacity-80 cursor-not-allowed" : ""}  
             `}
         >
