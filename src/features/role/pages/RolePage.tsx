@@ -1,4 +1,4 @@
-import { PlusCircle, Eye, Pencil, Trash2, Shield } from "lucide-react";
+import { PlusCircle, Eye, Pencil, Trash2, Shield, ShieldPlus } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
@@ -148,7 +148,7 @@ export default function RolePage() {
     <AppLayout>
       <div className="flex justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-(--primary)">Roles</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)"><Shield size={30}/>Roles</h1>
           <p className="text-sm text-neutral-500">
             Gestión de roles del sistema.
           </p>
@@ -191,7 +191,7 @@ export default function RolePage() {
               ? "Editar Rol"
               : "Detalle Rol"
         }
-        headerIcon={Shield}
+        headerIcon={ShieldPlus}
         mode={modalMode}
         data={selected}
         fields={fields}

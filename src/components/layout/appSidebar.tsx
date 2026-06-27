@@ -16,7 +16,8 @@ import {
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { SidebarGroup } from "./SidebarGroup";
-import { useState } from "react";
+// import { useState } from "react";
+import { useSidebarStore } from "@/stores//sidebar.store";
 import { X } from "lucide-react";
 
 interface Props {
@@ -27,8 +28,10 @@ interface Props {
 
 export default function AppSidebar({ isDarkMode, onClose }: Props) {
   const logout = useAuthStore((s) => s.logout);
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  // const [openGroup, setOpenGroup] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
+  const openGroup = useSidebarStore((s) => s.openGroup);
+  const setOpenGroup = useSidebarStore((s) => s.setOpenGroup);
 
   return (
     <aside

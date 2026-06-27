@@ -2,14 +2,12 @@ import {
   PlusCircle,
   Eye,
   Pencil,
-  Trash2,
-  UserCog,
   Tags,
-  UserPlus,
   WholeWord,
-  KeyRound,
-  IdCard,
-  User,
+  Variable,
+  RulerDimensionLine,
+  Ruler,
+  Ban,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -20,27 +18,27 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 import { useToast } from "@/components/ui/toast/useToast";
-import { useUsers } from "../hooks/useUsers";
-import { createUser, deleteUser, updateUser } from "../services/user.service";
-import type { UserDTO } from "../types/user.types";
+import { useModels } from "../hooks/useUnidad";
+import { crear, editar, anular } from "../services/unidad.service";
+import type { ModelDTO } from "../types/unidad.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
 
-type UserFilter = "nombre" | "documento";
+type ModelFilter = "nombre" | "simbolo";
 
-export default function UserPage() {
+export default function UnidadPage() {
   const toast = useToast();
-  const { users, roles, loading, refetch } = useUsers();
+  const { models, loading, refetch } = useModels();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
-  const [filterBy, setFilterBy] = useState<UserFilter>("nombre");
+  const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
-  const [selected, setSelected] = useState<UserDTO | null>(null);
-
-  const fields: ModalField<UserDTO & { rolId?: string }>[] = [
+  const [selected, setSelected] = useState<ModelDTO | null>(null);
+  const [showActivo, setShowActivo] = useState(false);
+  const fields: ModalField<ModelDTO>[] = [
     {
       name: "nombre",
       label: "Nombre",
@@ -50,47 +48,17 @@ export default function UserPage() {
       type: "text",
     },
     {
-      name: "apellido",
-      label: "Apellido",
-      icon: WholeWord,
+      name: "simbolo",
+      label: "Simbolo",
+      icon: Variable,
       colSpan: 3,
       required: true,
       type: "text",
     },
-    {
-      name: "documento",
-      label: "Documento",
-      icon: IdCard,
-      colSpan: 3,
-      required: true,
-      type: "number",
-      inputMode: "numeric",
-    },
-    {
-      name: "rolId",
-      label: "Rol",
-      icon: UserCog,
-      colSpan: 3,
-      required: true,
-      type: "select",
-      options: roles.map((r) => ({ label: r.name, value: r.id })),
-    },
-    ...(modalMode === "create"
-      ? [
-          {
-            name: "password" as keyof UserDTO,
-            label: "Contraseña",
-            icon: KeyRound,
-            colSpan: 6,
-            required: true,
-            type: "password" as const,
-          },
-        ]
-      : []),
     ...(modalMode === "edit"
       ? [
           {
-            name: "activo" as keyof UserDTO,
+            name: "activo" as keyof ModelDTO,
             label: "Activo",
             icon: Tags as typeof Tags,
             colSpan: 6,
@@ -100,32 +68,26 @@ export default function UserPage() {
       : []),
   ];
 
-  const handleSubmit = async (data: Partial<UserDTO>) => {
-    if (!data.nombre || !data.apellido || !data.documento) {
-      return toast.error("Nombre, apellido y documento son obligatorios");
+  const handleSubmit = async (data: Partial<ModelDTO>) => {
+    if (!data.nombre) {
+      return toast.error("Nombre es obligatorio.");
     }
 
     try {
       if (modalMode === "create") {
-        const password = (data as any).password;
-        if (!password) return toast.error("Contraseña es obligatoria");
-        await createUser({
-          documento: data.documento,
+        await crear({
           nombre: data.nombre,
-          apellido: data.apellido,
-          password,
-          rolId: (data as any).rolId,
+          simbolo: data.simbolo ?? "",
         });
         toast.success("Creado exitosamente.");
       }
 
-      if (modalMode === "edit" && selected?.id) {
-        await updateUser(selected.id, {
-          documento: data.documento,
+      if (modalMode === "edit" && selected?.unidadMedidaId) {
+        await editar(selected.unidadMedidaId, {
+          unidadMedidaId: "",
           nombre: data.nombre,
-          apellido: data.apellido,
+          simbolo: data.simbolo ?? "",
           activo: data.activo ?? true,
-          rolId: (data as any).rolId,
         });
         toast.success("Actualizado con éxito.");
       }
@@ -138,10 +100,10 @@ export default function UserPage() {
     }
   };
 
-  const confirmarDelete = async (model: UserDTO) => {
+  const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${model.nombre} ${model.apellido}"?`,
+      text: `¿Anular: "${item.nombre}"?`,
       icon: "error",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -150,7 +112,12 @@ export default function UserPage() {
 
     if (result.isConfirmed) {
       try {
-        await deleteUser(model.id);
+        await anular(item.unidadMedidaId, {
+          unidadMedidaId: item.unidadMedidaId,
+          nombre: item.nombre,
+          simbolo: item.simbolo ?? "",
+          activo: item.activo ?? true,
+        });
         toast.success("Anulado con exito.");
         await refetch();
       } catch (error) {
@@ -159,35 +126,24 @@ export default function UserPage() {
     }
   };
 
-  const filtered = users.filter((u) =>
-    `${u.nombre} ${u.apellido} ${u.documento}`
-      .toLowerCase()
-      .includes(search.toLowerCase()),
-  );
+  const esActive = (a: any) => a.activo === false;
 
-  const columns: TableColumn<UserDTO>[] = [
+  const filtered = models
+    .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
+    .filter((u) =>
+      `${u.nombre} ${u.simbolo}`.toLowerCase().includes(search.toLowerCase()),
+    );
+
+  const columns: TableColumn<ModelDTO>[] = [
     {
       key: "nombre",
       header: "Nombre",
-      render: (row) => (
-        <span className="font-semibold">
-          {row.nombre} {row.apellido}
-        </span>
-      ),
+      render: (row) => <span className="font-semibold">{row.nombre}</span>,
     },
     {
-      key: "documento",
-      header: "Documento",
-      render: (row) => <span>{row.documento}</span>,
-    },
-    {
-      key: "role",
-      header: "Rol",
-      render: (row) => (
-        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
-          {row.role?.name ?? "—"}
-        </span>
-      ),
+      key: "simbolo",
+      header: "Simbolo",
+      render: (row) => <span>{row.simbolo}</span>,
     },
     {
       key: "activo",
@@ -230,7 +186,7 @@ export default function UserPage() {
             onClick={() => confirmarDelete(row)}
             className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
           >
-            <Trash2 size={16} />
+            <Ban size={16} />
           </button>
         </div>
       ),
@@ -253,9 +209,12 @@ export default function UserPage() {
     <AppLayout>
       <div className="flex justify-between mb-8">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)"><User size={30}/>Usuarios</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
+            <RulerDimensionLine size={30} />
+            Unidad de Medida
+          </h1>
           <p className="text-sm text-neutral-500">
-            Gestión de usuarios del sistema.
+            Gestión de medidas del sistema.
           </p>
         </div>
         <button
@@ -270,30 +229,61 @@ export default function UserPage() {
         </button>
       </div>
 
-      <SearchFilter<UserFilter>
+      <SearchFilter<ModelFilter>
         filterValue={filterBy}
         searchValue={search}
         placeholder="Buscar usuario..."
         options={[
           { value: "nombre", label: "Nombre" },
-          { value: "documento", label: "Documento" },
+          { value: "simbolo", label: "Simbolo" },
         ]}
         onFilterChange={setFilterBy}
         onSearchChange={setSearch}
         isDarkMode={isDarkMode}
       />
 
-      <DataTable<UserDTO>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 mb-3">
+          <button
+            type="button"
+            onClick={() => setShowActivo((v) => !v)}
+            className={`
+            relative w-11 h-6 rounded-full transition-colors
+            ${showActivo ? "bg-(--secondary)" : "bg-neutral-300"}
+        `}
+          >
+            <span
+              className={`
+                absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white
+                transition-transform
+                ${showActivo ? "translate-x-5" : ""}
+            `}
+            />
+          </button>
+
+          <span
+            className={`
+            text-sm select-none transition-colors
+            ${isDarkMode ? "text-(--texto)" : "text-(--texto)"}
+            ${showActivo ? "text-(--texto) font-medium" : "text-neutral-500"}
+        `}
+          >
+            Ver anulados
+          </span>
+        </div>
+      </div>
+
+      <DataTable<ModelDTO>
         data={filtered}
         columns={columns}
-        rowKey={(row) => row?.id}
+        rowKey={(row) => row?.unidadMedidaId}
         emptyMessage="No se encontraron usuarios"
         isDarkMode={isDarkMode}
       />
 
-      <EntityModal<UserDTO & { rolId?: string }>
+      <EntityModal<ModelDTO>
         open={modalOpen}
-        key={`${modalMode}-${selected?.id ?? "new"}`}
+        key={`${modalMode}-${selected?.unidadMedidaId ?? "new"}`}
         title={
           modalMode === "create"
             ? "Crear"
@@ -301,9 +291,9 @@ export default function UserPage() {
               ? "Editar"
               : "Detalles"
         }
-        headerIcon={UserPlus}
+        headerIcon={Ruler}
         mode={modalMode}
-        data={selected ? { ...selected, rolId: selected.role?.id ?? "" } : null}
+        data={selected ? { ...selected } : null}
         fields={fields}
         isDarkMode={isDarkMode}
         onClose={() => {

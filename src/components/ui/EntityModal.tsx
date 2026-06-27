@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { X, Trash2, Pencil, SaveIcon, CloudCheck, BanIcon } from "lucide-react";
+import { X, Trash2, Pencil, CloudCheck, CircleX } from "lucide-react";
 import { useState } from "react";
 import InputField from "@/components/ui/InputField";
 import type { LucideIcon } from "lucide-react";
@@ -901,7 +901,7 @@ export default function EntityModal<T extends object, D extends object = any>({
               onClick={onClose}
               className="w-30 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-orange-500/50 hover:bg-orange-500/70 text-white font-bold"
             >
-              <BanIcon size={18} />
+              <CircleX size={18} />
               Cancelar
             </button>
 
