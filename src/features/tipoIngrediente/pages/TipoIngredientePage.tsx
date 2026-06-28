@@ -5,9 +5,11 @@ import {
   Tags,
   WholeWord,
   Variable,
-  RulerDimensionLine,
   Ruler,
   Ban,
+  UtensilsCrossed,
+  Utensils,
+  SquareDashedText,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -18,15 +20,15 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 import { useToast } from "@/components/ui/toast/useToast";
-import { useModels } from "../hooks/useUnidad";
-import { crear, editar, anular } from "../services/unidad.service";
-import type { ModelDTO } from "../types/unidad.types";
+import { useModels } from "../hooks/useTipoIngrediente";
+import { crear, editar, anular } from "../services/tipoIngrediente.service";
+import type { ModelDTO } from "../types/tipoIngrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
 
-type ModelFilter = "nombre" | "simbolo";
+type ModelFilter = "nombre" | "descripcion";
 
 export default function UnidadPage() {
   const toast = useToast();
@@ -48,9 +50,9 @@ export default function UnidadPage() {
       type: "text",
     },
     {
-      name: "simbolo",
-      label: "Simbolo",
-      icon: Variable,
+      name: "descripcion",
+      label: "Descripción",
+      icon: SquareDashedText,
       colSpan: 3,
       required: true,
       type: "text",
@@ -77,16 +79,16 @@ export default function UnidadPage() {
       if (modalMode === "create") {
         await crear({
           nombre: data.nombre,
-          simbolo: data.simbolo ?? "",
+          descripcion: data.descripcion ?? "",
         });
         toast.success("Creado exitosamente.");
       }
 
-      if (modalMode === "edit" && selected?.unidadMedidaId) {
-        await editar(selected.unidadMedidaId, {
-          unidadMedidaId: "",
+      if (modalMode === "edit" && selected?.tipoIngredienteId) {
+        await editar(selected.tipoIngredienteId, {
+          tipoIngredienteId: "",
           nombre: data.nombre,
-          simbolo: data.simbolo ?? "",
+          descripcion: data.descripcion ?? "",
           activo: data.activo ?? true,
         });
         toast.success("Actualizado con éxito.");
@@ -112,10 +114,10 @@ export default function UnidadPage() {
 
     if (result.isConfirmed) {
       try {
-        await anular(item.unidadMedidaId, {
-          unidadMedidaId: item.unidadMedidaId,
+        await anular(item.tipoIngredienteId, {
+          tipoIngredienteId: item.tipoIngredienteId,
           nombre: item.nombre,
-          simbolo: item.simbolo ?? "",
+          descripcion: item.descripcion ?? "",
           activo: item.activo ?? true,
         });
         toast.success("Anulado con exito.");
@@ -131,7 +133,9 @@ export default function UnidadPage() {
   const filtered = models
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
-      `${u.nombre} ${u.simbolo}`.toLowerCase().includes(search.toLowerCase()),
+      `${u.nombre} ${u.descripcion}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
     );
 
   const columns: TableColumn<ModelDTO>[] = [
@@ -141,9 +145,9 @@ export default function UnidadPage() {
       render: (row) => <span className="font-semibold">{row.nombre}</span>,
     },
     {
-      key: "simbolo",
-      header: "Simbolo",
-      render: (row) => <span>{row.simbolo}</span>,
+      key: "descripcion",
+      header: "Descripción",
+      render: (row) => <span>{row.descripcion}</span>,
     },
     {
       key: "activo",
@@ -210,8 +214,8 @@ export default function UnidadPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
-            <RulerDimensionLine size={30} />
-            Unidad de Medida
+            <UtensilsCrossed size={30} />
+            Tipo de Ingredientes
           </h1>
           <p className="text-sm text-neutral-500">
             Gestión de medidas del sistema.
@@ -235,7 +239,7 @@ export default function UnidadPage() {
         placeholder="Buscar..."
         options={[
           { value: "nombre", label: "Nombre" },
-          { value: "simbolo", label: "Simbolo" },
+          { value: "descripcion", label: "Descripción" },
         ]}
         onFilterChange={setFilterBy}
         onSearchChange={setSearch}
@@ -276,14 +280,14 @@ export default function UnidadPage() {
       <DataTable<ModelDTO>
         data={filtered}
         columns={columns}
-        rowKey={(row) => row?.unidadMedidaId}
+        rowKey={(row) => row?.tipoIngredienteId}
         emptyMessage="No se encontraron usuarios"
         isDarkMode={isDarkMode}
       />
 
       <EntityModal<ModelDTO>
         open={modalOpen}
-        key={`${modalMode}-${selected?.unidadMedidaId ?? "new"}`}
+        key={`${modalMode}-${selected?.tipoIngredienteId ?? "new"}`}
         title={
           modalMode === "create"
             ? "Crear"
@@ -291,7 +295,7 @@ export default function UnidadPage() {
               ? "Editar"
               : "Detalles"
         }
-        headerIcon={Ruler}
+        headerIcon={Utensils}
         mode={modalMode}
         data={selected ? { ...selected } : null}
         fields={fields}

@@ -5,6 +5,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import RolePage from "@/features/role/pages/RolePage";
 import UserPage from "@/features/user/pages/UserPage";
 import UnidadPage from "@/features/unidadMedida/pages/UnidadPage";
+import TipoIngrediente from "@/features/tipoIngrediente/pages/TipoIngredientePage"
 
 
 export default function AppRouter() {
@@ -17,6 +18,7 @@ export default function AppRouter() {
           <Route path="/roles" element={<RolePage />} />
           <Route path="/usuario" element={<UserPage />} />
           <Route path="/unidad-medida" element={<UnidadPage />} />
+          <Route path="/tipo-ingredientes" element={<TipoIngrediente />} />
         </Route>
       </Routes>
     </BrowserRouter>
