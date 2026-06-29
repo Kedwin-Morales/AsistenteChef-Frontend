@@ -5,8 +5,11 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import RolePage from "@/features/role/pages/RolePage";
 import UserPage from "@/features/user/pages/UserPage";
 import UnidadPage from "@/features/unidadMedida/pages/UnidadPage";
-import TipoIngrediente from "@/features/tipoIngrediente/pages/TipoIngredientePage"
-
+import TipoIngredientePage from "@/features/tipoIngrediente/pages/TipoIngredientePage";
+import ProveedorPage from "@/features/proveedor/pages/ProveedorPage";
+import IngredientePage from "@/features/ingrediente/pages/IngredientePage";
+import FamiliaMenuPage from "@/features/familiaMenu/pages/FamiliaMenuPage";
+import CategoriaPlatoPage from "@/features/categoriaPlato/pages/CategoriaPlatoPage";
 
 export default function AppRouter() {
   return (
@@ -18,7 +21,11 @@ export default function AppRouter() {
           <Route path="/roles" element={<RolePage />} />
           <Route path="/usuario" element={<UserPage />} />
           <Route path="/unidad-medida" element={<UnidadPage />} />
-          <Route path="/tipo-ingredientes" element={<TipoIngrediente />} />
+          <Route path="/tipo-ingredientes" element={<TipoIngredientePage />} />
+          <Route path="/proveedores" element={<ProveedorPage />} />
+          <Route path="/ingredientes" element={<IngredientePage />} />
+          <Route path="/familia-menu" element={<FamiliaMenuPage />} />
+          <Route path="/categoria-plato" element={<CategoriaPlatoPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

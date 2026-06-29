@@ -4,8 +4,6 @@ import {
   Pencil,
   Tags,
   WholeWord,
-  Variable,
-  Ruler,
   Ban,
   UtensilsCrossed,
   Utensils,
@@ -43,7 +41,7 @@ export default function UnidadPage() {
   const fields: ModalField<ModelDTO>[] = [
     {
       name: "nombre",
-      label: "Nombre",
+      label: "Nombre: ",
       icon: WholeWord,
       colSpan: 3,
       required: true,
@@ -51,17 +49,17 @@ export default function UnidadPage() {
     },
     {
       name: "descripcion",
-      label: "Descripción",
+      label: "Descripción: ",
       icon: SquareDashedText,
       colSpan: 3,
       required: true,
-      type: "text",
+      type: "textarea",
     },
     ...(modalMode === "edit"
       ? [
           {
             name: "activo" as keyof ModelDTO,
-            label: "Activo",
+            label: "Activo: ",
             icon: Tags as typeof Tags,
             colSpan: 6,
             type: "boolean" as const,
@@ -218,7 +216,7 @@ export default function UnidadPage() {
             Tipo de Ingredientes
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión de medidas del sistema.
+            Gestión para Ingredientes del sistema.
           </p>
         </div>
         <button
@@ -281,7 +279,7 @@ export default function UnidadPage() {
         data={filtered}
         columns={columns}
         rowKey={(row) => row?.tipoIngredienteId}
-        emptyMessage="No se encontraron usuarios"
+        emptyMessage="No se encontraron resultados."
         isDarkMode={isDarkMode}
       />
 

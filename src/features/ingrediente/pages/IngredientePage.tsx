@@ -4,10 +4,14 @@ import {
   Pencil,
   Tags,
   WholeWord,
-  Variable,
-  RulerDimensionLine,
-  Ruler,
   Ban,
+  UtensilsCrossed,
+  SquareDashedText,
+  RulerDimensionLine,
+  CircleDollarSign,
+  Barcode,
+  ShoppingCart,
+  ShoppingBasket,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -18,19 +22,19 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 import { useToast } from "@/components/ui/toast/useToast";
-import { useModels } from "../hooks/useUnidad";
-import { crear, editar, anular } from "../services/unidad.service";
-import type { ModelDTO } from "../types/unidad.types";
+import { useModels } from "../hooks/useIngrediente";
+import { crear, editar, anular } from "../services/ingrediente.service";
+import type { ModelDTO } from "../types/ingrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
 
-type ModelFilter = "nombre" | "simbolo";
+type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 
 export default function UnidadPage() {
   const toast = useToast();
-  const { models, loading, refetch } = useModels();
+  const { models, tipos, unidades, loading, refetch } = useModels();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
@@ -38,22 +42,57 @@ export default function UnidadPage() {
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
-  const fields: ModalField<ModelDTO>[] = [
+  
+  const fields: ModalField<ModelDTO & {tipoIngredienteId?: string} & {unidadMedidaId?: string}>[] = [
     {
       name: "nombre",
       label: "Nombre: ",
       icon: WholeWord,
-      colSpan: 3,
+      colSpan: 6,
       required: true,
       type: "text",
     },
     {
-      name: "simbolo",
-      label: "Simbolo: ",
-      icon: Variable,
+      name: "tipoIngredienteId",
+      label: "Tipo: ",
+      icon: UtensilsCrossed,
       colSpan: 3,
       required: true,
+      type: "select",
+      options: tipos.map((t) => ({ label: t.nombre, value: t.tipoIngredienteId })),
+    },
+    {
+      name: "unidadMedidaId",
+      label: "Unidad de Medidad: ",
+      icon: RulerDimensionLine,
+      colSpan: 3,
+      required: true,
+      type: "select",
+      options: unidades.map((t) => ({ label: t.nombre, value: t.unidadMedidaId })),
+    },
+    {
+      name: "costo",
+      label: "Costo (Opcional): ",
+      icon: CircleDollarSign,
+      colSpan: 3,
+      required: false,
+      type: "number",
+    },
+    {
+      name: "codigo",
+      label: "Código (Opcional): ",
+      icon: Barcode,
+      colSpan: 3,
+      required: false,
       type: "text",
+    },
+    {
+      name: "descripcion",
+      label: "Descripción: ",
+      icon: SquareDashedText,
+      colSpan: 6,
+      required: false,
+      type: "textarea",
     },
     ...(modalMode === "edit"
       ? [
@@ -69,25 +108,33 @@ export default function UnidadPage() {
   ];
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
-    if (!data.nombre) {
-      return toast.error("Nombre es obligatorio.");
+    if (!data.nombre || !(data as any).tipoIngredienteId || !(data as any).unidadMedidaId ) {
+      return toast.error("Nombre, tipo y unidad son obligatorios.");
     }
 
     try {
       if (modalMode === "create") {
         await crear({
           nombre: data.nombre,
-          simbolo: data.simbolo ?? "",
+          descripcion: data.descripcion ?? "",
+          costo: data.costo ?? 0,
+          codigo: data.codigo ?? "",
+          tipoIngredienteId: (data as any).tipoIngredienteId,
+          unidadMedidaId: (data as any).unidadMedidaId,
         });
         toast.success("Creado exitosamente.");
       }
 
-      if (modalMode === "edit" && selected?.unidadMedidaId) {
-        await editar(selected.unidadMedidaId, {
-          unidadMedidaId: "",
+      if (modalMode === "edit" && selected?.ingredienteId) {
+        await editar(selected.ingredienteId, {
+          ingredienteId: selected.ingredienteId,
           nombre: data.nombre,
-          simbolo: data.simbolo ?? "",
+          descripcion: data.descripcion ?? "",
+          costo: data.costo ?? 0,
+          codigo: data.codigo ?? "",
           activo: data.activo ?? true,
+          tipoIngredienteId: (data as any).tipoIngredienteId,
+          unidadMedidaId: (data as any).unidadMedidaId,
         });
         toast.success("Actualizado con éxito.");
       }
@@ -112,11 +159,15 @@ export default function UnidadPage() {
 
     if (result.isConfirmed) {
       try {
-        await anular(item.unidadMedidaId, {
-          unidadMedidaId: item.unidadMedidaId,
+        await anular(item.ingredienteId, {
+          ingredienteId: item.ingredienteId,
           nombre: item.nombre,
-          simbolo: item.simbolo ?? "",
+          descripcion: item.descripcion ?? "",
           activo: item.activo ?? true,
+          costo: item.costo ?? 0,
+          codigo: item.codigo ?? "",
+          tipoIngredienteId: (item as any).tipoIngredienteId,
+          unidadMedidaId: (item as any).unidadMedidaId,
         });
         toast.success("Anulado con exito.");
         await refetch();
@@ -131,7 +182,9 @@ export default function UnidadPage() {
   const filtered = models
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
-      `${u.nombre} ${u.simbolo}`.toLowerCase().includes(search.toLowerCase()),
+      `${u.nombre} ${u.codigo} ${u.tipoIngrediente?.nombre} ${u.unidadMedida?.nombre}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
     );
 
   const columns: TableColumn<ModelDTO>[] = [
@@ -141,9 +194,27 @@ export default function UnidadPage() {
       render: (row) => <span className="font-semibold">{row.nombre}</span>,
     },
     {
-      key: "simbolo",
-      header: "Simbolo",
-      render: (row) => <span>{row.simbolo}</span>,
+      key: "codigo",
+      header: "Código",
+      render: (row) => <span>{row.codigo}</span>,
+    },
+    {
+      key: "tipoIngrendiente",
+      header: "Tipo",
+      render: (row) => (
+        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+          {row.tipoIngrediente?.nombre ?? "—"}
+        </span>
+      ),
+    },
+    {
+      key: "unidadMedida",
+      header: "Ud. Medida",
+      render: (row) => (
+        <span className="px-2 py-1 rounded-full text-xs bg-teal-100 text-teal-700">
+          {row.unidadMedida?.nombre ?? "—"} ({row.unidadMedida?.simbolo ?? "—"})
+        </span>
+      ),
     },
     {
       key: "activo",
@@ -210,11 +281,11 @@ export default function UnidadPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
-            <RulerDimensionLine size={30} />
-            Unidad de Medida
+            <ShoppingCart size={30} />
+            Ingredientes o Utensilios
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión de medidas del sistema.
+            Gestión para Ingredientes del sistema.
           </p>
         </div>
         <button
@@ -235,7 +306,9 @@ export default function UnidadPage() {
         placeholder="Buscar..."
         options={[
           { value: "nombre", label: "Nombre" },
-          { value: "simbolo", label: "Simbolo" },
+          { value: "codigo", label: "Código" },
+          { value: "tipo", label: "Tipo" },
+          { value: "unidad", label: "Ud. Medida" },
         ]}
         onFilterChange={setFilterBy}
         onSearchChange={setSearch}
@@ -276,14 +349,14 @@ export default function UnidadPage() {
       <DataTable<ModelDTO>
         data={filtered}
         columns={columns}
-        rowKey={(row) => row?.unidadMedidaId}
+        rowKey={(row) => row?.ingredienteId}
         emptyMessage="No se encontraron resultados."
         isDarkMode={isDarkMode}
       />
 
-      <EntityModal<ModelDTO>
+      <EntityModal<ModelDTO & {tipoIngredienteId?: string} & {unidadMedidaId? : string} >
         open={modalOpen}
-        key={`${modalMode}-${selected?.unidadMedidaId ?? "new"}`}
+        key={`${modalMode}-${selected?.ingredienteId ?? "new"}`}
         title={
           modalMode === "create"
             ? "Crear"
@@ -291,9 +364,9 @@ export default function UnidadPage() {
               ? "Editar"
               : "Detalles"
         }
-        headerIcon={Ruler}
+        headerIcon={ShoppingBasket}
         mode={modalMode}
-        data={selected ? { ...selected } : null}
+        data={selected ? { ...selected, tipoIngredienteId: selected.tipoIngrediente?.tipoIngredienteId ?? "", unidadMedidaId: selected.unidadMedida?.unidadMedidaId ?? "" } : null}
         fields={fields}
         isDarkMode={isDarkMode}
         onClose={() => {

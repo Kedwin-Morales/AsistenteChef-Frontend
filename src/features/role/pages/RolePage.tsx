@@ -28,7 +28,7 @@ export default function RolePage() {
   const fields: ModalField<RoleDTO>[] = [
     {
       name: "name",
-      label: "Nombre:",
+      label: "Nombre: ",
       icon: Shield,
       colSpan: 6,
       required: true,

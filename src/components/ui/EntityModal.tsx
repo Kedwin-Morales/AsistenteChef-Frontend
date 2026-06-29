@@ -17,7 +17,8 @@ export type FieldType =
   | "date"
   | "boolean"
   | "select"
-  | "autocomplete";
+  | "autocomplete"
+  | "textarea";
 
 interface ModalAction<T> {
   label: string;
@@ -204,7 +205,7 @@ export default function EntityModal<T extends object, D extends object = any>({
   const addDetail = () => {
     if (!detailFields || detailFields.length === 0) return;
 
-    // 🔎 Validar si hay algún valor real
+    // Validar si hay algún valor real
     const hasAnyValue = Object.values(detailForm).some((v) => {
       if (typeof v === "string") return v.trim() !== "";
       return v !== undefined && v !== null;
@@ -212,7 +213,7 @@ export default function EntityModal<T extends object, D extends object = any>({
 
     if (!hasAnyValue) return;
 
-    // 🔥 Validar required dinámico
+    // Validar required dinámico
     const missingRequired = detailFields.find((f) => {
       if (!f.required) return false;
 
@@ -247,14 +248,14 @@ export default function EntityModal<T extends object, D extends object = any>({
     const newItem = detailForm as D;
 
     setDetails((prev) => {
-      // ✏️ Si estamos editando
+      // Si se esta editando
       if (editingIndex !== null) {
         const updated = [...prev];
         updated[editingIndex] = newItem;
         return updated;
       }
 
-      // 🧠 Si no hay merge configurado
+      // Si no hay merge configurado
       if (!mergeDetailBy) {
         return [...prev, newItem];
       }
@@ -307,7 +308,7 @@ export default function EntityModal<T extends object, D extends object = any>({
       ...(detailKey ? { [detailKey]: details } : {}),
     };
 
-    // 🔥 Inyectar campos con content
+    // Inyectar campos con content
     fields.forEach((f) => {
       if (f.content !== undefined) {
         payload[f.name] = f.content;
@@ -529,6 +530,57 @@ export default function EntityModal<T extends object, D extends object = any>({
                     />
                   </div>
                 );
+}
+              
+              /* Para componente textarea */
+              if (field.type === "textarea") {
+                const Icon = field.icon;
+
+                return (
+                  <div key={String(field.name)} className={colSpanClass}>
+                    <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
+                      {field.label}
+                      {field.required && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}
+                    </label>
+
+                    <div className="relative">
+                      {Icon && (
+                        <Icon
+                          size={18}
+                          className={`absolute left-3 top-3
+                ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
+              `}
+                        />
+                      )}
+
+                      <textarea
+                        disabled={isReadOnly}
+                        required={field.required}
+                        value={String(value ?? "")}
+                        rows={3}
+                        onChange={(e) =>
+                          handleChange(
+                            field.name,
+                            e.target.value as unknown as T[keyof T],
+                          )
+                        }
+                        className={`
+              w-full py-3 px-4 rounded-xl border resize-none transition-all duration-300
+              focus:outline-none focus:ring-2 focus:ring-(--secondary)/50 focus:border-(--secondary)
+              ${Icon ? "pl-10" : "pl-4"} pr-4
+              ${
+                isDarkMode
+                  ? "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
+                  : "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
+              }
+              ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}
+            `}
+                      />
+                    </div>
+                  </div>
+                );
               }
 
               return (
@@ -733,6 +785,54 @@ export default function EntityModal<T extends object, D extends object = any>({
                             )
                           }
                         />
+                      </div>
+                    );
+}
+                  
+                  /* Para componente textarea */
+                  if (f.type === "textarea") {
+                    const Icon = f.icon;
+
+                    return (
+                      <div key={String(f.name)} className={colSpanClass}>
+                        <label className="block mb-1 font-semibold">
+                          {f.label}
+                        </label>
+
+                        <div className="relative">
+                          {Icon && (
+                            <Icon
+                              size={18}
+                              className={`absolute left-3 top-3
+                ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
+              `}
+                            />
+                          )}
+
+                          <textarea
+                            disabled={isReadOnly}
+                            value={String(value ?? "")}
+                            rows={3}
+                            onChange={(e) =>
+                              handleDetailChange(
+                                f.name,
+                                e.target.value as unknown as D[keyof D],
+                              )
+                            }
+                            className={`
+              w-full py-3 px-4 rounded-xl border resize-none transition-all duration-300
+              focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+              ${Icon ? "pl-10" : "pl-4"} pr-4
+              ${
+                isDarkMode
+                  ? "bg-(--bg-form) border-slate-700 text-gray-100"
+                  : "bg-(--bg-form) border-slate-300 text-gray-900"
+              }
+              ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
+              ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}
+            `}
+                          />
+                        </div>
                       </div>
                     );
                   }

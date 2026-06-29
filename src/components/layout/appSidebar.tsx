@@ -85,7 +85,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           <NavItem
             to="/categoria-plato"
             icon={Layers2}
-            label="Categorias de Platos"
+            label="Categoria de Platos"
             isDarkMode={isDarkMode}
           />
           <NavItem
@@ -97,7 +97,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           <NavItem
             to="/ingredientes"
             icon={ShoppingCart}
-            label="Ingredientes y/o Insumos"
+            label="Ingredientes y/o Utensilios"
             isDarkMode={isDarkMode}
           />
           <NavItem

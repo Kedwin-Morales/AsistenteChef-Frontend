@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import AppSidebar from "@/components/layout/appSidebar";
+import Footer from "@/components/layout/Footer";
+
 interface Props {
   children: React.ReactNode;
 }
@@ -101,6 +103,7 @@ export default function AppLayout({ children }: Props) {
 
         {/* CONTENT */}
         <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <Footer />
       </div>
     </div>
   );

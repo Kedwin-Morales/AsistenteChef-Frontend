@@ -39,7 +39,7 @@ export default function SearchFilter<T extends string>({
           onFilterChange(e.target.value as T)
         }
         className={`
-          px-4 py-3 rounded-xl border transition-all 
+          min-w-[20%] px-4 py-3 rounded-xl border transition-all 
           outline-none 
           ${
             isDarkMode

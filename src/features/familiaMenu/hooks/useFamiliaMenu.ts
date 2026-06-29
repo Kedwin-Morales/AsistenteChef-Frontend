@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { getAll } from "../services/tipoIngrediente.service";
-import type { ModelDTO } from "../types/tipoIngrediente.types";
+import { getAll } from "../services/familiaMenu.service";
+import type { ModelDTO } from "../types/familiaMenu.types";
 
 export function useModels() {
   const [models, setModels] = useState<ModelDTO[]>([]);

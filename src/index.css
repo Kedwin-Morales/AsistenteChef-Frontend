@@ -29,30 +29,6 @@
   --texto: theme("colors.neutral-100");
 }
 
-select,
-::picker(select) {
-  appearance: base-select;
-  background: var(--bg-form);
-}
-
-::picker(select) {
-  border: none;
-  border-radius: 0.5rem;
-  margin-top: 0.2rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  background: var(--bg-form);
-}
-
-select option {
-  border-radius: 4px;
-  padding: 0.5rem;
-  color: var(--texto);
-}
-
-select option:hover {
-  color: var(--secondary);
-}
-
 /* ---------- TRANSICIONES GLOBALES ---------- */
 * {
   @apply transition-colors duration-300;

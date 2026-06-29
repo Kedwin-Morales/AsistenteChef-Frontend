@@ -14,7 +14,7 @@ export default function AuthLayout({
   return (
     <div
       className={`min-h-screen flex flex-col transition-colors duration-300
-        ${isDarkMode ? "bg-stone-900 text-stone-100" : "bg-gradient-to-br from-red-500 via-amber-50 to-stone-100 text-stone-800"}
+        ${isDarkMode ? "bg-stone-900 text-stone-100" : "bg-gradient-to from-red-500 via-amber-50 to-stone-100 text-stone-800"}
       `}
     >
       <AuthTopBar
