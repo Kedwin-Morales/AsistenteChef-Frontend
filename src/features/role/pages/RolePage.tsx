@@ -7,7 +7,6 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useToast } from "@/components/ui/toast/useToast";
 import { useRoles } from "../hooks/useRoles";
 import { createRole, updateRole, deleteRole } from "../services/role.service";
 import type { RoleDTO } from "../types/role.types";
@@ -15,9 +14,9 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
+import { sileo } from "sileo";
 
 export default function RolePage() {
-  const toast = useToast();
   const { roles, loading, refetch } = useRoles();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
@@ -37,24 +36,38 @@ export default function RolePage() {
   ];
 
   const handleSubmit = async (data: Partial<RoleDTO>) => {
-    if (!data.name) return toast.error("Nombre es obligatorio");
+    if (!data.name){
+      return sileo.warning({
+          title: "¡Atención!",
+          description: "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
+        });
+    }
 
     try {
       if (modalMode === "create") {
         await createRole(data.name);
-        toast.success("Creado exitosamente.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se guardó correctamente.",
+        });
       }
 
       if (modalMode === "edit" && selected?.id) {
         await updateRole(selected.id, data.name);
-        toast.success("Actualizado con éxito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "Cambios guardados con éxito.",
+        });
       }
 
       setModalOpen(false);
       setSelected(null);
       await refetch();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al crear."));
+      sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
+        });
     }
   };
 
@@ -71,10 +84,16 @@ export default function RolePage() {
     if (result.isConfirmed) {
       try {
         await deleteRole(role.id);
-        toast.success("Eliminado con exito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se elimino correctamente.",
+        });
         await refetch();
       } catch (error) {
-        toast.error(getErrorMessage(error, "Error al eliminar."));
+        sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al eliminar."),
+        });
       }
     }
   };

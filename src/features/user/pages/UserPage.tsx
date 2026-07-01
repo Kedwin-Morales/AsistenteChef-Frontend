@@ -27,6 +27,7 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
+import { sileo } from "sileo";
 
 type UserFilter = "nombre" | "documento";
 
@@ -102,7 +103,10 @@ export default function UserPage() {
 
   const handleSubmit = async (data: Partial<UserDTO>) => {
     if (!data.nombre || !data.apellido || !data.documento) {
-      return toast.error("Nombre, apellido y documento son obligatorios");
+      return sileo.warning({
+          title: "¡Atención!",
+          description: "Por favor, revisa los datos ingresados: Nombres y Cedula son obligatorio.",
+        });
     }
 
     try {
@@ -116,7 +120,10 @@ export default function UserPage() {
           password,
           rolId: (data as any).rolId,
         });
-        toast.success("Creado exitosamente.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se guardó correctamente.",
+        });
       }
 
       if (modalMode === "edit" && selected?.id) {
@@ -127,14 +134,21 @@ export default function UserPage() {
           activo: data.activo ?? true,
           rolId: (data as any).rolId,
         });
-        toast.success("Actualizado con éxito.");
+        
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "Cambios guardados con éxito.",
+        });
       }
 
       setModalOpen(false);
       setSelected(null);
       await refetch();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al guardar"));
+      sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
+        });
     }
   };
 
@@ -151,10 +165,16 @@ export default function UserPage() {
     if (result.isConfirmed) {
       try {
         await deleteUser(model.id);
-        toast.success("Anulado con exito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se anuló correctamente.",
+        });
         await refetch();
       } catch (error) {
-        toast.error(getErrorMessage(error, "Error al anular."));
+        sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+        });
       }
     }
   };
@@ -276,7 +296,7 @@ export default function UserPage() {
         placeholder="Buscar..."
         options={[
           { value: "nombre", label: "Nombre" },
-          { value: "documento", label: "Documento" },
+          { value: "documento", label: "Cedula" },
         ]}
         onFilterChange={setFilterBy}
         onSearchChange={setSearch}

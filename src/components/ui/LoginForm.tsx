@@ -5,8 +5,10 @@ import InputField from "./InputField";
 import { loginRequest } from "@/features/auth/services/auth.service";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import type { LoginRequest } from "@/features/auth/types/auth.types";
-import { useToast } from "@/components/ui/toast/useToast";
+//import { useToast } from "@/components/ui/toast/useToast";
 import { useState } from "react";
+import { sileo } from "sileo";
+
 
 interface Props {
   isDarkMode: boolean;
@@ -16,7 +18,7 @@ export default function LoginForm({ isDarkMode }: Props) {
   const { register, handleSubmit } = useForm<LoginRequest>();
   const setTokens = useAuthStore((s) => s.setTokens);
   const navigate = useNavigate();
-  const toast = useToast();
+  //const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data: LoginRequest) => {
@@ -29,13 +31,21 @@ export default function LoginForm({ isDarkMode }: Props) {
 
       setTokens(res.token);
 
-      toast.success("¡Bienvenido!");
+      //toast.success("¡Bienvenido!");
+      sileo.success({
+          title: "¡Bienvenido!".toUpperCase(),
+          description: "Has ingresado exitosamente al sistema.",
+        });
 
       setTimeout(() => {
         navigate("/");
       }, 500);
     } catch {
-      toast.error("Error al iniciar sesión. Credenciales incorrectas.");
+      //toast.error("Error al iniciar sesión. Credenciales incorrectas.");
+      sileo.error({
+          title: "¡Error al iniciar sesión!",
+          description: "Usuario o contraseña incorrectos. Inténtalo de nuevo.",
+        });
     } finally {
       setIsSubmitting(false);
     }
@@ -105,7 +115,7 @@ export default function LoginForm({ isDarkMode }: Props) {
 
       <footer className="mt-8 text-center mb-1">
         <p
-          className={`text-[10px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-gray-500" : "text-gray-400"}`}
+          className={`text-[10px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-neutral-500" : "text-neutral-400"}`}
         >
           © Elaborado por Kedwin Morales - 2026. Todos los derechos reservados.
         </p>

@@ -21,7 +21,6 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useToast } from "@/components/ui/toast/useToast";
 import { useModels } from "../hooks/useIngrediente";
 import { crear, editar, anular } from "../services/ingrediente.service";
 import type { ModelDTO } from "../types/ingrediente.types";
@@ -29,11 +28,12 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
+import { sileo } from "sileo";
+
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 
-export default function UnidadPage() {
-  const toast = useToast();
+export default function IngredientePage() {
   const { models, tipos, unidades, loading, refetch } = useModels();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
@@ -42,8 +42,10 @@ export default function UnidadPage() {
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
-  
-  const fields: ModalField<ModelDTO & {tipoIngredienteId?: string} & {unidadMedidaId?: string}>[] = [
+
+  const fields: ModalField<
+    ModelDTO & { tipoIngredienteId?: string } & { unidadMedidaId?: string }
+  >[] = [
     {
       name: "nombre",
       label: "Nombre: ",
@@ -59,7 +61,10 @@ export default function UnidadPage() {
       colSpan: 3,
       required: true,
       type: "select",
-      options: tipos.map((t) => ({ label: t.nombre, value: t.tipoIngredienteId })),
+      options: tipos.map((t) => ({
+        label: t.nombre,
+        value: t.tipoIngredienteId,
+      })),
     },
     {
       name: "unidadMedidaId",
@@ -68,7 +73,10 @@ export default function UnidadPage() {
       colSpan: 3,
       required: true,
       type: "select",
-      options: unidades.map((t) => ({ label: t.nombre, value: t.unidadMedidaId })),
+      options: unidades.map((t) => ({
+        label: t.nombre,
+        value: t.unidadMedidaId,
+      })),
     },
     {
       name: "costo",
@@ -108,8 +116,15 @@ export default function UnidadPage() {
   ];
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
-    if (!data.nombre || !(data as any).tipoIngredienteId || !(data as any).unidadMedidaId ) {
-      return toast.error("Nombre, tipo y unidad son obligatorios.");
+    if (
+      !data.nombre ||
+      !(data as any).tipoIngredienteId ||
+      !(data as any).unidadMedidaId
+    ) {
+      return sileo.warning({
+          title: "¡Atención!",
+          description: "Por favor, revisa los datos ingresados: Nombre, Tipo y Unidad son obligatorios.",
+        });
     }
 
     try {
@@ -122,7 +137,10 @@ export default function UnidadPage() {
           tipoIngredienteId: (data as any).tipoIngredienteId,
           unidadMedidaId: (data as any).unidadMedidaId,
         });
-        toast.success("Creado exitosamente.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se guardó correctamente.",
+        });
       }
 
       if (modalMode === "edit" && selected?.ingredienteId) {
@@ -136,14 +154,21 @@ export default function UnidadPage() {
           tipoIngredienteId: (data as any).tipoIngredienteId,
           unidadMedidaId: (data as any).unidadMedidaId,
         });
-        toast.success("Actualizado con éxito.");
+        
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "Cambios guardados con éxito.",
+        });
       }
 
       setModalOpen(false);
       setSelected(null);
       await refetch();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al guardar"));
+      sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
+        });
     }
   };
 
@@ -169,10 +194,16 @@ export default function UnidadPage() {
           tipoIngredienteId: (item as any).tipoIngredienteId,
           unidadMedidaId: (item as any).unidadMedidaId,
         });
-        toast.success("Anulado con exito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se anuló correctamente.",
+        });
         await refetch();
       } catch (error) {
-        toast.error(getErrorMessage(error, "Error al anular."));
+        sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+        });
       }
     }
   };
@@ -354,7 +385,9 @@ export default function UnidadPage() {
         isDarkMode={isDarkMode}
       />
 
-      <EntityModal<ModelDTO & {tipoIngredienteId?: string} & {unidadMedidaId? : string} >
+      <EntityModal<
+        ModelDTO & { tipoIngredienteId?: string } & { unidadMedidaId?: string }
+      >
         open={modalOpen}
         key={`${modalMode}-${selected?.ingredienteId ?? "new"}`}
         title={
@@ -366,7 +399,16 @@ export default function UnidadPage() {
         }
         headerIcon={ShoppingBasket}
         mode={modalMode}
-        data={selected ? { ...selected, tipoIngredienteId: selected.tipoIngrediente?.tipoIngredienteId ?? "", unidadMedidaId: selected.unidadMedida?.unidadMedidaId ?? "" } : null}
+        data={
+          selected
+            ? {
+                ...selected,
+                tipoIngredienteId:
+                  selected.tipoIngrediente?.tipoIngredienteId ?? "",
+                unidadMedidaId: selected.unidadMedida?.unidadMedidaId ?? "",
+              }
+            : null
+        }
         fields={fields}
         isDarkMode={isDarkMode}
         onClose={() => {

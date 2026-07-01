@@ -25,6 +25,7 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
+import { sileo } from "sileo";
 
 type ModelFilter = "nombre" | "simbolo";
 
@@ -70,7 +71,10 @@ export default function UnidadPage() {
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
     if (!data.nombre) {
-      return toast.error("Nombre es obligatorio.");
+      return sileo.warning({
+          title: "¡Atención!",
+          description: "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
+        });
     }
 
     try {
@@ -79,7 +83,10 @@ export default function UnidadPage() {
           nombre: data.nombre,
           simbolo: data.simbolo ?? "",
         });
-        toast.success("Creado exitosamente.");
+                sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se guardó correctamente.",
+        });
       }
 
       if (modalMode === "edit" && selected?.unidadMedidaId) {
@@ -89,14 +96,20 @@ export default function UnidadPage() {
           simbolo: data.simbolo ?? "",
           activo: data.activo ?? true,
         });
-        toast.success("Actualizado con éxito.");
+                sileo.success({
+          title: "¡Operación exitosa!",
+          description: "Cambios guardados con éxito.",
+        });
       }
 
       setModalOpen(false);
       setSelected(null);
       await refetch();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al guardar"));
+      sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
+        });
     }
   };
 
@@ -118,10 +131,16 @@ export default function UnidadPage() {
           simbolo: item.simbolo ?? "",
           activo: item.activo ?? true,
         });
-        toast.success("Anulado con exito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se anuló correctamente.",
+        });
         await refetch();
       } catch (error) {
-        toast.error(getErrorMessage(error, "Error al anular."));
+        sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+        });
       }
     }
   };

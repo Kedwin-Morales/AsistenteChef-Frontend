@@ -6,9 +6,6 @@ import {
   WholeWord,
   Ban,
   SquareDashedText,
-  NotebookPen,
-  NotebookText,
-  Layers,
   Layers2,
   LayersPlus,
 } from "lucide-react";
@@ -20,7 +17,6 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useToast } from "@/components/ui/toast/useToast";
 import { useModels } from "../hooks/useCategoriaPlato";
 import { crear, editar, anular } from "../services/categoriaPlatos.service";
 import type { ModelDTO } from "../types/categoria.types";
@@ -28,11 +24,11 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
+import { sileo } from "sileo";
 
 type ModelFilter = "nombre" | "descripcion";
 
-export default function UnidadPage() {
-  const toast = useToast();
+export default function CategoriaPlatoPage() {
   const { models, loading, refetch } = useModels();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
@@ -46,7 +42,7 @@ export default function UnidadPage() {
       name: "nombre",
       label: "Nombre: ",
       icon: WholeWord,
-      colSpan: 3,
+      colSpan: 6,
       required: true,
       type: "text",
     },
@@ -54,7 +50,7 @@ export default function UnidadPage() {
       name: "descripcion",
       label: "Descripción: ",
       icon: SquareDashedText,
-      colSpan: 3,
+      colSpan: 6,
       required: true,
       type: "textarea",
     },
@@ -73,7 +69,10 @@ export default function UnidadPage() {
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
     if (!data.nombre) {
-      return toast.error("Nombre es obligatorio.");
+      return sileo.warning({
+          title: "¡Atención!",
+          description: "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
+        });
     }
 
     try {
@@ -82,7 +81,10 @@ export default function UnidadPage() {
           nombre: data.nombre,
           descripcion: data.descripcion ?? "",
         });
-        toast.success("Creado exitosamente.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se guardó correctamente.",
+        });
       }
 
       if (modalMode === "edit" && selected?.categoriaPlatoId) {
@@ -92,14 +94,20 @@ export default function UnidadPage() {
           descripcion: data.descripcion ?? "",
           activo: data.activo ?? true,
         });
-        toast.success("Actualizado con éxito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "Cambios guardados con éxito.",
+        });
       }
 
       setModalOpen(false);
       setSelected(null);
       await refetch();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al guardar"));
+      sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
+        });
     }
   };
 
@@ -121,10 +129,16 @@ export default function UnidadPage() {
           descripcion: item.descripcion ?? "",
           activo: item.activo ?? true,
         });
-        toast.success("Anulado con exito.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se anuló correctamente.",
+        });
         await refetch();
       } catch (error) {
-        toast.error(getErrorMessage(error, "Error al anular."));
+        sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+        });
       }
     }
   };

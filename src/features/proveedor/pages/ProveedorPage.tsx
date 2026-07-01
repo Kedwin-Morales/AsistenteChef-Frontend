@@ -21,7 +21,6 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useToast } from "@/components/ui/toast/useToast";
 import { useModels } from "../hooks/useProveedor";
 import { crear, editar, anular } from "../services/proveedor.service";
 import type { ModelDTO } from "../types/proveedor.types";
@@ -29,11 +28,11 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/utils/swal";
+import { sileo } from "sileo";
 
 type ModelFilter = "razonSocial" | "ruc" | "tipo";
 
-export default function UnidadPage() {
-  const toast = useToast();
+export default function ProveedorPage() {
   const { models, loading, refetch } = useModels();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
@@ -106,7 +105,11 @@ export default function UnidadPage() {
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
     if (!data.ruc || !data.razonSocial) {
-      return toast.error("RIF y Razón Social son obligatorias.");
+      return sileo.warning({
+        title: "¡Atención!",
+        description:
+          "Por favor, revisa los datos ingresados: RIF y Razon Social son obligatorios.",
+      });
     }
 
     try {
@@ -119,7 +122,10 @@ export default function UnidadPage() {
           direccion: data.direccion ?? "",
           tipo: data.tipo ?? "",
         });
-        toast.success("Creado exitosamente.");
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se guardó correctamente.",
+        });
       }
 
       if (modalMode === "edit" && selected?.proveedorId) {
@@ -133,14 +139,21 @@ export default function UnidadPage() {
           tipo: data.tipo ?? "",
           activo: data.activo ?? true,
         });
-        toast.success("Actualizado con éxito.");
+        
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "Cambios guardados con éxito.",
+        });
       }
 
       setModalOpen(false);
       setSelected(null);
       await refetch();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al guardar"));
+      sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
+      });
     }
   };
 
@@ -166,10 +179,17 @@ export default function UnidadPage() {
           tipo: item.tipo ?? "",
           activo: item.activo ?? true,
         });
-        toast.success("Anulado con exito.");
+
+        sileo.success({
+          title: "¡Operación exitosa!",
+          description: "El registro se anuló correctamente.",
+        });
         await refetch();
       } catch (error) {
-        toast.error(getErrorMessage(error, "Error al anular."));
+        sileo.error({
+          title: "Error de sistema",
+          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+        });
       }
     }
   };
