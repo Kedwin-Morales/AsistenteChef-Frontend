@@ -12,6 +12,7 @@ import {
   Barcode,
   ShoppingCart,
   ShoppingBasket,
+  Upload,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -27,9 +28,11 @@ import type { ModelDTO } from "../types/ingrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
-import { confirm } from "@/utils/swal";
+import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
-
+import ImportModal from "@/shared/utils/import/ui/importModal";
+import { importConfigs } from "@/shared/utils/import/config/importConfigs";
+import { useAuthStore } from "@/features/auth/store/auth.store";
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 
@@ -42,6 +45,10 @@ export default function IngredientePage() {
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
+  const { user } = useAuthStore();
+
+  /* IMPORT */
+  const [importOpen, setImportOpen] = useState(false);
 
   const fields: ModalField<
     ModelDTO & { tipoIngredienteId?: string } & { unidadMedidaId?: string }
@@ -122,9 +129,10 @@ export default function IngredientePage() {
       !(data as any).unidadMedidaId
     ) {
       return sileo.warning({
-          title: "¡Atención!",
-          description: "Por favor, revisa los datos ingresados: Nombre, Tipo y Unidad son obligatorios.",
-        });
+        title: "¡Atención!",
+        description:
+          "Por favor, revisa los datos ingresados: Nombre, Tipo y Unidad son obligatorios.",
+      });
     }
 
     try {
@@ -154,7 +162,7 @@ export default function IngredientePage() {
           tipoIngredienteId: (data as any).tipoIngredienteId,
           unidadMedidaId: (data as any).unidadMedidaId,
         });
-        
+
         sileo.success({
           title: "¡Operación exitosa!",
           description: "Cambios guardados con éxito.",
@@ -166,9 +174,12 @@ export default function IngredientePage() {
       await refetch();
     } catch (error) {
       sileo.error({
-          title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
-        });
+        title: "Error de sistema",
+        description: getErrorMessage(
+          error,
+          "No se pudo procesar la solicitud: Error al guardar.",
+        ),
+      });
     }
   };
 
@@ -202,7 +213,10 @@ export default function IngredientePage() {
       } catch (error) {
         sileo.error({
           title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+          description: getErrorMessage(
+            error,
+            "No se pudo procesar la solicitud: Error al anular.",
+          ),
         });
       }
     }
@@ -319,16 +333,29 @@ export default function IngredientePage() {
             Gestión para Ingredientes del sistema.
           </p>
         </div>
-        <button
-          onClick={() => {
-            setSelected(null);
-            setModalMode("create");
-            setModalOpen(true);
-          }}
-          className="bg-gradient btn-gradient shadow-xl-secondary"
-        >
-          <PlusCircle size={18} /> Nuevo
-        </button>
+
+        <div className="hidden md:flex gap-3">
+          <button
+            onClick={() => {
+              setSelected(null);
+              setModalMode("create");
+              setModalOpen(true);
+            }}
+            className="bg-gradient btn-gradient shadow-xl-secondary"
+          >
+            <PlusCircle size={18} /> Nuevo
+          </button>
+
+          {(user?.role === "Admin" || user?.role === "Gerente") && (
+            <button
+              onClick={() => setImportOpen(true)}
+              className="btn-gradient bg-gradient-import"
+            >
+              <Upload size={18} />
+              Importar
+            </button>
+          )}
+        </div>
       </div>
 
       <SearchFilter<ModelFilter>
@@ -353,7 +380,7 @@ export default function IngredientePage() {
             onClick={() => setShowActivo((v) => !v)}
             className={`
             relative w-11 h-6 rounded-full transition-colors
-            ${showActivo ? "bg-(--secondary)" : "bg-neutral-300"}
+            ${showActivo ? "bg-(--secondary)" : "bg-neutral-500/50"}
         `}
           >
             <span
@@ -384,6 +411,16 @@ export default function IngredientePage() {
         emptyMessage="No se encontraron resultados."
         isDarkMode={isDarkMode}
       />
+
+      {/* ================= IMPORT MODAL ================= */}
+      {importOpen && (
+        <ImportModal
+          isDarkMode={isDarkMode}
+          onClose={() => setImportOpen(false)}
+          config={importConfigs.Ingredientes}
+          onSuccess={refetch}
+        />
+      )}
 
       <EntityModal<
         ModelDTO & { tipoIngredienteId?: string } & { unidadMedidaId?: string }

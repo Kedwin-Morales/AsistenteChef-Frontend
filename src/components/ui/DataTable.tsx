@@ -37,14 +37,14 @@ export default function DataTable<T>({
 
   return (
     <div>
-      <div className="w-full overflow-x-auto rounded-xl border border-neutral-200">
+      <div className={`w-full overflow-x-auto rounded-xl border ${isDarkMode ? "border-neutral-600" : "border-neutral-200"}`}>
         <table className="min-w-0 md:min-w-162.5 w-full text-sm">
           <thead className="hidden md:table-header-group">
             <tr
               className={`text-[12px] uppercase font-bold ${
                 isDarkMode
                   ? "bg-neutral-600/50 text-(--texto) "
-                  : "bg-olive-400/40 text-(--texto)"
+                  : "bg-olive-400/50 text-(--texto)"
               }`}
             >
               {columns.map((col) => (

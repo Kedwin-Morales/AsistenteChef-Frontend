@@ -17,20 +17,20 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useToast } from "@/components/ui/toast/useToast";
+//import { useToast } from "@/components/ui/toast/useToast";
 import { useModels } from "../hooks/useUnidad";
 import { crear, editar, anular } from "../services/unidad.service";
 import type { ModelDTO } from "../types/unidad.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
-import { confirm } from "@/utils/swal";
+import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 
 type ModelFilter = "nombre" | "simbolo";
 
 export default function UnidadPage() {
-  const toast = useToast();
+  //const toast = useToast();
   const { models, loading, refetch } = useModels();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
@@ -72,9 +72,10 @@ export default function UnidadPage() {
   const handleSubmit = async (data: Partial<ModelDTO>) => {
     if (!data.nombre) {
       return sileo.warning({
-          title: "¡Atención!",
-          description: "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
-        });
+        title: "¡Atención!",
+        description:
+          "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
+      });
     }
 
     try {
@@ -83,7 +84,7 @@ export default function UnidadPage() {
           nombre: data.nombre,
           simbolo: data.simbolo ?? "",
         });
-                sileo.success({
+        sileo.success({
           title: "¡Operación exitosa!",
           description: "El registro se guardó correctamente.",
         });
@@ -96,7 +97,7 @@ export default function UnidadPage() {
           simbolo: data.simbolo ?? "",
           activo: data.activo ?? true,
         });
-                sileo.success({
+        sileo.success({
           title: "¡Operación exitosa!",
           description: "Cambios guardados con éxito.",
         });
@@ -107,9 +108,12 @@ export default function UnidadPage() {
       await refetch();
     } catch (error) {
       sileo.error({
-          title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
-        });
+        title: "Error de sistema",
+        description: getErrorMessage(
+          error,
+          "No se pudo procesar la solicitud: Error al guardar.",
+        ),
+      });
     }
   };
 
@@ -139,7 +143,10 @@ export default function UnidadPage() {
       } catch (error) {
         sileo.error({
           title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+          description: getErrorMessage(
+            error,
+            "No se pudo procesar la solicitud: Error al anular.",
+          ),
         });
       }
     }
@@ -268,7 +275,7 @@ export default function UnidadPage() {
             onClick={() => setShowActivo((v) => !v)}
             className={`
             relative w-11 h-6 rounded-full transition-colors
-            ${showActivo ? "bg-(--secondary)" : "bg-neutral-300"}
+            ${showActivo ? "bg-(--secondary)" : "bg-neutral-500/50"}
         `}
           >
             <span

@@ -23,7 +23,7 @@ import type { ModelDTO } from "../types/tipoIngrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
-import { confirm } from "@/utils/swal";
+import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 
 type ModelFilter = "nombre" | "descripcion";
@@ -70,9 +70,10 @@ export default function TipoIngredientePage() {
   const handleSubmit = async (data: Partial<ModelDTO>) => {
     if (!data.nombre) {
       return sileo.warning({
-          title: "¡Atención!",
-          description: "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
-        });
+        title: "¡Atención!",
+        description:
+          "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
+      });
     }
 
     try {
@@ -94,7 +95,7 @@ export default function TipoIngredientePage() {
           descripcion: data.descripcion ?? "",
           activo: data.activo ?? true,
         });
-                sileo.success({
+        sileo.success({
           title: "¡Operación exitosa!",
           description: "Cambios guardados con éxito.",
         });
@@ -105,9 +106,12 @@ export default function TipoIngredientePage() {
       await refetch();
     } catch (error) {
       sileo.error({
-          title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
-        });
+        title: "Error de sistema",
+        description: getErrorMessage(
+          error,
+          "No se pudo procesar la solicitud: Error al guardar.",
+        ),
+      });
     }
   };
 
@@ -137,7 +141,10 @@ export default function TipoIngredientePage() {
       } catch (error) {
         sileo.error({
           title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+          description: getErrorMessage(
+            error,
+            "No se pudo procesar la solicitud: Error al anular.",
+          ),
         });
       }
     }
@@ -268,7 +275,7 @@ export default function TipoIngredientePage() {
             onClick={() => setShowActivo((v) => !v)}
             className={`
             relative w-11 h-6 rounded-full transition-colors
-            ${showActivo ? "bg-(--secondary)" : "bg-neutral-300"}
+            ${showActivo ? "bg-(--secondary)" : "bg-neutral-500/50"}
         `}
           >
             <span

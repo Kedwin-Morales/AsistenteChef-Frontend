@@ -43,7 +43,7 @@ export default function SearchFilter<T extends string>({
           outline-none 
           ${
             isDarkMode
-              ? "bg-(--bg-form) border-neutral-200 text-neutral-100"
+              ? "bg-(--bg-form) border-neutral-600 text-neutral-100"
               : "bg-(--bg-form) border-neutral-200 text-neutral-900"
           }
         `}
@@ -73,7 +73,7 @@ export default function SearchFilter<T extends string>({
           className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all outline-none
             ${
               isDarkMode
-                ? "bg-(--bg-form) border-neutral-200 text-neutral-100 placeholder-neutral-300"
+                ? "bg-(--bg-form) border-neutral-600 text-neutral-100 placeholder-neutral-300"
                 : "bg-(--bg-form) border-neutral-200 text-neutral-900"
             }`}
         />

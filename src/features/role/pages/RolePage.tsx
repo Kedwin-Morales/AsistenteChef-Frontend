@@ -1,4 +1,11 @@
-import { PlusCircle, Eye, Pencil, Trash2, Shield, ShieldPlus } from "lucide-react";
+import {
+  PlusCircle,
+  Eye,
+  Pencil,
+  Trash2,
+  Shield,
+  ShieldPlus,
+} from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
@@ -13,7 +20,7 @@ import type { RoleDTO } from "../types/role.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
-import { confirm } from "@/utils/swal";
+import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 
 export default function RolePage() {
@@ -36,11 +43,12 @@ export default function RolePage() {
   ];
 
   const handleSubmit = async (data: Partial<RoleDTO>) => {
-    if (!data.name){
+    if (!data.name) {
       return sileo.warning({
-          title: "¡Atención!",
-          description: "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
-        });
+        title: "¡Atención!",
+        description:
+          "Por favor, revisa los datos ingresados: Nombre es obligatorio.",
+      });
     }
 
     try {
@@ -65,9 +73,12 @@ export default function RolePage() {
       await refetch();
     } catch (error) {
       sileo.error({
-          title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
-        });
+        title: "Error de sistema",
+        description: getErrorMessage(
+          error,
+          "No se pudo procesar la solicitud: Error al guardar.",
+        ),
+      });
     }
   };
 
@@ -92,7 +103,10 @@ export default function RolePage() {
       } catch (error) {
         sileo.error({
           title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al eliminar."),
+          description: getErrorMessage(
+            error,
+            "No se pudo procesar la solicitud: Error al eliminar.",
+          ),
         });
       }
     }
@@ -167,7 +181,10 @@ export default function RolePage() {
     <AppLayout>
       <div className="flex justify-between mb-8">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)"><Shield size={30}/>Roles</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
+            <Shield size={30} />
+            Roles
+          </h1>
           <p className="text-sm text-neutral-500">
             Gestión de roles del sistema.
           </p>

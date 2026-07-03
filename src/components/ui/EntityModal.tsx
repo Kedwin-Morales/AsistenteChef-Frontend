@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { X, Trash2, Pencil, CloudCheck, CircleX } from "lucide-react";
+import { Trash2, Pencil, CloudCheck, CircleX } from "lucide-react";
 import { useState } from "react";
 import InputField from "@/components/ui/InputField";
 import type { LucideIcon } from "lucide-react";
@@ -320,7 +320,7 @@ export default function EntityModal<T extends object, D extends object = any>({
 
   return (
     <div
-      className={`fixed inset-0 z-100 flex items-end md:items-center justify-center ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/70"}`}
+      className={`fixed inset-0 z-100 flex items-end md:items-center justify-center ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/80"}`}
     >
       <div
         className={`
@@ -335,8 +335,8 @@ export default function EntityModal<T extends object, D extends object = any>({
   `}
       >
         {/* HEADER */}
-        <div className="p-6 flex justify-between items-center bg-gradient text-neutral-200">
-          <div className="justify-between flex gap-4 items-center">
+        <div className="p-3 flex justify-between items-center bg-gradient text-neutral-200">
+          <div className="justify-between flex gap-3 items-center ml-3">
             {HeaderIcon && (
               <HeaderIcon size={30} className="text-neutral-200" />
             )}
@@ -345,18 +345,18 @@ export default function EntityModal<T extends object, D extends object = any>({
               <p className="text-sm">Información del sistema.</p>
             </div>
           </div>
-          <button onClick={onClose}>
-            <X />
+          <button className="mr-3 hover:text-rose-500" onClick={onClose}>
+            <CircleX />
           </button>
         </div>
 
         {/* BODY */}
         <form
           onSubmit={handleSubmit}
-          className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto"
+          className="flex-1 p-4 md:px-6 space-y-3 overflow-y-auto"
         >
           {/* MAIN FIELDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3">
             {visibleFields.map((field) => {
               const value =
                 field.content !== undefined ? field.content : form[field.name];
@@ -1010,7 +1010,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                 type="submit"
                 disabled={isSubmitting}
                 className={`
-      w-30 py-3 flex items-center justify-center gap-2 bg-neutral-500 hover:bg-sky-600 text-white font-bold rounded-2xl shadow-lg shadow-sky-500/50 transform active:scale-[0.98] transition-all duration-200
+      w-30 py-3 flex items-center justify-center gap-2 bg-neutral-500 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/80 transform active:scale-[0.98] transition-all duration-200
       ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}
     `}
               >

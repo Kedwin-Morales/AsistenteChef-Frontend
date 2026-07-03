@@ -26,7 +26,7 @@ import type { UserDTO } from "../types/user.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
-import { confirm } from "@/utils/swal";
+import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 
 type UserFilter = "nombre" | "documento";
@@ -104,9 +104,10 @@ export default function UserPage() {
   const handleSubmit = async (data: Partial<UserDTO>) => {
     if (!data.nombre || !data.apellido || !data.documento) {
       return sileo.warning({
-          title: "¡Atención!",
-          description: "Por favor, revisa los datos ingresados: Nombres y Cedula son obligatorio.",
-        });
+        title: "¡Atención!",
+        description:
+          "Por favor, revisa los datos ingresados: Nombres y Cedula son obligatorio.",
+      });
     }
 
     try {
@@ -134,7 +135,7 @@ export default function UserPage() {
           activo: data.activo ?? true,
           rolId: (data as any).rolId,
         });
-        
+
         sileo.success({
           title: "¡Operación exitosa!",
           description: "Cambios guardados con éxito.",
@@ -146,9 +147,12 @@ export default function UserPage() {
       await refetch();
     } catch (error) {
       sileo.error({
-          title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al guardar."),
-        });
+        title: "Error de sistema",
+        description: getErrorMessage(
+          error,
+          "No se pudo procesar la solicitud: Error al guardar.",
+        ),
+      });
     }
   };
 
@@ -173,7 +177,10 @@ export default function UserPage() {
       } catch (error) {
         sileo.error({
           title: "Error de sistema",
-          description: getErrorMessage(error, "No se pudo procesar la solicitud: Error al anular."),
+          description: getErrorMessage(
+            error,
+            "No se pudo procesar la solicitud: Error al anular.",
+          ),
         });
       }
     }
@@ -273,7 +280,10 @@ export default function UserPage() {
     <AppLayout>
       <div className="flex justify-between mb-8">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)"><User size={30}/>Usuarios</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
+            <User size={30} />
+            Usuarios
+          </h1>
           <p className="text-sm text-neutral-500">
             Gestión de usuarios del sistema.
           </p>
