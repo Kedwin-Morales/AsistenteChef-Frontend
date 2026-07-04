@@ -33,6 +33,9 @@ import { sileo } from "sileo";
 import ImportModal from "@/shared/utils/import/ui/importModal";
 import { importConfigs } from "@/shared/utils/import/config/importConfigs";
 import { useAuthStore } from "@/features/auth/store/auth.store";
+import { exportConfigs } from "@/shared/utils/export/config/exportConfigs";
+import ExportButton from "@/shared/utils/export/ui/exportButton";
+
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 
@@ -165,7 +168,7 @@ export default function IngredientePage() {
 
         sileo.success({
           title: "¡Operación exitosa!",
-          description: "Cambios guardados con éxito.",
+          description: "Cambios guardados correctamente.",
         });
       }
 
@@ -347,6 +350,7 @@ export default function IngredientePage() {
           </button>
 
           {(user?.role === "Admin" || user?.role === "Gerente") && (
+          <>
             <button
               onClick={() => setImportOpen(true)}
               className="btn-gradient bg-gradient-import"
@@ -354,6 +358,7 @@ export default function IngredientePage() {
               <Upload size={18} />
               Importar
             </button>
+          </>
           )}
         </div>
       </div>
@@ -401,6 +406,15 @@ export default function IngredientePage() {
           >
             Ver anulados
           </span>
+        </div>
+        <div className="hidden md:flex m-1">
+          <ExportButton
+          isDarkMode={isDarkMode}
+          config={exportConfigs.IngredientesFormat}
+          data={[]}
+          onSuccess={refetch}
+          format={false}
+        /> 
         </div>
       </div>
 
