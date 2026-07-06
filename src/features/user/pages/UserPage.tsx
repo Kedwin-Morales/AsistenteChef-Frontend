@@ -2,7 +2,6 @@ import {
   PlusCircle,
   Eye,
   Pencil,
-  Trash2,
   UserCog,
   Tags,
   UserPlus,
@@ -10,6 +9,7 @@ import {
   KeyRound,
   IdCard,
   User,
+  Ban,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -159,8 +159,8 @@ export default function UserPage() {
   const confirmarDelete = async (model: UserDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${model.nombre} ${model.apellido}"?`,
-      icon: "error",
+      text: `¿Desea anular: ${model.nombre} ${model.apellido}?`,
+      icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
       isDarkMode,
@@ -257,7 +257,7 @@ export default function UserPage() {
             onClick={() => confirmarDelete(row)}
             className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
           >
-            <Trash2 size={16} />
+            <Ban size={16} />
           </button>
         </div>
       ),

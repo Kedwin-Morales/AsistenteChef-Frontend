@@ -18,7 +18,20 @@ export function useRoles() {
         }
     }, []);
 
-    useEffect(() => { refetch(); }, [refetch]);
-
+    // useEffect(() => { refetch(); }, [refetch]);
+    useEffect(() => {
+        let alive = true;
+    
+        const load = async () => {
+          if (!alive) return;
+          await refetch();
+        };
+    
+        load();
+    
+        return () => {
+          alive = false;
+        };
+    }, [refetch]);
     return { roles, loading, refetch };
 }

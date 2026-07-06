@@ -230,7 +230,7 @@ export default function ExportModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full md:w-30 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-orange-500/50 hover:bg-orange-500/70 text-white font-bold"
+            className="btn-cancelar"
           >
             <CircleX size={18} />
             Cancelar
@@ -240,7 +240,7 @@ export default function ExportModal({
               <button
                 onClick={handleExport}
                 disabled={isExporting || data.length === 0}
-                className={`w-full md:w-70 py-3 flex items-center justify-center gap-2 rounded-xl     font-bold text-white bg-neutral-500 shadow-lg shadow-blue-500/80    hover:bg-blue-500 transition-all duration-300 ${isExporting || data.  length ===    0 ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"}`}
+                className={`btn-guardar ${isExporting || data.  length ===    0 ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"}`}
               >
                 {isExporting ? (
                   <>
@@ -260,7 +260,7 @@ export default function ExportModal({
                   <button
                     onClick={handleExport}
                     disabled={isExporting}
-                    className={`w-70 py-3 flex items-center justify-center gap-2 rounded-xl font-bold text-white bg-neutral-500 shadow-lg shadow-blue-500/80 hover:bg-blue-500 transition-all duration-300 ${isExporting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"}`}
+                    className={`btn-guardar ${isExporting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"}`}
                   >
                     {isExporting ? (
                   <>

@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { getAll, getTipo, getUnidad } from "../services/ingrediente.service";
 import type { ModelDTO, TipoIngredienteDTO, UnidadMedidaDTO } from "../types/ingrediente.types";
 
-export function useModels() {
-  const [models, setModels] = useState<ModelDTO[]>([]);
+export function useIngrediente() {
+  const [ingredientes, setModels] = useState<ModelDTO[]>([]);
   const [tipos, setTipos] = useState<TipoIngredienteDTO[]>([]);
   const [unidades, setUnidades] = useState<UnidadMedidaDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +21,21 @@ export function useModels() {
       setLoading(false);
     }
   }, []);
-
+  
   useEffect(() => {
-    refetch();
+    let alive = true;
+
+    const load = async () => {
+      if (!alive) return;
+      await refetch();
+    };
+
+    load();
+
+    return () => {
+      alive = false;
+    };
   }, [refetch]);
 
-  return { models, tipos : tipos.filter(t => t.activo), unidades : unidades.filter(t => t.activo), loading, refetch };
+  return { ingredientes, tipos : tipos.filter(t => t.activo), unidades : unidades.filter(t => t.activo), loading, refetch };
 }

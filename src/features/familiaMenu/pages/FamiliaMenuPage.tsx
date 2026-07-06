@@ -17,7 +17,7 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useModels } from "../hooks/useFamiliaMenu";
+import { useFamiliaMenu } from "../hooks/useFamiliaMenu";
 import { crear, editar, anular } from "../services/familiaMenu.service";
 import type { ModelDTO } from "../types/familiaMenu.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
@@ -29,7 +29,7 @@ import { sileo } from "sileo";
 type ModelFilter = "nombre" | "descripcion";
 
 export default function FamiliaMenuPage() {
-  const { models, loading, refetch } = useModels();
+  const { familias, loading, refetch } = useFamiliaMenu();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
@@ -120,8 +120,8 @@ export default function FamiliaMenuPage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${item.nombre}"?`,
-      icon: "error",
+      text: `¿Desea anular: ${item.nombre}?`,
+      icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
       isDarkMode,
@@ -154,7 +154,7 @@ export default function FamiliaMenuPage() {
 
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = models
+  const filtered = familias
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.descripcion}`

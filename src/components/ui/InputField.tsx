@@ -81,7 +81,7 @@ const InputField = forwardRef<HTMLInputElement, Props>(
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             className={`
-              w-full py-3 pr-4 ${Icon ? "pl-10" : "pl-4"} text-md
+              w-full py-2 pr-4 ${Icon ? "pl-10" : "pl-4"} text-md
               bg-transparent outline-none text-(--texto)
               placeholder:text-neutral-400
             `}

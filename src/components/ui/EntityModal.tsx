@@ -226,7 +226,7 @@ export default function EntityModal<T extends object, D extends object = any>({
     if (missingRequired) {
       setDetailErrors({ [String(missingRequired.name)]: true });
 
-      toast.warning(`El campo "${missingRequired.label}" es obligatorio`);
+      toast.warning(`El campo "${missingRequired.label}" es obligatorio.`);
 
       const element = document.querySelector(
         `[name="${String(missingRequired.name)}"]`,
@@ -409,7 +409,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                           )
                         }
                         className={`
-            w-full py-3 rounded-xl border appearance-none transition-all duration-300
+            w-full py-2 rounded-xl border appearance-none transition-all duration-300
             focus:outline-none focus:ring-2 focus:ring-(--secondary)/50 focus:border-(--secondary)
             ${Icon ? "pl-10" : "pl-4"} pr-10
             ${
@@ -999,7 +999,7 @@ export default function EntityModal<T extends object, D extends object = any>({
             <button
               type="button"
               onClick={onClose}
-              className="w-30 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-orange-500/50 hover:bg-orange-500/70 text-white font-bold"
+              className="btn-cancelar"
             >
               <CircleX size={18} />
               Cancelar
@@ -1009,10 +1009,8 @@ export default function EntityModal<T extends object, D extends object = any>({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`
-      w-30 py-3 flex items-center justify-center gap-2 bg-neutral-500 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/80 transform active:scale-[0.98] transition-all duration-200
-      ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}
-    `}
+                className={`btn-guardar ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}
+                `}
               >
                 <CloudCheck size={18} />
                 {isSubmitting ? (

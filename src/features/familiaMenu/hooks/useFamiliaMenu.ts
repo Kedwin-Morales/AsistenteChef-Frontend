@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { getAll } from "../services/familiaMenu.service";
 import type { ModelDTO } from "../types/familiaMenu.types";
 
-export function useModels() {
-  const [models, setModels] = useState<ModelDTO[]>([]);
+export function useFamiliaMenu() {
+  const [familias, setModels] = useState<ModelDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refetch = useCallback(async () => {
@@ -19,8 +19,19 @@ export function useModels() {
   }, []);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    let alive = true;
 
-  return { models, loading, refetch };
+    const load = async () => {
+      if (!alive) return;
+      await refetch();
+    };
+
+    load();
+
+    return () => {
+      alive = false;
+    };
+  }, [refetch]);
+  
+  return { familias, loading, refetch };
 }

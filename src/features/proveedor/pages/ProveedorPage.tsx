@@ -21,7 +21,7 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useModels } from "../hooks/useProveedor";
+import { useProveedor } from "../hooks/useProveedor";
 import { crear, editar, anular } from "../services/proveedor.service";
 import type { ModelDTO } from "../types/proveedor.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
@@ -33,7 +33,7 @@ import { sileo } from "sileo";
 type ModelFilter = "razonSocial" | "ruc" | "tipo";
 
 export default function ProveedorPage() {
-  const { models, loading, refetch } = useModels();
+  const { proveedores, loading, refetch } = useProveedor();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("razonSocial");
@@ -63,7 +63,7 @@ export default function ProveedorPage() {
       label: "Teléfono: ",
       icon: Phone,
       colSpan: 3,
-      required: true,
+      required: false,
       type: "text",
     },
     {
@@ -71,7 +71,7 @@ export default function ProveedorPage() {
       label: "Correo: ",
       icon: AtSign,
       colSpan: 3,
-      required: true,
+      required: false,
       type: "text",
     },
     {
@@ -79,7 +79,7 @@ export default function ProveedorPage() {
       label: "Dirección: ",
       icon: MapPinned,
       colSpan: 3,
-      required: true,
+      required: false,
       type: "text",
     },
     {
@@ -87,7 +87,7 @@ export default function ProveedorPage() {
       label: "Tipo: ",
       icon: FileType,
       colSpan: 3,
-      required: true,
+      required: false,
       type: "text",
     },
     ...(modalMode === "edit"
@@ -163,8 +163,8 @@ export default function ProveedorPage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${item.razonSocial}"?`,
-      icon: "error",
+      text: `¿Desea anular: ${item.razonSocial}?`,
+      icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
       isDarkMode,
@@ -202,7 +202,7 @@ export default function ProveedorPage() {
 
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = models
+  const filtered = proveedores
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.razonSocial} ${u.ruc} ${u.tipo}`

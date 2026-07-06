@@ -32,8 +32,9 @@ export default function ExportButton({
         <button 
           type="button"
           onClick={() => setIsOpen(true)}  
-          className={`flex items-center justify-center gap-2 text-(--secondary) hover:text-(--primary) bg-transparent border-transparent ${isDarkMode ? "hover:bg-(--secondary)/20" : "hover:bg-(--secondary)/20"} 
-          font-medium rounded-xl text-sm px-4 py-2`} 
+          className={`flex items-center justify-center gap-2 text-(--secondary) hover:text-(--primary) bg-transparent border-transparent 
+                    ${isDarkMode ? "hover:bg-(--secondary)/20" : "hover:bg-(--secondary)/20"} 
+                    font-medium rounded-xl text-sm px-4 py-2`} 
         >
           <Download size={18} />
           Exportar Formato (Excel)
@@ -57,9 +58,9 @@ export default function ExportButton({
         <button
           type="button"
           disabled
-          className={`flex items-center justify-center gap-2 text-(--secondary) hover:text-(--primary) bg-transparent border-transparent 
-            ${isDarkMode ? "hover:bg-(--secondary)/20" : "hover:bg-(--secondary)/20"} 
-            font-medium rounded-xl text-sm px-4 py-2 ${className}`}
+          className={`flex items-center justify-center gap-2 text-neutral-500
+                    bg-transparent border-transparent hover:bg-neutral-500/20           
+                    font-medium rounded-xl text-sm px-4 py-2`}
         >
           {children || (
             <>
@@ -76,8 +77,8 @@ export default function ExportButton({
           type="button"
           onClick={() => setIsOpen(true)}
           className={`flex items-center justify-center gap-2 text-(--secondary) hover:text-(--primary) bg-transparent border-transparent 
-            ${isDarkMode ? "hover:bg-(--secondary)/20" : "hover:bg-(--secondary)/20"} 
-            font-medium rounded-xl text-sm px-4 py-2 ${className}`}
+                    ${isDarkMode ? "hover:bg-(--secondary)/20" : "hover:bg-(--secondary)/20"} 
+                    font-medium rounded-xl text-sm px-4 py-2 ${className}`}
         >
           {children || (
             <>

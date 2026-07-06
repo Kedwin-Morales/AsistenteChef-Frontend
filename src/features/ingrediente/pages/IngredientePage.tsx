@@ -22,7 +22,7 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useModels } from "../hooks/useIngrediente";
+import { useIngrediente } from "../hooks/useIngrediente";
 import { crear, editar, anular } from "../services/ingrediente.service";
 import type { ModelDTO } from "../types/ingrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
@@ -40,7 +40,7 @@ import ExportButton from "@/shared/utils/export/ui/exportButton";
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 
 export default function IngredientePage() {
-  const { models, tipos, unidades, loading, refetch } = useModels();
+  const { ingredientes, tipos, unidades, loading, refetch } = useIngrediente();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
@@ -189,8 +189,8 @@ export default function IngredientePage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${item.nombre}"?`,
-      icon: "error",
+      text: `¿Desea anular: ${item.nombre}?`,
+      icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
       isDarkMode,
@@ -227,7 +227,7 @@ export default function IngredientePage() {
 
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = models
+  const filtered = ingredientes
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.codigo} ${u.tipoIngrediente?.nombre} ${u.unidadMedida?.nombre}`
@@ -409,12 +409,12 @@ export default function IngredientePage() {
         </div>
         <div className="hidden md:flex m-1">
           <ExportButton
-          isDarkMode={isDarkMode}
-          config={exportConfigs.IngredientesFormat}
-          data={[]}
-          onSuccess={refetch}
-          format={false}
-        /> 
+            isDarkMode={isDarkMode}
+            config={exportConfigs.IngredientesFormat}
+            data={filtered}
+            onSuccess={refetch}
+            format={false}
+          /> 
         </div>
       </div>
 

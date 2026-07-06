@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { getAll } from "../services/tipoIngrediente.service";
 import type { ModelDTO } from "../types/tipoIngrediente.types";
 
-export function useModels() {
-  const [models, setModels] = useState<ModelDTO[]>([]);
+export function useTipoIngrediente() {
+  const [tiposIngrediente, setModels] = useState<ModelDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refetch = useCallback(async () => {
@@ -19,8 +19,20 @@ export function useModels() {
   }, []);
 
   useEffect(() => {
-    refetch();
+    let alive = true;
+
+    const load = async () => {
+      if (!alive) return;
+      await refetch();
+    };
+
+    load();
+
+    return () => {
+      alive = false;
+    };
   }, [refetch]);
 
-  return { models, loading, refetch };
+
+  return { tiposIngrediente, loading, refetch };
 }

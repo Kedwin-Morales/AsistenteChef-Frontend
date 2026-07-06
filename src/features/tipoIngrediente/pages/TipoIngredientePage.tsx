@@ -17,7 +17,7 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useModels } from "../hooks/useTipoIngrediente";
+import { useTipoIngrediente } from "../hooks/useTipoIngrediente";
 import { crear, editar, anular } from "../services/tipoIngrediente.service";
 import type { ModelDTO } from "../types/tipoIngrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
@@ -29,7 +29,7 @@ import { sileo } from "sileo";
 type ModelFilter = "nombre" | "descripcion";
 
 export default function TipoIngredientePage() {
-  const { models, loading, refetch } = useModels();
+  const { tiposIngrediente, loading, refetch } = useTipoIngrediente();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
@@ -118,8 +118,8 @@ export default function TipoIngredientePage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${item.nombre}"?`,
-      icon: "error",
+      text: `¿Desea anular: ${item.nombre}?`,
+      icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
       isDarkMode,
@@ -152,7 +152,7 @@ export default function TipoIngredientePage() {
 
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = models
+  const filtered = tiposIngrediente
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.descripcion}`

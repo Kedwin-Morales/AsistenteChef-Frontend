@@ -18,7 +18,7 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 //import { useToast } from "@/components/ui/toast/useToast";
-import { useModels } from "../hooks/useUnidad";
+import { useUnidad } from "../hooks/useUnidad";
 import { crear, editar, anular } from "../services/unidad.service";
 import type { ModelDTO } from "../types/unidad.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
@@ -31,7 +31,7 @@ type ModelFilter = "nombre" | "simbolo";
 
 export default function UnidadPage() {
   //const toast = useToast();
-  const { models, loading, refetch } = useModels();
+  const { unidades, loading, refetch } = useUnidad();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
@@ -120,8 +120,8 @@ export default function UnidadPage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: "Anular",
-      text: `¿Anular: "${item.nombre}"?`,
-      icon: "error",
+      text: `¿Desea anular: ${item.nombre}?`,
+      icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
       isDarkMode,
@@ -154,7 +154,7 @@ export default function UnidadPage() {
 
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = models
+  const filtered = unidades
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.simbolo}`.toLowerCase().includes(search.toLowerCase()),

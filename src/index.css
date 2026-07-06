@@ -59,7 +59,25 @@
   }
 
   .btn-gradient {
-    @apply flex items-center justify-center gap-2 text-white font-bold rounded-2xl
-           px-4 py-3 outline-(--secondary) outline-2 outline-offset-2;
+    @apply flex items-center justify-center gap-2 text-white font-bold rounded-xl
+           px-4 h-10 outline-(--secondary) outline-2 outline-offset-2;
   }
+}
+
+/* Sobrescribir el estilo del botón de confirmación */
+.swal2-container .swal2-cancel {
+   @apply bg-neutral-500 hover:bg-orange-500/70 text-white font-bold rounded-xl shadow-lg shadow-orange-500/50;
+}
+
+/* Opcional: el color cuando pasas el mouse */
+.swal2-container .swal2-confirm {
+     @apply bg-neutral-500 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/80;
+}
+
+.btn-cancelar{
+    @apply px-4 h-10 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-orange-500/50 hover:bg-orange-500/70 text-white font-bold;
+}
+
+.btn-guardar{
+  @apply px-4 h-10 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/80 transform active:scale-[0.98] transition-all duration-200;
 }

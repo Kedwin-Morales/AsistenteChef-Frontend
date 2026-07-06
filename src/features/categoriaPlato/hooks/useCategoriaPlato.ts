@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { getAll } from "../services/categoriaPlatos.service";
 import type { ModelDTO } from "../types/categoria.types";
 
-export function useModels() {
-  const [models, setModels] = useState<ModelDTO[]>([]);
+export function useCategoriaPlato() {
+  const [categorias, setModels] = useState<ModelDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refetch = useCallback(async () => {
@@ -17,10 +17,21 @@ export function useModels() {
       setLoading(false);
     }
   }, []);
-
+  
   useEffect(() => {
-    refetch();
+    let alive = true;
+
+    const load = async () => {
+      if (!alive) return;
+      await refetch();
+    };
+
+    load();
+
+    return () => {
+      alive = false;
+    };
   }, [refetch]);
 
-  return { models, loading, refetch };
+  return { categorias, loading, refetch };
 }

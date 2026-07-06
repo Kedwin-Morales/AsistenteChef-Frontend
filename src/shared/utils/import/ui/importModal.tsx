@@ -476,7 +476,7 @@ export default function ImportModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-30 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-orange-500/50 hover:bg-orange-500/70 text-white font-bold"
+              className="btn-cancelar"
             >
               <CircleX size={18} />
               Cancelar
@@ -493,7 +493,7 @@ export default function ImportModal({
                   setExcelHeaders([]);
                   setColumnMapping({});
                 }}
-                className="w-50 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-teal-500 hover:bg-teal-500 text-white font-bold"
+                className="px-4 h-10 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-teal-500 hover:bg-teal-500 text-white font-bold"
               >
                 <FolderSearch size={18} />
                 Cambiar archivo
@@ -501,7 +501,7 @@ export default function ImportModal({
               <button
                 onClick={handleImport}
                 disabled={isSubmitting}
-                className={`w-70 py-3 flex items-center justify-center gap-2 rounded-xl font-bold text-white bg-neutral-500 shadow-lg shadow-blue-500/80 hover:bg-blue-500 transition-all duration-300 ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"}`}
+                className={`btn-guardar ${isSubmitting ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"}`}
               >
                 {isSubmitting ? (
                   <>
@@ -521,7 +521,7 @@ export default function ImportModal({
           {step === "result" && (
             <button
               onClick={onClose}
-              className="w-30 py-3 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-rose-600/70 hover:bg-rose-600 text-white font-bold"
+              className="btn-cancelar"
             >
               <CircleX size={18} />
               Cerrar
