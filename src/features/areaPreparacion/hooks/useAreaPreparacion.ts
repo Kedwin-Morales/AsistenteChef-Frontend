@@ -12,12 +12,12 @@ export function useAreaPreparacion() {
 
     try {
       const data = await getAll();
-      const mapped: ModelDTO[] = data.map((p: any) => ({
-        areaPreparacionId: p.areaPreparacionId,
-        nombre: p.nombre,
-        descripcion: p.descripcion,
-        activo: p.activo,
-        detalle: p.detalle,
+      const mapped: ModelDTO[] = data.map((t: any) => ({
+        areaPreparacionId: t.areaPreparacionId,
+        nombre: t.nombre,
+        descripcion: t.descripcion,
+        activo: t.activo,
+        detalle: t.detalle,
       }));
 
       setArea(mapped);

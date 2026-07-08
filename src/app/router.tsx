@@ -10,6 +10,7 @@ import ProveedorPage from "@/features/proveedor/pages/ProveedorPage";
 import IngredientePage from "@/features/ingrediente/pages/IngredientePage";
 import FamiliaMenuPage from "@/features/familiaMenu/pages/FamiliaMenuPage";
 import CategoriaPlatoPage from "@/features/categoriaPlato/pages/CategoriaPlatoPage";
+import AreaPreparacionPage from "@/features/areaPreparacion/pages/AreaPreparacionPage";
 
 export default function AppRouter() {
   return (
@@ -26,6 +27,7 @@ export default function AppRouter() {
           <Route path="/ingredientes" element={<IngredientePage />} />
           <Route path="/familia-menu" element={<FamiliaMenuPage />} />
           <Route path="/categoria-plato" element={<CategoriaPlatoPage />} />
+          <Route path="/area-preparacion" element={<AreaPreparacionPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

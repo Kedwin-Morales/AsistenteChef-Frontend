@@ -320,19 +320,13 @@ export default function EntityModal<T extends object, D extends object = any>({
 
   return (
     <div
-      className={`fixed inset-0 z-100 flex items-end md:items-center justify-center ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/80"}`}
+      className={`fixed inset-0 z-100 flex items-end md:items-center justify-center 
+        ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/80"}`}
     >
       <div
-        className={`
-    w-full
-    md:max-w-3xl
-    h-[95vh] md:h-auto
-    md:max-h-[90vh]
-    rounded-t-3xl md:rounded-3xl
-    overflow-hidden
-    flex flex-col
-    ${isDarkMode ? "bg-(--color-bg)" : "bg-(--color-bg)"}
-  `}
+        className={`w-full md:max-w-3xl h-[95vh] md:h-auto md:max-h-[90vh] rounded-t-3xl 
+          md:rounded-3xl overflow-hidden flex flex-col
+          ${isDarkMode ? "bg-(--color-bg)" : "bg-(--color-bg)"}`}
       >
         {/* HEADER */}
         <div className="p-3 flex justify-between items-center bg-gradient text-neutral-200">
@@ -390,11 +384,8 @@ export default function EntityModal<T extends object, D extends object = any>({
 
                     <div className="relative">
                       {Icon && (
-                        <Icon
-                          size={18}
-                          className={`absolute left-3 top-1/2 -translate-y-1/2
-              ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
-            `}
+                        <Icon size={18} className={`absolute left-3 top-1/2 -translate-y-1/2
+                          ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}
                         />
                       )}
 
@@ -408,20 +399,16 @@ export default function EntityModal<T extends object, D extends object = any>({
                             e.target.value as unknown as T[keyof T],
                           )
                         }
-                        className={`
-            w-full py-2 rounded-xl border appearance-none transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-(--secondary)/50 focus:border-(--secondary)
-            ${Icon ? "pl-10" : "pl-4"} pr-10
-            ${
-              isDarkMode
-                ? "bg-(--form) border-neutral-700/30 text-(--texto)"
-                : "bg-(--form) border-slate-700/30 text-(--texto)"
-            }
-            ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
-          `}
+                        className={`w-full py-2 rounded-xl border appearance-none transition-all duration-300
+                          focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                          ${Icon ? "pl-10" : "pl-4"} pr-10
+                          ${isDarkMode
+                            ? "bg-(--form) border-(--bordes) text-(--texto)"
+                            : "bg-(--form) border-(--bordes) text-(--texto)"
+                          }
+                          ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}`}
                       >
                         <option value="">Seleccione...</option>
-
                         {finalOptions?.map((o) => (
                           <option key={o.value} value={o.value}>
                             {o.label}
@@ -453,24 +440,19 @@ export default function EntityModal<T extends object, D extends object = any>({
                       onClick={() =>
                         handleChange(field.name, !checked as T[keyof T])
                       }
-                      className={`
-      w-full flex items-center justify-between px-4 py-3
-      rounded-xl border transition-all duration-300
-      focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-      ${
-        isDarkMode
-          ? "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
-          : "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
-      }
-    `}
+                      className={`w-full flex items-center justify-between px-4 py-3
+                        rounded-xl border transition-all duration-300
+                        focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+                        ${isDarkMode
+                          ? "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
+                          : "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
+                        }`}
                     >
                       {/* LEFT */}
                       <div className="flex items-center gap-3">
                         <span
-                          className={`
-          w-6 h-6 rounded-full flex items-center justify-center text-sm
-          ${checked ? "bg-emerald-500 text-white" : "bg-neutral-400 text-white"}
-        `}
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
+                            ${checked ? "bg-emerald-500 text-white" : "bg-neutral-400 text-white"}`}
                         >
                           ✓
                         </span>
@@ -481,17 +463,12 @@ export default function EntityModal<T extends object, D extends object = any>({
 
                       {/* SWITCH */}
                       <div
-                        className={`
-        w-12 h-7 rounded-full relative transition-colors
-        ${checked ? "bg-emerald-500" : "bg-neutral-400"}
-      `}
+                        className={`w-12 h-7 rounded-full relative transition-colors
+                          ${checked ? "bg-emerald-500" : "bg-neutral-400"}`}
                       >
                         <span
-                          className={`
-          absolute top-1 left-1 w-5 h-5 bg-white rounded-full
-          transition-transform
-          ${checked ? "translate-x-5" : ""}
-        `}
+                          className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full
+                            transition-transform ${checked ? "translate-x-5" : ""}`}
                         />
                       </div>
                     </button>
@@ -550,8 +527,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                         <Icon
                           size={18}
                           className={`absolute left-3 top-3
-                ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
-              `}
+                            ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}
                         />
                       )}
 
@@ -566,17 +542,14 @@ export default function EntityModal<T extends object, D extends object = any>({
                             e.target.value as unknown as T[keyof T],
                           )
                         }
-                        className={`
-              w-full py-3 px-4 rounded-xl border resize-none transition-all duration-300
-              focus:outline-none focus:ring-2 focus:ring-(--secondary)/50 focus:border-(--secondary)
-              ${Icon ? "pl-10" : "pl-4"} pr-4
-              ${
-                isDarkMode
-                  ? "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
-                  : "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
-              }
-              ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}
-            `}
+                        className={`w-full py-2 px-4 rounded-xl border resize-none transition-all duration-300
+                          focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                          ${Icon ? "pl-10" : "pl-4"} pr-4
+                          ${ isDarkMode
+                            ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                            : "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                          }
+                          ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}`}
                       />
                     </div>
                   </div>
@@ -609,83 +582,76 @@ export default function EntityModal<T extends object, D extends object = any>({
           {/* DETAIL FORM */}
           {visibleFieldsDetails && !isReadOnly && (
             <>
-              <hr
-                className={`${isDarkMode ? "border-slate-700" : "border-slate-200"}`}
-              />
-              <h3 className="font-bold text-lg">Detalle</h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
-                {visibleFieldsDetails.map((f) => {
-                  const value = detailForm[f.name];
-                  const colSpan = f.colSpan ?? 1;
-                  const colSpanClass = COL_SPAN_CLASS[colSpan];
-                  const hasError = detailErrors[String(f.name)];
-
-                  /* SELECT */
-                  if (f.type === "select") {
-                    const Icon = f.icon;
-
-                    const parentValue = f.dependsOn
-                      ? detailForm[f.dependsOn]
-                      : undefined;
-
-                    const finalOptions =
-                      f.dependsOn && f.filterOptions
-                        ? f.filterOptions(parentValue, f.options ?? [])
-                        : f.options;
-
-                    const isDisabled =
-                      isReadOnly || (f.dependsOn && !parentValue);
-
-                    return (
-                      <div key={String(f.name)} className={colSpanClass}>
-                        <label className="block mb-1 font-semibold">
-                          {f.label}
-                        </label>
-
-                        <div className="relative">
-                          {Icon && (
-                            <Icon
-                              size={18}
-                              className={`absolute left-3 top-1/2 -translate-y-1/2
-              ${isDarkMode ? "text-gray-400" : "text-gray-500"}
-            `}
-                            />
-                          )}
-
-                          <select
-                            disabled={isDisabled}
-                            value={String(value ?? "")}
-                            onChange={(e) =>
-                              handleDetailChange(
-                                f.name,
-                                e.target.value as unknown as D[keyof D],
-                              )
-                            }
-                            className={`
-            w-full py-3 rounded-xl border appearance-none transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-            ${Icon ? "pl-10" : "pl-4"} pr-10
-            ${
-              isDarkMode
-                ? "bg-slate-800 border-slate-700 text-gray-100"
-                : "bg-white border-slate-300 text-gray-900"
-            }
-            ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
-                ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
-          `}
-                          >
-                            <option value="">Seleccione...</option>
-                            {finalOptions?.map((o) => (
-                              <option key={o.value} value={o.value}>
-                                {o.label}
-                              </option>
-                            ))}
-                          </select>
+              <fieldset className="border rounded-xl px-3 border-(--secondary)/20">
+                <legend className="font-bold text-lg text-(--secondary)/80 px-3">Detalles</legend>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+                  {visibleFieldsDetails.map((f) => {
+                    const value = detailForm[f.name];
+                    const colSpan = f.colSpan ?? 1;
+                    const colSpanClass = COL_SPAN_CLASS[colSpan];
+                    const hasError = detailErrors[String(f.name)];
+  
+                    /* SELECT */
+                    if (f.type === "select") {
+                      const Icon = f.icon;
+  
+                      const parentValue = f.dependsOn
+                        ? detailForm[f.dependsOn]
+                        : undefined;
+  
+                      const finalOptions =
+                        f.dependsOn && f.filterOptions
+                          ? f.filterOptions(parentValue, f.options ?? [])
+                          : f.options;
+  
+                      const isDisabled =
+                        isReadOnly || (f.dependsOn && !parentValue);
+  
+                      return (
+                        <div key={String(f.name)} className={colSpanClass}>
+                          <label className="block mb-1 font-semibold">
+                            {f.label}
+                          </label>
+  
+                          <div className="relative">
+                            {Icon && (
+                              <Icon
+                                size={18}
+                                className={`absolute left-3 top-1/2 -translate-y-1/2
+                                  ${isDarkMode ? "text-neutral-500": "text-neutral-500"}`}
+                              />
+                            )}
+  
+                            <select
+                              disabled={isDisabled}
+                              value={String(value ?? "")}
+                              onChange={(e) =>
+                                handleDetailChange(
+                                  f.name,
+                                  e.target.value as unknown as D[keyof D],
+                                )
+                              }
+                              className={`w-full py-2 rounded-xl border appearance-none transition-all duration-300
+                                focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                                ${Icon ? "pl-10" : "pl-4"} pr-10
+                                ${isDarkMode
+                                    ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                    : "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                }
+                                ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
+                                ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
+                            >
+                              <option value="">Seleccione...</option>
+                              {finalOptions?.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                  {o.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  }
+                      );
+                    }
 
                   /* BOOLEAN */
                   if (f.type === "boolean") {
@@ -705,26 +671,20 @@ export default function EntityModal<T extends object, D extends object = any>({
                           onClick={() =>
                             handleDetailChange(f.name, !checked as T[keyof T])
                           }
-                          className={`
-          w-full h-13 flex items-center justify-between px-4
-          rounded-xl border transition-all duration-300
-          focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-          ${
-            isDarkMode
-              ? "bg-slate-800 border-slate-700 text-gray-100"
-              : "bg-slate-100 border-slate-300 text-gray-900"
-          }
-
-                                  ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
-        `}
+                          className={`w-full h-13 flex items-center justify-between px-4
+                            rounded-xl border transition-all duration-300
+                            focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+                            ${isDarkMode
+                                ? "bg-slate-800 border-slate-700 text-gray-100"
+                                : "bg-slate-100 border-slate-300 text-gray-900"
+                            }
+                            ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
                         >
                           {/* LEFT */}
                           <div className="flex items-center gap-3">
                             <span
-                              className={`
-              w-6 h-6 rounded-full flex items-center justify-center text-sm
-              ${checked ? "bg-emerald-500 text-white" : "bg-slate-400 text-white"}
-            `}
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
+                                ${checked ? "bg-emerald-500 text-white" : "bg-slate-400 text-white"}`}
                             >
                               ✓
                             </span>
@@ -735,17 +695,13 @@ export default function EntityModal<T extends object, D extends object = any>({
 
                           {/* SWITCH */}
                           <div
-                            className={`
-            w-12 h-7 rounded-full relative transition-colors
-            ${checked ? "bg-emerald-500" : "bg-slate-400"}
-          `}
+                            className={`w-12 h-7 rounded-full relative transition-colors
+                              ${checked ? "bg-emerald-500" : "bg-slate-400"}`}
                           >
                             <span
-                              className={`
-              absolute top-1 left-1 w-5 h-5 bg-white rounded-full
-              transition-transform
-              ${checked ? "translate-x-5" : ""}
-            `}
+                              className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full
+                                transition-transform
+                                ${checked ? "translate-x-5" : ""}`}
                             />
                           </div>
                         </button>
@@ -804,8 +760,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                             <Icon
                               size={18}
                               className={`absolute left-3 top-3
-                ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
-              `}
+                                ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}
                             />
                           )}
 
@@ -819,18 +774,15 @@ export default function EntityModal<T extends object, D extends object = any>({
                                 e.target.value as unknown as D[keyof D],
                               )
                             }
-                            className={`
-              w-full py-3 px-4 rounded-xl border resize-none transition-all duration-300
-              focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-              ${Icon ? "pl-10" : "pl-4"} pr-4
-              ${
-                isDarkMode
-                  ? "bg-(--bg-form) border-slate-700 text-gray-100"
-                  : "bg-(--bg-form) border-slate-300 text-gray-900"
-              }
-              ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
-              ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}
-            `}
+                            className={`w-full py-2 px-4 rounded-xl border resize-none transition-all duration-300
+                              focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                                ${Icon ? "pl-10" : "pl-4"} pr-4
+                                ${isDarkMode
+                                  ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                  : "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                }
+                                ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
+                                ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}`}
                           />
                         </div>
                       </div>
@@ -855,54 +807,41 @@ export default function EntityModal<T extends object, D extends object = any>({
                       />
                     </div>
                   );
-                })}
-              </div>
-
-              <button
-                type="button"
-                onClick={addDetail}
-                disabled={
-                  !Object.values(detailForm).some((v) => {
-                    if (typeof v === "string") return v.trim() !== "";
-                    return v !== undefined && v !== null;
-                  })
-                }
-                className={`
-    px-4 py-2 rounded-lg font-bold text-white transition-all duration-200
-    bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2
-    hover:scale-[1.03]
-    active:scale-[0.97]
-    disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100
-  `}
-              >
-                {editingIndex !== null ? "Actualizar" : "Agregar"}
-              </button>
-            </>
-          )}
-
-          {/* DETAIL TABLE */}
-          {detailColumns && details.length > 0 && (
-            <div className="overflow-x-auto">
-              <table
-                className={`
-        w-full mt-4 border rounded-xl overflow-hidden
-        ${
-          isDarkMode
-            ? "border-slate-700 text-gray-100"
-            : "border-slate-300 text-gray-900"
-        }
-      `}
-              >
-                <thead
-                  className={`
-          ${isDarkMode ? "bg-slate-800" : "bg-slate-100"}
-        `}
-                >
+                  })}
+                </div>
+                <div className="flex flex-col items-center justify-center md:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={addDetail}
+                    disabled={
+                      !Object.values(detailForm).some((v) => {
+                        if (typeof v === "string") return v.trim() !== "";
+                        return v !== undefined && v !== null;
+                      })
+                    }
+                    className={`btn-guardar m-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100`}
+                  >
+                    {editingIndex !== null ? "Actualizar" : "Agregar"}
+                  </button> 
+                </div>
+               
+                {/* DETAIL TABLE */}
+                {detailColumns && details.length > 0 && (
+                  <div className="w-full overflow-x-auto my-2 rounded-xl border border-(--bordes)">
+                    <table className={`w-full overflow-hidden text-sm`}
+                    >
+                    <thead
+                      className={`text-[12px] uppercase font-bold 
+                        ${isDarkMode
+                        ? "bg-neutral-600/50 text-(--texto) "
+                        : "bg-olive-400/50 text-(--texto)"
+                      }`}
+                    >
                   <tr>
                     {detailColumns.map((c) => (
                       <th
                         key={String(c.key)}
-                        className="p-3 text-left font-semibold"
+                        className="p-3 text-left text-sm font-semibold"
                       >
                         {c.label}
                       </th>
@@ -917,14 +856,10 @@ export default function EntityModal<T extends object, D extends object = any>({
                   {details.map((row, i) => (
                     <tr
                       key={i}
-                      className={`
-              border-t
-              ${
-                isDarkMode
-                  ? "border-slate-700 hover:bg-slate-800"
-                  : "border-slate-200 hover:bg-slate-50"
-              }
-            `}
+                      className={`transition md:table-row block                 
+                        ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " 
+                        : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
+                      `}
                     >
                       {detailColumns.map((c) => (
                         <td key={String(c.key)} className="p-3">
@@ -962,12 +897,10 @@ export default function EntityModal<T extends object, D extends object = any>({
                             type="button"
                             onClick={() => editDetail(i)}
                             className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
-      ${
-        isDarkMode
-          ? "hover:bg-blue-500/20 text-blue-400"
-          : "hover:bg-blue-100 text-blue-600"
-      }
-    `}
+                            ${isDarkMode
+                              ? "hover:bg-blue-500/20 text-blue-400"
+                              : "hover:bg-blue-100 text-blue-600"
+                            }`}
                           >
                             <Pencil size={16} />
                           </button>
@@ -976,12 +909,10 @@ export default function EntityModal<T extends object, D extends object = any>({
                             onClick={() => removeDetail(i)}
                             type="button"
                             className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
-      ${
-        isDarkMode
-          ? "hover:bg-red-500/20 text-red-400"
-          : "hover:bg-red-100 text-red-600"
-      }
-    `}
+                            ${isDarkMode
+                              ? "hover:bg-red-500/20 text-red-400"
+                              : "hover:bg-red-100 text-red-600"
+                            }`}
                           >
                             <Trash2 size={16} />
                           </button>
@@ -990,8 +921,11 @@ export default function EntityModal<T extends object, D extends object = any>({
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+                  </table>
+                </div>
+                )}
+              </fieldset>        
+            </>
           )}
 
           {/* ACTIONS */}

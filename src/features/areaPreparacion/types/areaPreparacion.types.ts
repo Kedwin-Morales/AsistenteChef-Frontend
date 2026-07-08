@@ -9,11 +9,11 @@ export interface ModelDTO {
 export interface ModelDET {
     AreaPreparacionDetId: string;
     areaPreparacionId?: string;
-    areaPreparacionNombre?: string;
+    //areaPreparacionNombre?: string;
     cantidad?: number;
     medida?: string;
     ingredienteId?: string;
-    ingredienteNombre?: string;
+    //ingredienteNombre?: string;
 }
 
 export interface CreateDTO {
@@ -23,8 +23,8 @@ export interface CreateDTO {
 }
 
 export interface ModelDETCreate {
+    ingredienteId?: string;
     cantidad?: number;
     medida?: string;
-    ingredienteId?: string;
 }
 

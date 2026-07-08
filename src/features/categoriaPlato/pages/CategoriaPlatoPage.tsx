@@ -37,6 +37,7 @@ export default function CategoriaPlatoPage() {
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
+  
   const fields: ModalField<ModelDTO>[] = [
     {
       name: "nombre",

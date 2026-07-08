@@ -67,7 +67,7 @@ const InputField = forwardRef<HTMLInputElement, Props>(
         </label>
 
         <div
-          className={`relative rounded-xl border transition-all duration-300 border-neutral-700/30
+          className={`relative rounded-xl border transition-all duration-300 border-(--bordes)
             ${isDarkMode ? "bg-(--bg-form)" : "bg-(--bg-form)"}
             focus-within:ring-2 focus-within:ring-(--secondary) focus-within:border-(--secondary)`}>
           {Icon && (

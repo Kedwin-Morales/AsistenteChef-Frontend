@@ -192,7 +192,7 @@ function NavItem({ to, label, icon: Icon, isDarkMode }: NavItemProps) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? (isDarkMode ? "bg-(--secondary) text-neutral-200" : "bg-(--secondary) text-neutral-100") : isDarkMode ? "text-neutral-400 hover:bg-neutral-600 hover:text-neutral-200" : "text-neutral-500 hover:bg-neutral-300 hover:text-neutral-500"}`
+        `w-full flex text-[15px] items-center gap-3 px-4 py-2 rounded-xl transition-all ${isActive ? (isDarkMode ? "bg-(--secondary) text-neutral-200" : "bg-(--secondary) text-neutral-100") : isDarkMode ? "text-neutral-400 hover:bg-neutral-600 hover:text-neutral-200" : "text-neutral-500 hover:bg-neutral-300 hover:text-neutral-500"}`
       }
     >
       <Icon size={20} />

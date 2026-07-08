@@ -30,7 +30,7 @@ export default function SearchFilter<T extends string>({
   onSearchChange,
 }: Props<T>) {
   return (
-    <div className="flex flex-col sm:flex-row mb-6 gap-3">
+    <div className="flex flex-col sm:flex-row mb-3 gap-3">
       {/* SELECT */}
       <select
         value={filterValue}
@@ -39,7 +39,7 @@ export default function SearchFilter<T extends string>({
           onFilterChange(e.target.value as T)
         }
         className={`
-          min-w-[20%] px-4 py-3 rounded-xl border transition-all 
+          min-w-[20%] px-4 h-10 items-center rounded-xl border transition-all 
           outline-none 
           ${
             isDarkMode
@@ -70,7 +70,7 @@ export default function SearchFilter<T extends string>({
             onSearchChange(e.target.value)
           }
           placeholder={placeholder}
-          className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all outline-none
+          className={`w-full pl-10 pr-4 h-10 rounded-xl border transition-all outline-none
             ${
               isDarkMode
                 ? "bg-(--bg-form) border-neutral-600 text-neutral-100 placeholder-neutral-300"

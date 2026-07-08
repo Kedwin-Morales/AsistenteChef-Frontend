@@ -66,18 +66,18 @@ export default function DataTable<T>({
           <tbody>
             {pageData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length}>{emptyMessage}</td>
+                <td className="py-4 text-center" colSpan={columns.length}>
+                  {emptyMessage}
+                </td>
               </tr>
             ) : (
               pageData.map((row) => (
                 <tr
                   key={rowKey(row)}
-                  className={`
-                      transition
-                      md:table-row
-                      block                 
-                      ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
-                    `}
+                  className={`transition md:table-row block                 
+                      ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " 
+                      : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
+                  `}
                 >
                   {columns.map((col) => (
                     <td
