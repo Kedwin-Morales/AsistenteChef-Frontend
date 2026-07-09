@@ -9,8 +9,9 @@ import {
   LandPlot,
   Layers2,
   NotebookPen,
+  ShoppingBasket,
   UtensilsCrossed,
-  Users2,
+  Truck,
   RulerDimensionLine,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -77,6 +78,12 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
             isDarkMode={isDarkMode}
           />
           <NavItem
+            to="/ingredientes"
+            icon={ShoppingBasket}
+            label="Ingredientes y/o Utensilios"
+            isDarkMode={isDarkMode}
+          /> 
+          <NavItem
             to="/area-preparacion"
             icon={LandPlot}
             label="Aréa de Preparación"
@@ -93,19 +100,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
             icon={NotebookPen}
             label="Familia de Menú"
             isDarkMode={isDarkMode}
-          />
-          <NavItem
-            to="/ingredientes"
-            icon={ShoppingCart}
-            label="Ingredientes y/o Utensilios"
-            isDarkMode={isDarkMode}
-          />
-          <NavItem
-            to="/proveedores"
-            icon={Users2}
-            label="Proveedores"
-            isDarkMode={isDarkMode}
-          />
+          />                   
           <NavItem
             to="/tipo-ingredientes"
             icon={UtensilsCrossed}
@@ -116,6 +111,12 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
             to="/unidad-medida"
             icon={RulerDimensionLine}
             label="Unidad de Medida"
+            isDarkMode={isDarkMode}
+          />
+          <NavItem
+            to="/proveedores"
+            icon={Truck}
+            label="Proveedores"
             isDarkMode={isDarkMode}
           />
         </SidebarGroup>

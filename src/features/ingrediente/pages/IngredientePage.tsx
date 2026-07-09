@@ -10,7 +10,6 @@ import {
   RulerDimensionLine,
   CircleDollarSign,
   Barcode,
-  ShoppingCart,
   ShoppingBasket,
   Upload,
 } from "lucide-react";
@@ -329,7 +328,7 @@ export default function IngredientePage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
-            <ShoppingCart size={30} />
+            <ShoppingBasket size={30} />
             Ingredientes o Utensilios
           </h1>
           <p className="text-sm text-neutral-500">

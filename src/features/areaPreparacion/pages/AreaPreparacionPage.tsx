@@ -34,13 +34,15 @@ export default function AreaPreparacionPage() {
   const { areas, loading, refetch } = useAreaPreparacion();
   const { ingredientes } = useIngrediente();
   const { isDarkMode } = useLoginUI();
-  
+
   /* FILTER */
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
   const [showActivo, setShowActivo] = useState(false);
-  const filterIngredientes = ingredientes.filter((t) => t.activo && t.tipoIngrediente?.nombre === "Utensilios");
-  
+  const filterIngredientes = ingredientes.filter(
+    (t) => t.activo && t.tipoIngrediente?.nombre.toUpperCase() === "UTENSILIOS",
+  );
+
   /* MODAL */
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
@@ -280,7 +282,9 @@ export default function AreaPreparacionPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
-            <LandPlot size={30} />Áreas de Preparación</h1>
+            <LandPlot size={30} />
+            Áreas de Preparación
+          </h1>
           <p className="text-sm text-neutral-500">
             Gestión para las Áreas de Preparación del sistema
           </p>

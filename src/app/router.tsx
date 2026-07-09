@@ -11,6 +11,7 @@ import IngredientePage from "@/features/ingrediente/pages/IngredientePage";
 import FamiliaMenuPage from "@/features/familiaMenu/pages/FamiliaMenuPage";
 import CategoriaPlatoPage from "@/features/categoriaPlato/pages/CategoriaPlatoPage";
 import AreaPreparacionPage from "@/features/areaPreparacion/pages/AreaPreparacionPage";
+import MaestroPage from "@/features/maestro/page/MaestroPage";
 
 export default function AppRouter() {
   return (
@@ -19,6 +20,7 @@ export default function AppRouter() {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/maestro" element={<MaestroPage />} />
           <Route path="/roles" element={<RolePage />} />
           <Route path="/usuario" element={<UserPage />} />
           <Route path="/unidad-medida" element={<UnidadPage />} />
