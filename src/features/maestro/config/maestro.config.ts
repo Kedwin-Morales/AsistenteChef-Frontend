@@ -2,7 +2,7 @@ import {
   ShoppingBasket,
   UtensilsCrossed,
   LandPlot,
-  Copy,
+  RulerDimensionLine,
   Layers2,
   Truck,
 } from "lucide-react";
@@ -17,9 +17,9 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
   {
     id: "ingredientes",
     feature: "Ingredientes",
-    title: "Ingredientes e Insumos",
+    title: "Ingredientes y/o Utensilios",
     description:
-      "Gestión completa de materias primas, insumos y productos base.",
+      "Gestión completa de materias primas, utensilios y productos base.",
     icon: ShoppingBasket,
     image: "/imgMaestro/ingredientes.png",
     route: "/ingredientes",
@@ -31,7 +31,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     feature: "Tipos",
     title: "Tipo de Ingrediente",
     description:
-      "Clasificación jerárquica de ingredientes por naturaleza. Define categorías como proteínas, vegetales, lácteos, secos, entre otros.",
+      "Clasificación jerárquica de ingredientes por naturaleza. Define categorías como: proteínas, vegetales, lácteos, secos, entre otros.",
     icon: UtensilsCrossed,
     image: "/imgMaestro/tipo-ingrediente.png",
     route: "/tipo-ingredientes",
@@ -41,7 +41,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     feature: "Familias",
     title: "Familias del Menú",
     description:
-      "Agrupación estratégica de platos por concepto culinario. Facilita la ingeniería de menús, costeo y análisis de rentabilidad.",
+      "Agrupación estratégica de las recetas por concepto culinario. Facilita la ingeniería de menús y la asignación por área.",
     icon: UtensilsCrossed,
     image: "/imgMaestro/familia-menu.png",
     route: "/familia-menu",
@@ -61,7 +61,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     feature: "Categorías",
     title: "Categoría del Plato",
     description:
-      "Taxonomía de platos por momento de consumo, tipo de servicio o concepto gastronómico. Entradas, principales, postres, bebidas.",
+      "Taxonomía de platos o concepto gastronómico: Entradas, Platos Principales, Postres, Bebidas.",
     icon: Layers2,
     image: "/imgMaestro/categoria-plato.png",
     route: "/categoria-plato",
@@ -71,10 +71,20 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     feature: "Proveedores",
     title: "Proveedores",
     description:
-      "Gestión de proveedores homologados, condiciones comerciales, lead times, certificaciones y trazabilidad de abastecimiento.",
+      "Gestión de proveedores homologados, condiciones comerciales, certificaciones y trazabilidad de abastecimiento.",
     icon: Truck,
     image: "/imgMaestro/proveedores.png",
     route: "/proveedores",
+  },
+  {
+    id: "unidad-medida",
+    feature: "Unidad de Medida",
+    title: "Unidad de Medida",
+    description:
+      "Gestión de unidades de medidas y trazabilidad de ingredientes.",
+    icon: RulerDimensionLine,
+    image: "/imgMaestro/unidad-medida.png",
+    route: "/unidad-medida",
   },
   // {
   //   id: "subrecetas",

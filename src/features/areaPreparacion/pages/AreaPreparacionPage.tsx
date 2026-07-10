@@ -8,6 +8,7 @@ import {
   SquareDashedText,
   LandPlot,
   UtensilsCrossed,
+  MoveLeft,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -27,6 +28,7 @@ import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
+import { useNavigate } from "react-router-dom";
 
 type ModelFilter = "nombre" | "descripcion";
 
@@ -34,6 +36,7 @@ export default function AreaPreparacionPage() {
   const { areas, loading, refetch } = useAreaPreparacion();
   const { ingredientes } = useIngrediente();
   const { isDarkMode } = useLoginUI();
+  const navigate = useNavigate();
 
   /* FILTER */
   const [search, setSearch] = useState("");
@@ -282,10 +285,20 @@ export default function AreaPreparacionPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
+            <button
+              type="button"
+              onClick={() => {navigate("/maestro");}}
+              className={`flex items-center mr-5 text-sm hover:text-(--texto)
+                ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
+              data-bs-toggle="tooltip"
+              title="Volver"
+             >
+              <MoveLeft size={30} />
+            </button>
             <LandPlot size={30} />
             Áreas de Preparación
           </h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm ml-15 text-neutral-500">
             Gestión para las Áreas de Preparación del sistema
           </p>
         </div>

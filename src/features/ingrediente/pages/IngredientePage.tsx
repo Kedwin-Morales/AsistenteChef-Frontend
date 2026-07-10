@@ -13,6 +13,9 @@ import {
   ShoppingBasket,
   Upload,
   LogOut,
+  ArrowBigLeft,
+  Move3D,
+  MoveLeft,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -332,19 +335,19 @@ export default function IngredientePage() {
         <div>        
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
             <button
-            type="button"
-            onClick={() => {navigate("/maestro");}}
-            className={`flex items-center mr-5 text-sm hover:text-red-600 
-              ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
+              type="button"
+              onClick={() => {navigate("/maestro");}}
+              className={`flex items-center mr-5 text-sm hover:text-(--texto)
+                ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
               data-bs-toggle="tooltip"
               title="Volver"
-          >
-            <LogOut size={25} />
-      </button>
+             >
+              <MoveLeft size={30} />
+            </button>
             <ShoppingBasket size={30} />
             Ingredientes o Utensilios
           </h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm ml-15 text-neutral-500">
             Gestión para Ingredientes del sistema.
           </p>
         </div>

@@ -8,6 +8,7 @@ import {
   UtensilsCrossed,
   Utensils,
   SquareDashedText,
+  MoveLeft
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -25,6 +26,7 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
+import { useNavigate } from "react-router-dom";
 
 type ModelFilter = "nombre" | "descripcion";
 
@@ -37,6 +39,8 @@ export default function TipoIngredientePage() {
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
+  const navigate = useNavigate();
+  
   const fields: ModalField<ModelDTO>[] = [
     {
       name: "nombre",
@@ -236,10 +240,20 @@ export default function TipoIngredientePage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
+            <button
+              type="button"
+              onClick={() => {navigate("/maestro");}}
+              className={`flex items-center mr-5 text-sm hover:text-(--texto)
+                ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
+              data-bs-toggle="tooltip"
+              title="Volver"
+             >
+              <MoveLeft size={30} />
+            </button>
             <UtensilsCrossed size={30} />
             Tipo de Ingredientes
           </h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm ml-15 text-neutral-500">
             Gestión para Ingredientes del sistema.
           </p>
         </div>
