@@ -21,7 +21,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     description:
       "Gestión completa de materias primas, insumos y productos base.",
     icon: ShoppingBasket,
-    image: "/background1.webp",
+    image: "/imgMaestro/ingredientes.png",
     route: "/ingredientes",
     badge: "IMPORTANTE",
     variant: "highlighted",
@@ -33,7 +33,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     description:
       "Clasificación jerárquica de ingredientes por naturaleza. Define categorías como proteínas, vegetales, lácteos, secos, entre otros.",
     icon: UtensilsCrossed,
-    image: "/background.png",
+    image: "/imgMaestro/tipo-ingrediente.png",
     route: "/tipo-ingredientes",
   },
   {
@@ -43,7 +43,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     description:
       "Agrupación estratégica de platos por concepto culinario. Facilita la ingeniería de menús, costeo y análisis de rentabilidad.",
     icon: UtensilsCrossed,
-    image: "/background.png",
+    image: "/imgMaestro/familia-menu.png",
     route: "/familia-menu",
   },
   {
@@ -53,19 +53,8 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     description:
       "Definición de estaciones y centros de producción. Asignación de responsables, equipos y flujos de trabajo por área operativa.",
     icon: LandPlot,
-    image: "/background.png",
+    image: "/imgMaestro/area-preparacion.png",
     route: "/area-preparacion",
-  },
-  {
-    id: "subrecetas",
-    feature: "Subrecetas",
-    title: "Subrecetas",
-    description:
-      "Construcción de preparaciones base reutilizables. Estandarización de rendimientos, costos y procedimientos técnicos anidados.",
-    icon: Copy,
-    image: "/background.png",
-    route: "/subrecetas",
-    badge: "Próximamente",
   },
   {
     id: "categoria-plato",
@@ -74,7 +63,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     description:
       "Taxonomía de platos por momento de consumo, tipo de servicio o concepto gastronómico. Entradas, principales, postres, bebidas.",
     icon: Layers2,
-    image: "/background.png",
+    image: "/imgMaestro/categoria-plato.png",
     route: "/categoria-plato",
   },
   {
@@ -84,9 +73,20 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     description:
       "Gestión de proveedores homologados, condiciones comerciales, lead times, certificaciones y trazabilidad de abastecimiento.",
     icon: Truck,
-    image: "/background.png",
+    image: "/imgMaestro/proveedores.png",
     route: "/proveedores",
   },
+  // {
+  //   id: "subrecetas",
+  //   feature: "Subrecetas",
+  //   title: "Subrecetas",
+  //   description:
+  //     "Construcción de preparaciones base reutilizables. Estandarización de rendimientos, costos y procedimientos técnicos anidados.",
+  //   icon: Copy,
+  //   image: "/imgMaestro/subrecetas.png",
+  //   route: "/subrecetas",
+  //   badge: "Próximamente",
+  // },
 ];
 
 export const MAESTRO_DASHBOARD_CONFIG = {

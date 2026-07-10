@@ -64,7 +64,13 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           label="Ventas"
           isDarkMode={isDarkMode}
         />
-        <SidebarGroup
+        <NavItem
+          to="/maestro"
+          icon={CookingPot}
+          label="Maestro de Cocina"
+          isDarkMode={isDarkMode}
+        />
+        {/* <SidebarGroup
           title="Maestro de Cocina"
           isDarkMode={isDarkMode}
           id="organizacion"
@@ -119,8 +125,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
             label="Proveedores"
             isDarkMode={isDarkMode}
           />
-        </SidebarGroup>
-
+        </SidebarGroup> */}
         <SidebarGroup
           title="Configuracion"
           isDarkMode={isDarkMode}

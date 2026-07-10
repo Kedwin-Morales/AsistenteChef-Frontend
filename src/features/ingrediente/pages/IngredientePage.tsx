@@ -12,6 +12,7 @@ import {
   Barcode,
   ShoppingBasket,
   Upload,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -34,6 +35,7 @@ import { importConfigs } from "@/shared/utils/import/config/importConfigs";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import { exportConfigs } from "@/shared/utils/export/config/exportConfigs";
 import ExportButton from "@/shared/utils/export/ui/exportButton";
+import { useNavigate } from "react-router-dom";
 
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
@@ -48,6 +50,7 @@ export default function IngredientePage() {
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   /* IMPORT */
   const [importOpen, setImportOpen] = useState(false);
@@ -326,8 +329,18 @@ export default function IngredientePage() {
   return (
     <AppLayout>
       <div className="flex justify-between mb-8">
-        <div>
+        <div>        
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
+            <button
+            type="button"
+            onClick={() => {navigate("/maestro");}}
+            className={`flex items-center mr-5 text-sm hover:text-red-600 
+              ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
+              data-bs-toggle="tooltip"
+              title="Volver"
+          >
+            <LogOut size={25} />
+      </button>
             <ShoppingBasket size={30} />
             Ingredientes o Utensilios
           </h1>
