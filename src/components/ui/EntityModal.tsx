@@ -580,354 +580,356 @@ export default function EntityModal<T extends object, D extends object = any>({
           </div>
 
           {/* DETAIL FORM */}
-          {visibleFieldsDetails && !isReadOnly && (
+          {visibleFieldsDetails && (
             <>
               <fieldset className="border rounded-xl px-3 border-(--secondary)/20">
                 <legend className="font-bold text-lg text-(--secondary)/80 px-3">Detalles</legend>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
-                  {visibleFieldsDetails.map((f) => {
-                    const value = detailForm[f.name];
-                    const colSpan = f.colSpan ?? 1;
-                    const colSpanClass = COL_SPAN_CLASS[colSpan];
-                    const hasError = detailErrors[String(f.name)];
-  
-                    /* SELECT */
-                    if (f.type === "select") {
-                      const Icon = f.icon;
-  
-                      const parentValue = f.dependsOn
-                        ? detailForm[f.dependsOn]
-                        : undefined;
-  
-                      const finalOptions =
-                        f.dependsOn && f.filterOptions
-                          ? f.filterOptions(parentValue, f.options ?? [])
-                          : f.options;
-  
-                      const isDisabled =
-                        isReadOnly || (f.dependsOn && !parentValue);
-  
-                      return (
-                        <div key={String(f.name)} className={colSpanClass}>
-                          <label className="block mb-1 font-semibold">
-                            {f.label}
-                          </label>
-  
-                          <div className="relative">
-                            {Icon && (
-                              <Icon
-                                size={18}
-                                className={`absolute left-3 top-1/2 -translate-y-1/2
-                                  ${isDarkMode ? "text-neutral-500": "text-neutral-500"}`}
+                {!isReadOnly && (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+                      {visibleFieldsDetails.map((f) => {
+                        const value = detailForm[f.name];
+                        const colSpan = f.colSpan ?? 1;
+                        const colSpanClass = COL_SPAN_CLASS[colSpan];
+                        const hasError = detailErrors[String(f.name)];
+
+                        /* SELECT */
+                        if (f.type === "select") {
+                          const Icon = f.icon;
+                        
+                          const parentValue = f.dependsOn
+                            ? detailForm[f.dependsOn]
+                            : undefined;
+                        
+                          const finalOptions =
+                            f.dependsOn && f.filterOptions
+                              ? f.filterOptions(parentValue, f.options ?? [])
+                              : f.options;
+                        
+                          const isDisabled =
+                            isReadOnly || (f.dependsOn && !parentValue);
+                        
+                          return (
+                            <div key={String(f.name)} className={colSpanClass}>
+                              <label className="block mb-1 font-semibold">
+                                {f.label}
+                              </label>
+                          
+                              <div className="relative">
+                                {Icon && (
+                                  <Icon
+                                    size={18}
+                                    className={`absolute left-3 top-1/2 -translate-y-1/2
+                                      ${isDarkMode ? "text-neutral-500": "text-neutral-500"}`}
+                                  />
+                                )}
+
+                                <select
+                                  disabled={isDisabled}
+                                  value={String(value ?? "")}
+                                  onChange={(e) =>
+                                    handleDetailChange(
+                                      f.name,
+                                      e.target.value as unknown as D[keyof D],
+                                    )
+                                  }
+                                  className={`w-full py-2 rounded-xl border appearance-none transition-all duration-300
+                                    focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                                    ${Icon ? "pl-10" : "pl-4"} pr-10
+                                    ${isDarkMode
+                                        ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                        : "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                    }
+                                    ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
+                                    ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
+                                >
+                                  <option value="">Seleccione...</option>
+                                  {finalOptions?.map((o) => (
+                                    <option key={o.value} value={o.value}>
+                                      {o.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        /* BOOLEAN */
+                        if (f.type === "boolean") {
+                          const checked = Boolean(value);
+                          
+                          return (
+                            <div key={String(f.name)} className={colSpanClass}>
+                              {/* LABEL */}
+                              <label className="block mb-1 font-semibold">
+                                {f.label}
+                              </label>
+                          
+                              {/* CONTROL */}
+                              <button
+                                type="button"
+                                disabled={isReadOnly}
+                                onClick={() =>
+                                  handleDetailChange(f.name, !checked as T[keyof T])
+                                }
+                                className={`w-full h-13 flex items-center justify-between px-4
+                                  rounded-xl border transition-all duration-300
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+                                  ${isDarkMode
+                                      ? "bg-slate-800 border-slate-700 text-gray-100"
+                                      : "bg-slate-100 border-slate-300 text-gray-900"
+                                  }
+                                  ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
+                              >
+                                {/* LEFT */}
+                                <div className="flex items-center gap-3">
+                                  <span
+                                    className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
+                                      ${checked ? "bg-emerald-500 text-white" : "bg-slate-400 text-white"}`}
+                                  >
+                                    ✓
+                                  </span>
+                                  <span className="font-medium">
+                                    {checked ? "Activo" : "Inactivo"}
+                                  </span>
+                                </div>
+                                    
+                                {/* SWITCH */}
+                                <div
+                                  className={`w-12 h-7 rounded-full relative transition-colors
+                                    ${checked ? "bg-emerald-500" : "bg-slate-400"}`}
+                                >
+                                  <span
+                                    className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full
+                                      transition-transform
+                                      ${checked ? "translate-x-5" : ""}`}
+                                  />
+                                </div>
+                              </button>
+                            </div>
+                          );
+                        }
+                    
+                      /* AUTOCOMPLETE */
+                        if (f.type === "autocomplete") {
+                          const Icon = f.icon;
+                        
+                          const parentValue = f.dependsOn
+                            ? detailForm[f.dependsOn]
+                            : undefined;
+                        
+                          const finalOptions =
+                            f.dependsOn && f.filterOptions
+                              ? f.filterOptions(parentValue, f.options ?? [])
+                              : (f.options ?? []);
+                        
+                          const isDisabled =
+                            isReadOnly || (f.dependsOn && !parentValue);
+                        
+                          return (
+                            <div key={String(f.name)} className={colSpanClass}>
+                              <AutocompleteField
+                                label={f.label}
+                                value={value as any}
+                                options={finalOptions as any}
+                                disabled={isDisabled}
+                                icon={Icon}
+                                isDarkMode={isDarkMode}
+                                onChange={(val) =>
+                                  handleDetailChange(
+                                    f.name,
+                                    val as unknown as D[keyof D],
+                                  )
+                                }
                               />
-                            )}
-  
-                            <select
-                              disabled={isDisabled}
+                            </div>
+                          );
+                        }   
+
+                        /* Para componente textarea */
+                        if (f.type === "textarea") {
+                        const Icon = f.icon;
+                      
+                        return (
+                          <div key={String(f.name)} className={colSpanClass}>
+                            <label className="block mb-1 font-semibold">
+                              {f.label}
+                            </label>
+                        
+                            <div className="relative">
+                              {Icon && (
+                                <Icon
+                                  size={18}
+                                  className={`absolute left-3 top-3
+                                    ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}
+                                />
+                              )}
+
+                              <textarea
+                                disabled={isReadOnly}
+                                value={String(value ?? "")}
+                                rows={3}
+                                onChange={(e) =>
+                                  handleDetailChange(
+                                    f.name,
+                                    e.target.value as unknown as D[keyof D],
+                                  )
+                                }
+                                className={`w-full py-2 px-4 rounded-xl border resize-none transition-all duration-300
+                                  focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                                    ${Icon ? "pl-10" : "pl-4"} pr-4
+                                    ${isDarkMode
+                                      ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                      : "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                    }
+                                    ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
+                                    ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}`}
+                              />
+                            </div>
+                          </div>
+                        );
+                        }
+                      
+                        /* DEFAULT INPUT */
+                        return (
+                          <div className={colSpanClass} key={String(f.name)}>
+                            <InputField
+                              disabled={isReadOnly}
+                              label={f.label}
+                              type={f.type ?? "text"}
                               value={String(value ?? "")}
+                              isDarkMode={isDarkMode}
+                              icon={f.icon}
                               onChange={(e) =>
                                 handleDetailChange(
                                   f.name,
                                   e.target.value as unknown as D[keyof D],
                                 )
                               }
-                              className={`w-full py-2 rounded-xl border appearance-none transition-all duration-300
-                                focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
-                                ${Icon ? "pl-10" : "pl-4"} pr-10
-                                ${isDarkMode
-                                    ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
-                                    : "bg-(--bg-form) border-(--bordes) text-(--texto)"
-                                }
-                                ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
-                                ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
-                            >
-                              <option value="">Seleccione...</option>
-                              {finalOptions?.map((o) => (
-                                <option key={o.value} value={o.value}>
-                                  {o.label}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                  /* BOOLEAN */
-                  if (f.type === "boolean") {
-                    const checked = Boolean(value);
-
-                    return (
-                      <div key={String(f.name)} className={colSpanClass}>
-                        {/* LABEL */}
-                        <label className="block mb-1 font-semibold">
-                          {f.label}
-                        </label>
-
-                        {/* CONTROL */}
-                        <button
-                          type="button"
-                          disabled={isReadOnly}
-                          onClick={() =>
-                            handleDetailChange(f.name, !checked as T[keyof T])
-                          }
-                          className={`w-full h-13 flex items-center justify-between px-4
-                            rounded-xl border transition-all duration-300
-                            focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
-                            ${isDarkMode
-                                ? "bg-slate-800 border-slate-700 text-gray-100"
-                                : "bg-slate-100 border-slate-300 text-gray-900"
-                            }
-                            ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
-                        >
-                          {/* LEFT */}
-                          <div className="flex items-center gap-3">
-                            <span
-                              className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
-                                ${checked ? "bg-emerald-500 text-white" : "bg-slate-400 text-white"}`}
-                            >
-                              ✓
-                            </span>
-                            <span className="font-medium">
-                              {checked ? "Activo" : "Inactivo"}
-                            </span>
-                          </div>
-
-                          {/* SWITCH */}
-                          <div
-                            className={`w-12 h-7 rounded-full relative transition-colors
-                              ${checked ? "bg-emerald-500" : "bg-slate-400"}`}
-                          >
-                            <span
-                              className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full
-                                transition-transform
-                                ${checked ? "translate-x-5" : ""}`}
                             />
                           </div>
-                        </button>
-                      </div>
-                    );
-                  }
-
-                  /* AUTOCOMPLETE */
-                  if (f.type === "autocomplete") {
-                    const Icon = f.icon;
-
-                    const parentValue = f.dependsOn
-                      ? detailForm[f.dependsOn]
-                      : undefined;
-
-                    const finalOptions =
-                      f.dependsOn && f.filterOptions
-                        ? f.filterOptions(parentValue, f.options ?? [])
-                        : (f.options ?? []);
-
-                    const isDisabled =
-                      isReadOnly || (f.dependsOn && !parentValue);
-
-                    return (
-                      <div key={String(f.name)} className={colSpanClass}>
-                        <AutocompleteField
-                          label={f.label}
-                          value={value as any}
-                          options={finalOptions as any}
-                          disabled={isDisabled}
-                          icon={Icon}
-                          isDarkMode={isDarkMode}
-                          onChange={(val) =>
-                            handleDetailChange(
-                              f.name,
-                              val as unknown as D[keyof D],
-                            )
-                          }
-                        />
-                      </div>
-                    );
-}
-                  
-                  /* Para componente textarea */
-                  if (f.type === "textarea") {
-                    const Icon = f.icon;
-
-                    return (
-                      <div key={String(f.name)} className={colSpanClass}>
-                        <label className="block mb-1 font-semibold">
-                          {f.label}
-                        </label>
-
-                        <div className="relative">
-                          {Icon && (
-                            <Icon
-                              size={18}
-                              className={`absolute left-3 top-3
-                                ${isDarkMode ? "text-neutral-500" : "text-neutral-500"}`}
-                            />
-                          )}
-
-                          <textarea
-                            disabled={isReadOnly}
-                            value={String(value ?? "")}
-                            rows={3}
-                            onChange={(e) =>
-                              handleDetailChange(
-                                f.name,
-                                e.target.value as unknown as D[keyof D],
-                              )
-                            }
-                            className={`w-full py-2 px-4 rounded-xl border resize-none transition-all duration-300
-                              focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
-                                ${Icon ? "pl-10" : "pl-4"} pr-4
-                                ${isDarkMode
-                                  ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
-                                  : "bg-(--bg-form) border-(--bordes) text-(--texto)"
-                                }
-                                ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}
-                                ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}`}
-                          />
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  /* DEFAULT INPUT */
-                  return (
-                    <div className={colSpanClass} key={String(f.name)}>
-                      <InputField
-                        label={f.label}
-                        type={f.type ?? "text"}
-                        value={String(value ?? "")}
-                        isDarkMode={isDarkMode}
-                        icon={f.icon}
-                        onChange={(e) =>
-                          handleDetailChange(
-                            f.name,
-                            e.target.value as unknown as D[keyof D],
-                          )
-                        }
-                      />
+                        );                      
+                      })}
                     </div>
-                  );
-                  })}
-                </div>
-                <div className="flex flex-col items-center justify-center md:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={addDetail}
-                    disabled={
-                      !Object.values(detailForm).some((v) => {
-                        if (typeof v === "string") return v.trim() !== "";
-                        return v !== undefined && v !== null;
-                      })
-                    }
-                    className={`btn-guardar m-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100`}
-                  >
-                    {editingIndex !== null ? "Actualizar" : "Agregar"}
-                  </button> 
-                </div>
-               
-                {/* DETAIL TABLE */}
+                    <div className="flex flex-col items-center justify-center md:flex-row gap-3">
+                      <button
+                        type="button"
+                        onClick={addDetail}
+                        disabled={
+                          !Object.values(detailForm).some((v) => {
+                            if (typeof v === "string") return v.trim() !== "";
+                            return v !== undefined && v !== null;
+                          })
+                        }
+                        className={`btn-guardar m-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100`}
+                      >
+                        {editingIndex !== null ? "Actualizar" : "Agregar"}
+                      </button> 
+                    </div>
+                  </>
+                )} 
+                {/* DETAIL TABLE (visible in all modes including view) */}
                 {detailColumns && details.length > 0 && (
                   <div className="w-full overflow-x-auto my-2 rounded-xl border border-(--bordes)">
-                    <table className={`w-full overflow-hidden text-sm`}
-                    >
-                    <thead
-                      className={`text-[12px] uppercase font-bold 
-                        ${isDarkMode
-                        ? "bg-neutral-600/50 text-(--texto) "
-                        : "bg-olive-400/50 text-(--texto)"
-                      }`}
-                    >
-                  <tr>
-                    {detailColumns.map((c) => (
-                      <th
-                        key={String(c.key)}
-                        className="p-3 text-left text-sm font-semibold"
+                    <table className={`w-full overflow-hidden text-sm`}>
+                      <thead
+                        className={`text-[12px] uppercase font-bold 
+                          ${isDarkMode
+                          ? "bg-neutral-600/50 text-(--texto) "
+                          : "bg-olive-400/50 text-(--texto)"
+                        }`}
                       >
-                        {c.label}
-                      </th>
-                    ))}
-                    {!isReadOnly && (
-                      <th className="p-3 text-center">Acciones</th>
-                    )}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {details.map((row, i) => (
-                    <tr
-                      key={i}
-                      className={`transition md:table-row block                 
-                        ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " 
-                        : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
-                      `}
-                    >
-                      {detailColumns.map((c) => (
-                        <td key={String(c.key)} className="p-3">
-                          {(() => {
-                            const field = detailFields?.find(
-                              (f) => f.name === c.key,
-                            );
-
-                            if (field?.type === "select") {
-                              const option = field.options?.find(
-                                (o) => o.value === row[c.key],
-                              );
-                              return option?.label ?? "-";
-                            }
-
-                            if (field?.type === "autocomplete") {
-                              const option = field.options?.find(
-                                (o) => o.value === row[c.key],
-                              );
-                              return option?.label ?? `${option?.value}`;
-                            }
-
-                            if (field?.type === "boolean") {
-                              return row[c.key] ? "Sí" : "No";
-                            }
-
-                            return String(row[c.key] ?? "");
-                          })()}
-                        </td>
-                      ))}
-
-                      {!isReadOnly && (
-                        <td className="p-3 flex gap-2 justify-center">
-                          <button
-                            type="button"
-                            onClick={() => editDetail(i)}
-                            className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
-                            ${isDarkMode
-                              ? "hover:bg-blue-500/20 text-blue-400"
-                              : "hover:bg-blue-100 text-blue-600"
-                            }`}
+                        <tr>
+                          {detailColumns.map((c) => (
+                            <th
+                              key={String(c.key)}
+                              className="p-3 text-left text-sm font-semibold"
+                            >
+                              {c.label}
+                            </th>
+                          ))}
+                          {!isReadOnly && (
+                            <th className="p-3 text-center">Acciones</th>
+                          )}
+                        </tr>
+                      </thead>
+                        
+                      <tbody>
+                        {details.map((row, i) => (
+                          <tr
+                            key={i}
+                            className={`transition md:table-row block                 
+                              ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " 
+                              : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
+                            `}
                           >
-                            <Pencil size={16} />
-                          </button>
-
-                          <button
-                            onClick={() => removeDetail(i)}
-                            type="button"
-                            className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
-                            ${isDarkMode
-                              ? "hover:bg-red-500/20 text-red-400"
-                              : "hover:bg-red-100 text-red-600"
-                            }`}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-                  </table>
-                </div>
+                            {detailColumns.map((c) => (
+                              <td key={String(c.key)} className="p-3">
+                                {(() => {
+                                  const field = detailFields?.find(
+                                    (f) => f.name === c.key,
+                                  );
+                                
+                                  if (field?.type === "select") {
+                                    const option = field.options?.find(
+                                      (o) => o.value === row[c.key],
+                                    );
+                                    return option?.label ?? "-";
+                                  }
+                                
+                                  if (field?.type === "autocomplete") {
+                                    const option = field.options?.find(
+                                      (o) => o.value === row[c.key],
+                                    );
+                                    return option?.label ?? `${option?.value}`;
+                                  }
+                                
+                                  if (field?.type === "boolean") {
+                                    return row[c.key] ? "Sí" : "No";
+                                  }
+                                
+                                  return String(row[c.key] ?? "");
+                                })()}
+                              </td>
+                            ))}
+      
+                            {!isReadOnly && (
+                              <td className="p-3 flex gap-2 justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => editDetail(i)}
+                                  className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                                  ${isDarkMode
+                                    ? "hover:bg-blue-500/20 text-blue-400"
+                                    : "hover:bg-blue-100 text-blue-600"
+                                  }`}
+                                >
+                                  <Pencil size={16} />
+                                </button>
+                                
+                                <button
+                                  onClick={() => removeDetail(i)}
+                                  type="button"
+                                  className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
+                                  ${isDarkMode
+                                    ? "hover:bg-red-500/20 text-red-400"
+                                    : "hover:bg-red-100 text-red-600"
+                                  }`}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </fieldset>        
             </>
           )}
-
           {/* ACTIONS */}
           <div className="flex flex-col items-center justify-center md:flex-row gap-3">
             <button

@@ -16,7 +16,7 @@ export default function LoadingScreen({
       className={`${
         fullScreen ? "fixed inset-0 z-50" : "w-full py-16"
       } flex items-center justify-center transition-colors duration-500 ${
-        isDarkMode ? "bg-slate-950" : "bg-white"
+        isDarkMode ? "bg-(--color-bg)" : "bg-(--color-bg)"
       }`}
     >
       <div className="flex flex-col items-center gap-8">
@@ -24,8 +24,11 @@ export default function LoadingScreen({
         <div className="relative w-24 h-24">
           {/* Outer ring */}
           <motion.div
-            className="absolute inset-0 rounded-full border-2 border-amber-500/30"
-            animate={{ rotate: 360 }}
+            className="absolute inset-0 rounded-full border-2 border-(--secondary)/20"
+            animate={{ 
+              scale: [1.5, 1, 1.5],
+              opacity: [0.8, 1, 1],
+            }}
             transition={{
               repeat: Infinity,
               duration: 6,
@@ -35,8 +38,11 @@ export default function LoadingScreen({
 
           {/* Middle ring */}
           <motion.div
-            className="absolute inset-3 rounded-full border-2 border-amber-400/40"
-            animate={{ rotate: -360 }}
+            className="absolute inset-3 rounded-full border-2 border-(--secondary)/20"
+            animate={{ 
+              scale: [1.2, 1.2, 1.2],
+              opacity: [0.8, 1, 0.8], 
+            }}
             transition={{
               repeat: Infinity,
               duration: 4,
@@ -46,7 +52,7 @@ export default function LoadingScreen({
 
           {/* Inner pulse */}
           <motion.div
-            className="absolute inset-6 rounded-full bg-linear-to-r from-amber-600 to-orange-400"
+            className="absolute inset-6 rounded-full bg-gradient"
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.8, 1, 0.8],
@@ -62,7 +68,7 @@ export default function LoadingScreen({
         {/* TEXT */}
         <motion.p
           className={`text-sm tracking-widest uppercase ${
-            isDarkMode ? "text-slate-400" : "text-slate-500"
+            isDarkMode ? "text-neutral-400" : "text-neutral-500"
           }`}
           animate={{ opacity: [0.4, 1, 0.4] }}
           transition={{
