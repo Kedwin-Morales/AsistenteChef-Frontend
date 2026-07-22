@@ -7,7 +7,6 @@
   --color-accent-border: rgba(170, 59, 255, 0.5);
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-
   --breakpoint-xs: 480px;
 }
 

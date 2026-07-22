@@ -12,10 +12,8 @@ import {
   Barcode,
   ShoppingBasket,
   Upload,
-  LogOut,
-  ArrowBigLeft,
-  Move3D,
   MoveLeft,
+  CircleCheckBig
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -26,7 +24,7 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 import { useIngrediente } from "../hooks/useIngrediente";
-import { crear, editar, anular } from "../services/ingrediente.service";
+import { crear, editar } from "../services/ingrediente.service";
 import type { ModelDTO } from "../types/ingrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -39,7 +37,6 @@ import { useAuthStore } from "@/features/auth/store/auth.store";
 import { exportConfigs } from "@/shared/utils/export/config/exportConfigs";
 import ExportButton from "@/shared/utils/export/ui/exportButton";
 import { useNavigate } from "react-router-dom";
-
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 
@@ -193,8 +190,8 @@ export default function IngredientePage() {
 
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
-      title: "Anular",
-      text: `¿Desea anular: ${item.nombre}?`,
+      title: `${item.activo ? 'Anular' : 'Activar'}`,
+      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.nombre}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -203,19 +200,20 @@ export default function IngredientePage() {
 
     if (result.isConfirmed) {
       try {
-        await anular(item.ingredienteId, {
-          ingredienteId: item.ingredienteId,
-          nombre: item.nombre,
-          descripcion: item.descripcion ?? "",
-          activo: item.activo ?? true,
-          costo: item.costo ?? 0,
-          codigo: item.codigo ?? "",
-          tipoIngredienteId: (item as any).tipoIngredienteId,
-          unidadMedidaId: (item as any).unidadMedidaId,
-        });
+        item.activo = !item.activo;
+        await editar(item.ingredienteId, {
+            ingredienteId: item.ingredienteId,
+            nombre: item.nombre,
+            descripcion: item.descripcion ?? "",
+            activo: item.activo,
+            costo: item.costo ?? 0,
+            codigo: item.codigo ?? "",
+            tipoIngredienteId: (item as any).tipoIngredienteId,
+            unidadMedidaId: (item as any).unidadMedidaId,
+        });               
         sileo.success({
           title: "¡Operación exitosa!",
-          description: "El registro se anuló correctamente.",
+          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -274,7 +272,7 @@ export default function IngredientePage() {
       header: "Estado",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-bold ${row.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+          className={`px-2 py-1 rounded-full text-xs font-bold ${row.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-500"}`}
         >
           {row.activo ? "Activo" : "Inactivo"}
         </span>
@@ -296,22 +294,27 @@ export default function IngredientePage() {
           >
             <Eye size={16} />
           </button>
+          {row.activo ? 
+            <button
+              onClick={() => {
+                setSelected(row);
+                setModalMode("edit");
+                setModalOpen(true);
+              }}
+              className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+            >
+              <Pencil size={16} />
+            </button> : <></> 
+          }          
           <button
-            onClick={() => {
-              setSelected(row);
-              setModalMode("edit");
-              setModalOpen(true);
-            }}
-            className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+            onClick={() =>              
+              confirmarDelete(row)}
+            className={`p-2 ${row.activo ? 'text-red-500 hover:bg-red-100' : 'text-emerald-600 hover:bg-emerald-100'} rounded-lg`}
+            data-bs-toggle="tooltip"
+            title={`${row.activo ? 'Anular' : 'Activar'}`}
           >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => confirmarDelete(row)}
-            className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-          >
-            <Ban size={16} />
-          </button>
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}            
+          </button>           
         </div>
       ),
     },

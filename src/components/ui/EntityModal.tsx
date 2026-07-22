@@ -442,7 +442,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                       }
                       className={`w-full flex items-center justify-between px-4 py-3
                         rounded-xl border transition-all duration-300
-                        focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500
+                        focus:outline-none focus:ring-2 focus:ring-(--secondary)/50 focus:border-(--secondary)
                         ${isDarkMode
                           ? "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
                           : "bg-(--bg-form) border-neutral-700/30 text-(--texto)"
@@ -452,7 +452,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                       <div className="flex items-center gap-3">
                         <span
                           className={`w-6 h-6 rounded-full flex items-center justify-center text-sm
-                            ${checked ? "bg-emerald-500 text-white" : "bg-neutral-400 text-white"}`}
+                            ${checked ? "bg-emerald-500 text-white" : "bg-red-500 text-white"}`}
                         >
                           ✓
                         </span>
@@ -464,7 +464,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                       {/* SWITCH */}
                       <div
                         className={`w-12 h-7 rounded-full relative transition-colors
-                          ${checked ? "bg-emerald-500" : "bg-neutral-400"}`}
+                          ${checked ? "bg-emerald-500" : "bg-red-500"}`}
                       >
                         <span
                           className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full

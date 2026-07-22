@@ -31,7 +31,7 @@ export default function AppLayout({ children }: Props) {
 
       {/* SIDEBAR */}
       <div
-        className={`fixed md:relative inset-y-0 left-0 w-full md:w-72 z-50
+        className={`fixed md:sticky md:top-0 inset-y-0 left-0 w-full md:w-72 z-50 md:h-screen
           transform transition-transform duration-300    
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}    
           md:translate-x-0`}

@@ -8,7 +8,8 @@ import {
   SquareDashedText,
   Layers2,
   LayersPlus,
-  MoveLeft
+  MoveLeft,
+  CircleCheckBig,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -121,8 +122,8 @@ export default function CategoriaPlatoPage() {
 
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
-      title: "Anular",
-      text: `¿Desea anular: ${item.nombre}?`,
+      title: `${item.activo ? 'Anular' : 'Activar'}`,
+      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.nombre}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -131,15 +132,16 @@ export default function CategoriaPlatoPage() {
 
     if (result.isConfirmed) {
       try {
-        await anular(item.categoriaPlatoId, {
+        item.activo = !item.activo;
+        await editar(item.categoriaPlatoId, {
           categoriaPlatoId: item.categoriaPlatoId,
           nombre: item.nombre,
           descripcion: item.descripcion ?? "",
           activo: item.activo ?? true,
-        });
+        });               
         sileo.success({
           title: "¡Operación exitosa!",
-          description: "El registro se anuló correctamente.",
+          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -180,7 +182,7 @@ export default function CategoriaPlatoPage() {
       header: "Estado",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-bold ${row.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+          className={`px-2 py-1 rounded-full text-xs font-bold ${row.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-500"}`}
         >
           {row.activo ? "Activo" : "Inactivo"}
         </span>
@@ -202,21 +204,26 @@ export default function CategoriaPlatoPage() {
           >
             <Eye size={16} />
           </button>
+          {row.activo ? 
+            <button
+              onClick={() => {
+                setSelected(row);
+                setModalMode("edit");
+                setModalOpen(true);
+              }}
+              className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+            >
+              <Pencil size={16} />
+            </button> : <></> 
+          }          
           <button
-            onClick={() => {
-              setSelected(row);
-              setModalMode("edit");
-              setModalOpen(true);
-            }}
-            className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+            onClick={() =>              
+              confirmarDelete(row)}
+            className={`p-2 ${row.activo ? 'text-red-500 hover:bg-red-100' : 'text-emerald-600 hover:bg-emerald-100'} rounded-lg`}
+            data-bs-toggle="tooltip"
+            title={`${row.activo ? 'Anular' : 'Activar'}`}
           >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => confirmarDelete(row)}
-            className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-          >
-            <Ban size={16} />
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}            
           </button>
         </div>
       ),
