@@ -2,14 +2,12 @@ import {
   PlusCircle,
   Eye,
   Pencil,
-  Hash,
   WholeWord,
   Ban,
   SquareDashedText,
   LandPlot,
-  UtensilsCrossed,
   MoveLeft,
-  CircleCheckBig
+  CircleCheckBig,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -20,32 +18,27 @@ import EntityModal, {
   type ModalMode,
   type ModalDetailField,
 } from "@/components/ui/EntityModal";
-import { useAreaPreparacion } from "../hooks/useAreaPreparacion";
-import { crear, editar } from "../services/areaPreparacion.service";
-import type { ModelDETCreate, ModelDTO } from "../types/areaPreparacion.types";
+import { useReceta } from "../hooks/useReceta";
+import { crear, editar } from "../services/receta.service";
+import type { ModelDETCreate, ModelDTO } from "../types/receta.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
-import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
-import { useNavigate } from "react-router-dom";
+import { IoReceiptOutline } from "react-icons/io5";
+
 
 type ModelFilter = "nombre" | "descripcion";
 
 export default function AreaPreparacionPage() {
-  const { areas, loading, refetch } = useAreaPreparacion();
-  const { ingredientes } = useIngrediente();
+  const { recetas, loading, refetch } = useReceta();
   const { isDarkMode } = useLoginUI();
-  const navigate = useNavigate();
 
   /* FILTER */
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
   const [showActivo, setShowActivo] = useState(false);
-  const filterIngredientes = ingredientes.filter(
-    (t) => t.activo && t.tipoIngrediente?.nombre.toUpperCase() === "UTENSILIOS",
-  );
 
   /* MODAL */
   const [modalOpen, setModalOpen] = useState(false);
@@ -82,34 +75,6 @@ export default function AreaPreparacionPage() {
       : []),
   ];
 
-  const detalleFields: ModalDetailField<ModelDETCreate>[] = [
-    {
-      name: "ingredienteId",
-      label: "Utensilio: ",
-      icon: UtensilsCrossed,
-      colSpan: 4,
-      required: true,
-      type: "autocomplete",
-      options: filterIngredientes.map((i) => ({
-        value: i.ingredienteId,
-        label: i.nombre ?? "",
-      })),
-    },
-    {
-      name: "cantidad",
-      label: "Cantidad: ",
-      type: "number",
-      colSpan: 2,
-      icon: Hash,
-      required: true,
-    },
-  ];
-
-  const areaDetailColumns = [
-    { key: "ingredienteId", label: "Utensilios: " },
-    { key: "cantidad", label: "Cantidad: " },
-  ];
-
   /* CREATE / EDIT */
   const handleSubmit = async (data: Partial<ModelDTO>) => {
     if (!data.nombre) {
@@ -135,19 +100,19 @@ export default function AreaPreparacionPage() {
         });
       }
 
-      if (modalMode === "edit" && selected?.areaPreparacionId) {
+      if (modalMode === "edit" && selected?.recetaId) {
         const dtoUpdate = {
-          areaPreparacionId: selected.areaPreparacionId,
+          recetaId: selected.recetaId,
           nombre: data.nombre,
           descripcion: data.descripcion,
           detalle: data.detalle,
         };
 
-        await editar(selected.areaPreparacionId, dtoUpdate);
-        sileo.success({
-          title: "¡Operación exitosa!",
-          description: "Cambios guardados con éxito.",
-        });
+        // await editar(selected.recetaId, dtoUpdate);
+        // sileo.success({
+        //   title: "¡Operación exitosa!",
+        //   description: "Cambios guardados con éxito.",
+        // });
       }
 
       setModalOpen(false);
@@ -167,8 +132,8 @@ export default function AreaPreparacionPage() {
   /* Anular */
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
-      title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.nombre}?`,
+      title: `${item.activo ? "Anular" : "Activar"}`,
+      text: `¿Desea ${item.activo ? "Anular" : "Activar"}: ${item.nombre}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -177,15 +142,15 @@ export default function AreaPreparacionPage() {
     if (result.isConfirmed) {
       try {
         item.activo = !item.activo;
-        await editar(item.areaPreparacionId, {
-          areaPreparacionId: item.areaPreparacionId,
+        await editar(item.recetaId, {
+          recetaId: item.recetaId,
           nombre: item.nombre,
           descripcion: item.descripcion ?? "",
           activo: item.activo,
-        });             
+        });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
+          description: `El registro se ${item.activo ? "anuló" : "activo"} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -203,7 +168,7 @@ export default function AreaPreparacionPage() {
   /* FILTER DATA */
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = areas
+  const filtered = recetas
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.descripcion}`
@@ -251,7 +216,7 @@ export default function AreaPreparacionPage() {
           >
             <Eye size={16} />
           </button>
-          {row.activo ? 
+          {row.activo ? (
             <button
               onClick={() => {
                 setSelected(row);
@@ -261,16 +226,17 @@ export default function AreaPreparacionPage() {
               className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
             >
               <Pencil size={16} />
-            </button> : <></> 
-          }          
+            </button>
+          ) : (
+            <></>
+          )}
           <button
-            onClick={() =>              
-              confirmarDelete(row)}
-            className={`p-2 ${row.activo ? 'text-red-500 hover:bg-red-100' : 'text-emerald-600 hover:bg-emerald-100'} rounded-lg`}
+            onClick={() => confirmarDelete(row)}
+            className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
             data-bs-toggle="tooltip"
-            title={`${row.activo ? 'Anular' : 'Activar'}`}
+            title={`${row.activo ? "Anular" : "Activar"}`}
           >
-            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}            
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
           </button>
         </div>
       ),
@@ -290,30 +256,16 @@ export default function AreaPreparacionPage() {
       {/* HEADER */}
       <div className="flex justify-between mb-8">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
-            <button
-              type="button"
-              onClick={() => {navigate("/maestro");}}
-              className={`flex items-center mr-5 text-sm hover:text-(--texto)
-                ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
-              data-bs-toggle="tooltip"
-              title="Volver"
-             >
-              <MoveLeft size={30} />
-            </button>
-            <LandPlot size={30} />
-            Áreas de Preparación
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary) mb-2">
+            <IoReceiptOutline size={30} />
+            Recetas
           </h1>
-          <p className="text-sm ml-15 text-neutral-500">
-            Gestión para las Áreas de Preparación del sistema
+          <p className="text-sm text-neutral-500">
+            Gestión para las Recetas del sistema
           </p>
         </div>
         <button
-          onClick={() => {
-            setSelected(null);
-            setModalMode("create");
-            setModalOpen(true);
-          }}
+          onClick={() => {}}
           className="bg-gradient btn-gradient shadow-xl-secondary"
         >
           <PlusCircle size={18} /> Nuevo
@@ -367,36 +319,11 @@ export default function AreaPreparacionPage() {
       <DataTable<ModelDTO>
         data={filtered}
         columns={columns}
-        rowKey={(row) => row?.areaPreparacionId}
+        rowKey={(row) => row?.recetaId}
         emptyMessage="No se encontraron resultados."
         isDarkMode={isDarkMode}
       />
 
-      {/* MODAL */}
-      <EntityModal<ModelDTO>
-        open={modalOpen}
-        key={`${modalMode}-${selected?.areaPreparacionId ?? "new"}`}
-        title={
-          modalMode === "create"
-            ? "Crear"
-            : modalMode === "edit"
-              ? "Editar"
-              : "Detalles"
-        }
-        headerIcon={LandPlot}
-        mode={modalMode}
-        data={selected}
-        fields={fields}
-        isDarkMode={isDarkMode}
-        onClose={() => {
-          setModalOpen(false);
-          setSelected(null);
-        }}
-        onSubmit={handleSubmit}
-        detailKey="detalle"
-        detailFields={detalleFields}
-        detailColumns={areaDetailColumns}
-      />
     </AppLayout>
   );
 }

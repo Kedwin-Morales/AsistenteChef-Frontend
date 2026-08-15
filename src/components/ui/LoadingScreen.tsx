@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ThinkingOrb } from "thinking-orbs";
 
 interface LoadingScreenProps {
   message?: string;
@@ -19,58 +20,30 @@ export default function LoadingScreen({
         isDarkMode ? "bg-(--color-bg)" : "bg-(--color-bg)"
       }`}
     >
-      <div className="flex flex-col items-center gap-8">
-        {/* ORBITAL ANIMATION */}
-        <div className="relative w-24 h-24">
-          {/* Outer ring */}
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-(--secondary)/20"
-            animate={{ 
-              scale: [1.5, 1, 1.5],
-              opacity: [0.8, 1, 1],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 6,
-              ease: "linear",
-            }}
-          />
-
-          {/* Middle ring */}
-          <motion.div
-            className="absolute inset-3 rounded-full border-2 border-(--secondary)/20"
-            animate={{ 
-              scale: [1.2, 1.2, 1.2],
-              opacity: [0.8, 1, 0.8], 
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 4,
-              ease: "linear",
-            }}
-          />
-
-          {/* Inner pulse */}
-          <motion.div
-            className="absolute inset-6 rounded-full bg-gradient"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.8, 1, 0.8],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 1.8,
-              ease: "easeInOut",
-            }}
-          />
-        </div>
-
+      <motion.div
+      // --- Animación de aparición (Framer Motion) ---
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 1.5, 
+        ease: "easeInOut",
+        delay: 0.2
+      }}      
+      // --- Aplicamos la clase de movimiento de fondo continua (CSS) ---
+      className="p-5 rounded-full xl shadow-xl-secondary flex flex-col 
+        items-center justify-center animate-gradient-move"
+    >      
+      <div
+        className={`flex items-center gap-8`}
+      >
+        {/* ANIMATION */}
+        <ThinkingOrb state="solving" size={64} speed={0.5} />
         {/* TEXT */}
         <motion.p
           className={`text-sm tracking-widest uppercase ${
-            isDarkMode ? "text-neutral-400" : "text-neutral-500"
+            isDarkMode ? "text-neutral-300" : "text-neutral-600"
           }`}
-          animate={{ opacity: [0.4, 1, 0.4] }}
+          animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{
             repeat: Infinity,
             duration: 2,
@@ -78,7 +51,9 @@ export default function LoadingScreen({
         >
           {message}
         </motion.p>
+        <ThinkingOrb state="shaping" size={64} speed={1.6} />
       </div>
+    </motion.div>
     </div>
   );
 }

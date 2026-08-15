@@ -1,18 +1,10 @@
 import {
   LogOut,
   ChefHat,
-  ShoppingCart,
   UserCog,
   Shield,
   HomeIcon,
   CookingPot,
-  LandPlot,
-  Layers2,
-  NotebookPen,
-  ShoppingBasket,
-  UtensilsCrossed,
-  Truck,
-  RulerDimensionLine,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -20,6 +12,7 @@ import { SidebarGroup } from "./SidebarGroup";
 // import { useState } from "react";
 import { useSidebarStore } from "@/stores//sidebar.store";
 import { X } from "lucide-react";
+import { IoReceiptOutline } from "react-icons/io5";
 
 interface Props {
   isDarkMode: boolean;
@@ -59,9 +52,9 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           isDarkMode={isDarkMode}
         />
         <NavItem
-          to="/ventas"
-          icon={ShoppingCart}
-          label="Ventas"
+          to="/recetas"
+          icon={IoReceiptOutline}
+          label="Recetas"
           isDarkMode={isDarkMode}
         />
         <NavItem

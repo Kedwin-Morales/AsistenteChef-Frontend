@@ -429,9 +429,9 @@ export default function IngredientePage() {
           <ExportButton
             isDarkMode={isDarkMode}
             config={exportConfigs.IngredientesFormat}
-            data={filtered}
+            data={[]}
             onSuccess={refetch}
-            format={false}
+            format={true}
           /> 
         </div>
       </div>

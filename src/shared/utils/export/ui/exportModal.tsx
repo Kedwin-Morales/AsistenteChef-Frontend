@@ -3,8 +3,6 @@ import {
   Download,
   FileSpreadsheet,
   X,
-  Check,
-  ChevronDown,
   CircleX,
 } from "lucide-react";
 import type { ExportConfig, ExportOptions } from "../types/export.types";

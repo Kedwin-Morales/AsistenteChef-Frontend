@@ -102,3 +102,47 @@ body {
 .btn-guardar{
   @apply px-4 h-10 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-500/80 transform active:scale-[0.98] transition-all duration-200;
 }
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 2. Creamos una utilidad de Tailwind personalizada para aplicar la animación */
+@layer utilities {
+  .animate-gradient-move {
+    /* Un gradiente que ocupa 4 veces el ancho del contenedor */
+    background: linear-gradient(
+      270deg,
+      color-mix(in srgb, var(--primary) 70%, transparent),  
+      color-mix(in srgb, var(--secondary) 60%, transparent),
+      color-mix(in srgb, var(--color-bg) 50%, transparent),
+      color-mix(in srgb, var(--secondary) 60%, transparent),
+      color-mix(in srgb, var(--primary) 70%, transparent) 
+    );
+    background-size: 400% 400%; /* Clave: el fondo es mucho más grande que el div */
+    /* Aplicamos la animación definida arriba */
+    animation: moveBackground 10s ease infinite;
+  }
+  
+  /* Una versión para modo oscuro si lo necesitas */
+  .dark .animate-gradient-move {
+      background: linear-gradient(
+        270deg,
+        color-mix(in srgb, var(--primary) 70%, transparent),  
+        color-mix(in srgb, var(--secondary) 70%, transparent),
+        color-mix(in srgb, var(--color-bg) 70%, transparent),
+        color-mix(in srgb, var(--secondary) 70%, transparent),
+        color-mix(in srgb, var(--primary) 70%, transparent)
+      );
+      background-size: 400% 400%;
+      animation: moveBackground 10s ease infinite;
+  }
+}

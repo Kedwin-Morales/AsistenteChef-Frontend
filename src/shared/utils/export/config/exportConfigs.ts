@@ -28,7 +28,7 @@ export const exportConfigs: Record<string, ExportConfig> = {
   },
   IngredientesFormat: {
     entityType: "Ingredientes",
-    title: "Exportar Formato para Ingredientes",
+    title: "Formato para Ingredientes",
     fileName: "FormatoIngredientes",
     columns: [
         { header: "Nombre", field: "nombre" },
