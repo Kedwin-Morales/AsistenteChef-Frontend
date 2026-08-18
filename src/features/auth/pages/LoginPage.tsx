@@ -19,8 +19,8 @@ export default function LoginPage() {
       isDarkMode={isDarkMode}
       toggleDarkMode={toggleDarkMode}
     >
-      <div className="w-full max-w-md h-auto rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
-        <div className="w-full flex flex-col justify-center ">
+      <div className="w-full max-w-md h-auto rounded-3xl border-b-5 border-(--bordes) flex flex-col md:flex-row overflow-hidden shadow-xl-secondary">
+        <div className="w-full flex flex-col justify-center">
           <LoginForm
             isDarkMode={isDarkMode}
           />

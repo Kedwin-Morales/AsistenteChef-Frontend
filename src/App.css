@@ -28,3 +28,13 @@ select option {
 select option:hover {
   color: var(--secondary);
 }
+
+/* 1. CAMBIAR EL ICONO Y ALINEARLO A LA DERECHA */
+select::picker-icon {
+  color: var(--secondary);
+}
+
+/* 2. MANIPULAR EL ICONO DE SELECCIÓN (Subrayado en azul) */
+option::checkmark {
+  color: var(--secondary); /* Cambia esto por tu color o variable deseada */
+}

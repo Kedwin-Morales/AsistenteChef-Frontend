@@ -53,7 +53,7 @@ export default function MaestroPage() {
           role="list"
           aria-label="Módulos del Maestro de Cocina"
         >
-          {MAESTRO_MODULES.map((module) => (
+            {MAESTRO_MODULES.map((module) => (
             <FeatureCard
               key={module.id}
               title={module.title}
@@ -64,9 +64,8 @@ export default function MaestroPage() {
               badge={module.badge}
               variant={module.variant}
             />
-          ))}
+          ))}          
         </div>
-
         <section className="mt-16" aria-labelledby="footer-info">
           <h2 id="footer-info" className="sr-only">
             Información adicional

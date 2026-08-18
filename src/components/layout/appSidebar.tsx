@@ -13,6 +13,7 @@ import { SidebarGroup } from "./SidebarGroup";
 import { useSidebarStore } from "@/stores//sidebar.store";
 import { X } from "lucide-react";
 import { IoReceiptOutline } from "react-icons/io5";
+import { FaReceipt } from "react-icons/fa";
 
 interface Props {
   isDarkMode: boolean;
@@ -55,6 +56,12 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           to="/recetas"
           icon={IoReceiptOutline}
           label="Recetas"
+          isDarkMode={isDarkMode}
+        />
+        <NavItem
+          to="/sub-recetas"
+          icon={FaReceipt}
+          label="SubRecetas"
           isDarkMode={isDarkMode}
         />
         <NavItem

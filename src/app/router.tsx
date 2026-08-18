@@ -13,6 +13,8 @@ import CategoriaPlatoPage from "@/features/categoriaPlato/pages/CategoriaPlatoPa
 import AreaPreparacionPage from "@/features/areaPreparacion/pages/AreaPreparacionPage";
 import MaestroPage from "@/features/maestro/page/MaestroPage";
 import RecetaPage from "@/features/receta/pages/RecetasPage"
+import RecetaNuevaPage from "@/features/receta/pages/RecetaNuevaPage"
+import SubRecetaPage from "@/features/subReceta/pages/SubRecetasPage"
 
 export default function AppRouter() {
   return (
@@ -32,6 +34,10 @@ export default function AppRouter() {
           <Route path="/categoria-plato" element={<CategoriaPlatoPage />} />
           <Route path="/area-preparacion" element={<AreaPreparacionPage />} />
           <Route path="/recetas" element={<RecetaPage />} />
+          <Route path="/recetas/nueva" element={<RecetaNuevaPage />} />
+          <Route path="/recetas/editar/:id" element={<RecetaNuevaPage />} />
+          <Route path="/recetas/ver/:id" element={<RecetaNuevaPage />} />
+          <Route path="/sub-recetas" element={<SubRecetaPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

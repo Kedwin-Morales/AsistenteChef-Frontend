@@ -10,21 +10,21 @@ import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
-import { useReceta } from "../hooks/useReceta";
-import { editar } from "../services/receta.service";
-import type { ModelDTO } from "../types/receta.types";
+import { useSubReceta } from "../hooks/useSubReceta";
+import { editar } from "../services/subReceta.service";
+import type { ModelSubDTO } from "../types/subreceta.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
-import { IoReceiptOutline } from "react-icons/io5";
+import { FaReceipt } from "react-icons/fa";
 
 
 type ModelFilter = "nombre" | "descripcion";
 
 export default function AreaPreparacionPage() {
-  const { recetas, loading, refetch } = useReceta();
+  const { subRecetas, loading, refetch } = useSubReceta();
   const { isDarkMode } = useLoginUI();
   const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ export default function AreaPreparacionPage() {
   const [showActivo, setShowActivo] = useState(false);
 
   /* Anular */
-  const confirmarDelete = async (item: ModelDTO) => {
+  const confirmarDelete = async (item: ModelSubDTO) => {
     const result = await confirm({
       title: `${item.activo ? "Anular" : "Activar"}`,
       text: `¿Desea ${item.activo ? "Anular" : "Activar"}: ${item.nombre}?`,
@@ -46,8 +46,8 @@ export default function AreaPreparacionPage() {
     if (result.isConfirmed) {
       try {
         item.activo = !item.activo;
-        await editar(item.recetaId, {
-          recetaId: item.recetaId,
+        await editar(item.subRecetaId, {
+          subRecetaId: item.subRecetaId,
           nombre: item.nombre,
           descripcion: item.descripcion ?? "",
           porciones: item.porciones,
@@ -78,9 +78,9 @@ export default function AreaPreparacionPage() {
   };
 
   /* FILTER DATA */
-  const esActive = (a: ModelDTO) => a.activo === false;
+  const esActive = (a: ModelSubDTO) => a.activo === false;
 
-  const filtered = recetas
+  const filtered = subRecetas
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.descripcion}`
@@ -89,7 +89,7 @@ export default function AreaPreparacionPage() {
     );
 
   /* TABLE */
-  const columns: TableColumn<ModelDTO>[] = [
+  const columns: TableColumn<ModelSubDTO>[] = [
     {
       key: "nombre",
       header: "Nombre",
@@ -119,14 +119,14 @@ export default function AreaPreparacionPage() {
         render: (row) => (
           <div className="flex justify-center gap-2">
             <button
-              onClick={() => navigate(`/recetas/ver/${row.recetaId}`)}
+              onClick={() => navigate(`/recetas/ver/${row.subRecetaId}`)}
               className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
             >
               <Eye size={16} />
             </button>
             {row.activo ? (
               <button
-                onClick={() => navigate(`/recetas/editar/${row.recetaId}`)}
+                onClick={() => navigate(`/recetas/editar/${row.subRecetaId}`)}
                 className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
               >
                 <Pencil size={16} />
@@ -161,11 +161,11 @@ export default function AreaPreparacionPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary) mb-2">
-            <IoReceiptOutline size={30} />
-            Recetas
+            <FaReceipt size={30} />
+            Sub-Recetas
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión para las Recetas del sistema
+            Gestión para las Sub-Recetas del sistema
           </p>
         </div>
         <button
@@ -220,10 +220,10 @@ export default function AreaPreparacionPage() {
         </div>
       </div>
 
-      <DataTable<ModelDTO>
+      <DataTable<ModelSubDTO>
         data={filtered}
         columns={columns}
-        rowKey={(row) => row?.recetaId}
+        rowKey={(row) => row?.subRecetaId}
         emptyMessage="No se encontraron resultados."
         isDarkMode={isDarkMode}
       />

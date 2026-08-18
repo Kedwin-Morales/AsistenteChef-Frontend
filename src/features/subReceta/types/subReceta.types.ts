@@ -1,5 +1,5 @@
-export interface ModelDTO {
-  recetaId: string;
+export interface ModelSubDTO {
+  subRecetaId: string;
   nombre: string;
   descripcion: string,
   porciones: string;
@@ -20,40 +20,42 @@ export interface ModelDTO {
     detalle: AreaPreparacionDET[];
     activo: boolean;
   } | null;
-  detalle?: ModelDET[];
+  detalle?: ModelSubDET[];
   detPreparacion?: DetPreparacion[];
 }
 
-export interface ModelDET {
-    recetaDetId: string;
-    recetaId?: string;
+export interface ModelSubDET {
+    subRecetaDetId: string;
+    subRecetaId?: string;
     cantidad?: number;
     medida?: string;
     ingredienteId?: string;
+    recetaId?: string;
 }
 
 export interface DetPreparacion {
-    preparacionDetId: string;
-    recetaId?: string;
+    subPreparacionDetId: string;
+    subRecetaId?: string;
     nroPaso?: number;
     descripcion?: string;
 }
 
 //Section 1
-export interface CreateDTO {
+export interface CreateSubDTO {
   nombre?: string;
   descripcion?: string;
   porciones?: number;
   rendimiento?: string;
   familiaMenuId?: string;
   areaPreparacionId?: string;
-  detalle?: ModelDETCreate[];
+  detalle?: ModelSubDETCreate[];
   detPreparacion?: AreaPreparacionDETCreate[];
 }
 
 //Section 2
-export interface ModelDETCreate {
+export interface ModelSubDETCreate {
     ingredienteId?: string;
+    recetaId?: string;
     cantidad?: number;
     medida?: string;
 }

@@ -53,8 +53,7 @@ export default function LoginForm({ isDarkMode }: Props) {
 
   return (
     <div
-      className="bg-(--bg-form) backdrop-blur-xl w-full rounded-[2 rem] shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_40px_rgb(0,0,0,0.3)] border-none
-      p-8 sm:p-10"
+      className={`bg-linear-to-t from-(--bg-form) via-transparent via-5% to-(--bg-form) w-full p-8 sm:p-10`}
     >
       <div className="flex flex-col items-center text-center mb-8">
         <div className="w-16 h-16 bg-gradient shadow-xl-secondary rounded-2xl flex items-center justify-center mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
@@ -115,7 +114,7 @@ export default function LoginForm({ isDarkMode }: Props) {
 
       <footer className="mt-8 text-center mb-1">
         <p
-          className={`text-[10px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-neutral-500" : "text-neutral-400"}`}
+          className={`text-[11px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-neutral-400" : "text-neutral-300"}`}
         >
           © Elaborado por Kedwin Morales - 2026. Todos los derechos reservados.
         </p>

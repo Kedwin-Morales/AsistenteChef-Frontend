@@ -14,7 +14,7 @@ export default function AuthTopBar({
    
     return (
         <header
-            className={`w-full p-6 flex justify-between items-center bg-(--color-bg) relative z-10 border-b ${isDarkMode ? 'border-neutral-800' : 'border-neutral-200'} backdrop-blur-md`}
+            className={`w-full p-6 flex justify-between items-center bg-transparent relative z-10 ${isDarkMode ? 'border-neutral-800' : 'border-neutral-200'}`}
         >
             <div className="flex items-center gap-2">
                 <div className="bg-gradient shadow-xl-secondary p-2 rounded-xl shadow-sm text-white">
