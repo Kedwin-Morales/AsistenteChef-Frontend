@@ -3,6 +3,7 @@ import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import FeatureCard from "@/components/ui/FeatureCard";
 import { MAESTRO_MODULES, MAESTRO_DASHBOARD_CONFIG } from "../config/maestro.config";
 import { CookingPot } from "lucide-react";
+import { GiCook } from "react-icons/gi";
 
 export default function MaestroPage() {
   const { isDarkMode } = useLoginUI();
@@ -14,7 +15,7 @@ export default function MaestroPage() {
           <div>
             
             <h1 className="flex items-center gap-3 text-3xl md:text-4xl font-bold tracking-tight text-(--primary)">
-              <CookingPot size={32} />
+              <GiCook size={32} />
               {MAESTRO_DASHBOARD_CONFIG.title}
             </h1>
             <p className="mt-2 text-lg text-(--texto)/70 max-w-2xl">

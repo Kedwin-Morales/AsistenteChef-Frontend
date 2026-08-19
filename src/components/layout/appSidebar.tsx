@@ -4,7 +4,7 @@ import {
   UserCog,
   Shield,
   HomeIcon,
-  CookingPot,
+  ReceiptText
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -14,6 +14,7 @@ import { useSidebarStore } from "@/stores//sidebar.store";
 import { X } from "lucide-react";
 import { IoReceiptOutline } from "react-icons/io5";
 import { FaReceipt } from "react-icons/fa";
+import { GiCook } from "react-icons/gi";
 
 interface Props {
   isDarkMode: boolean;
@@ -60,13 +61,13 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
         />
         <NavItem
           to="/sub-recetas"
-          icon={FaReceipt}
+          icon={ReceiptText}
           label="SubRecetas"
           isDarkMode={isDarkMode}
         />
         <NavItem
           to="/maestro"
-          icon={CookingPot}
+          icon={GiCook}
           label="Maestro de Cocina"
           isDarkMode={isDarkMode}
         />

@@ -58,7 +58,7 @@ body {
   background: var(--bg-form);
 }
 ::-webkit-scrollbar-thumb {
-  background-color: var(--secondary);
+  background-image: linear-gradient(to bottom, var(--secondary) 50%, var(--primary) 100%);
   border-radius: 10px;
 }
 

@@ -4,6 +4,7 @@ import {
   Pencil,
   Ban,
   CircleCheckBig,
+  ReceiptText,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +19,6 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
-import { FaReceipt } from "react-icons/fa";
-
 
 type ModelFilter = "nombre" | "descripcion";
 
@@ -161,7 +160,7 @@ export default function AreaPreparacionPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary) mb-2">
-            <FaReceipt size={30} />
+            <ReceiptText size={30} />
             Sub-Recetas
           </h1>
           <p className="text-sm text-neutral-500">
