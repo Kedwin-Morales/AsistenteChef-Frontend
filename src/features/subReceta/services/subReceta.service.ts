@@ -1,5 +1,5 @@
 import api from "@/shared/services/api.instance";
-import type { ModelSubDTO, CreateSubDTO } from "../types/subreceta.types";
+import type { ModelSubDTO, CreateSubDTO } from "../types/subReceta.types";
 
 export const getAll = async () => {
   const { data } = await api.get("/SubReceta/lista");

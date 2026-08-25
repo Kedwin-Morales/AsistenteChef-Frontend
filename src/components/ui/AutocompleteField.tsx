@@ -57,11 +57,11 @@ export default function AutocompleteField({
 
   return (
     <div
-      className="relative w-full"
+      className="relative w-full z-10"
       ref={wrapperRef}
     >
       <label
-        className={`block mb-1 font-semibold text-md ${
+        className={`z-10 mb-1 font-semibold text-md ${
           isDarkMode ? "text-(--texto)" : "text-(--texto)"
         }`}
       >
@@ -108,8 +108,8 @@ export default function AutocompleteField({
 
       {open && filtered.length > 0 && (
         <div
-          className={`
-            absolute z-50 mt-1 mb-1 w-full max-h-60 overflow-auto rounded-xl border shadow-lg transition-all
+          className={` 
+            relative sm:absolute z-1000 mt-1 mb-1 w-full max-h-60 overflow-auto rounded-xl border shadow-lg transition-all
             ${isDarkMode
               ? "bg-(--bg-form) border-(--bordes)"
               : "bg-(--bg-form) border-(--bordes)"}

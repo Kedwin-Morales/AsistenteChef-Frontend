@@ -180,3 +180,28 @@ body {
     opacity: 1;
   }
 }
+
+.card-skew {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Creamos una línea blanca brillante en diagonal */
+.card-skew::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--secondary) 30%, transparent), transparent);
+  transform: skewX(-20deg); /* Inclina el destello */
+  transition: left 2s ease;
+  z-index: 1000;
+}
+
+/* Al hacer hover, el destello cruza la tarjeta */
+.card-skew:hover::before {
+  left: 100%;
+  z-index: 1000;
+}

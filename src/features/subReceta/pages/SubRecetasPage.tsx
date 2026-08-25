@@ -61,7 +61,7 @@ export default function AreaPreparacionPage() {
         });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? "anuló" : "activo"} correctamente.`,
+          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -118,14 +118,14 @@ export default function AreaPreparacionPage() {
         render: (row) => (
           <div className="flex justify-center gap-2">
             <button
-              onClick={() => navigate(`/recetas/ver/${row.subRecetaId}`)}
+              onClick={() => navigate(`/sub-recetas/ver/${row.subRecetaId}`)}
               className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
             >
               <Eye size={16} />
             </button>
             {row.activo ? (
               <button
-                onClick={() => navigate(`/recetas/editar/${row.subRecetaId}`)}
+                onClick={() => navigate(`/sub-recetas/editar/${row.subRecetaId}`)}
                 className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
               >
                 <Pencil size={16} />
@@ -168,7 +168,7 @@ export default function AreaPreparacionPage() {
           </p>
         </div>
         <button
-          onClick={() => navigate("/recetas/nueva")}
+          onClick={() => navigate("/sub-recetas/nueva")}
           className="bg-gradient btn-gradient shadow-xl-secondary"
         >
           <PlusCircle size={18} /> Nuevo

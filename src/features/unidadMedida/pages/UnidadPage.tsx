@@ -143,7 +143,7 @@ export default function UnidadPage() {
         });               
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
+          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
         });
         await refetch();
       } catch (error) {

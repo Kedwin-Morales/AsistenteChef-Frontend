@@ -168,7 +168,7 @@ export default function ProveedorPage() {
   const confirmarDelete = async (item: ModelDTO) => {
 const result = await confirm({
       title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.razonSocial}?`,
+      text: `¿Desea ${item.activo ? 'activo' : 'anuló'}: ${item.razonSocial}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",

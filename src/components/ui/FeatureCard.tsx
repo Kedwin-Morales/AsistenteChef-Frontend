@@ -29,7 +29,7 @@ export default function FeatureCard({
     <ScrollReveal>
       <Link
         to={route}
-        className={`
+        className={`card-skew
           group relative flex flex-col overflow-hidden rounded-3xl
           border-b-5 border-(--bordes) transition-all duration-300 ease-out
           ${isHighlighted

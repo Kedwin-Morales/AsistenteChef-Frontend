@@ -2,7 +2,6 @@ import AppLayout from "@/components/layout/AppLayout";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import FeatureCard from "@/components/ui/FeatureCard";
 import { MAESTRO_MODULES, MAESTRO_DASHBOARD_CONFIG } from "../config/maestro.config";
-import { CookingPot } from "lucide-react";
 import { GiCook } from "react-icons/gi";
 
 export default function MaestroPage() {

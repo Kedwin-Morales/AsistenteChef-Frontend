@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import type { ModelSubDTO } from "../types/subreceta.types";
+import type { ModelSubDTO } from "../types/subReceta.types";
 import { getAll } from "../services/subReceta.service";
 
 export function useSubReceta() {

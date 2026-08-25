@@ -157,7 +157,7 @@ export default function Footer() {
               © {currentYear} AsistentePro. Todos los derechos reservados. 
             </p>
             <p className="text-sm text-neutral-500">
-              Desarrollado por CloverCube
+              Desarrollado por Kedwin Morales
             </p>
           </div>
         </div>

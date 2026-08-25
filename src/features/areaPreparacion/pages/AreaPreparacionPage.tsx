@@ -9,7 +9,11 @@ import {
   LandPlot,
   UtensilsCrossed,
   MoveLeft,
-  CircleCheckBig
+  CircleCheckBig,
+  TrendingUp,
+  TrendingDown,
+  Lightbulb,
+  BookOpen,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -20,6 +24,8 @@ import EntityModal, {
   type ModalMode,
   type ModalDetailField,
 } from "@/components/ui/EntityModal";
+import StatCard from "@/components/ui/StatCard";
+import TipCard from "@/components/ui/TipCard";
 import { useAreaPreparacion } from "../hooks/useAreaPreparacion";
 import { crear, editar } from "../services/areaPreparacion.service";
 import type { ModelDETCreate, ModelDTO } from "../types/areaPreparacion.types";
@@ -185,7 +191,7 @@ export default function AreaPreparacionPage() {
         });             
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
+          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -201,7 +207,7 @@ export default function AreaPreparacionPage() {
   };
 
   /* FILTER DATA */
-  const esActive = (a: any) => a.activo === false;
+  const esActive = (a: { activo: boolean }) => a.activo === false;
 
   const filtered = areas
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
@@ -320,6 +326,36 @@ export default function AreaPreparacionPage() {
         </button>
       </div>
 
+      {/* EJEMPLO DE USO: StatCard y TipCard */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard
+          title="Áreas Activas"
+          icon={LandPlot}
+          value={areas.filter((a) => a.activo).length}
+          footerIcon={TrendingUp}
+          footerText="+2 este mes"
+          trend="positive"
+          delay={100}
+        />
+        <StatCard
+          title="Total Áreas"
+          icon={LandPlot}
+          value={areas.length}
+          footerIcon={TrendingUp}
+          footerText="Tendencia positiva"
+          trend="positive"
+          delay={200}
+        />
+        <TipCard
+          title="Optimización de Áreas"
+          icon={Lightbulb}
+          description="Agrupa utensilios por frecuencia de uso para reducir tiempos de desplazamiento en la línea de preparación."
+          linkText="Ver guía de optimización"
+          href="/area-preparacion/guia"
+          delay={400}
+        />
+      </div>
+
       {/* SEARCH */}
       <SearchFilter<ModelFilter>
         filterValue={filterBy}
@@ -333,7 +369,6 @@ export default function AreaPreparacionPage() {
         onSearchChange={setSearch}
         isDarkMode={isDarkMode}
       />
-
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 mb-3">
           <button
@@ -363,7 +398,6 @@ export default function AreaPreparacionPage() {
           </span>
         </div>
       </div>
-
       <DataTable<ModelDTO>
         data={filtered}
         columns={columns}

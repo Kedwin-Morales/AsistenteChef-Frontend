@@ -125,7 +125,7 @@ export default function FamiliaMenuPage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.nombre}?`,
+      text: `¿Desea ${item.activo ? 'activo' : 'anuló'}: ${item.nombre}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -142,7 +142,7 @@ export default function FamiliaMenuPage() {
         });               
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
+          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
         });
         await refetch();
       } catch (error) {
