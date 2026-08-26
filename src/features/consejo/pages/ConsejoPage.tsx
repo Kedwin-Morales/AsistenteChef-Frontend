@@ -5,12 +5,11 @@ import {
   Tags,
   WholeWord,
   Ban,
-  IdCard,
   MessagesSquare,
-  Phone,
-  AtSign,
-  MapPinned,
-  FileType,
+  SquareDashedText,
+  Link2,
+  CalendarArrowUp,
+  CalendarArrowDown,
   MoveLeft,
   CircleCheckBig,
   MessageSquarePlus,
@@ -46,29 +45,15 @@ export default function ProveedorPage() {
   const [showActivo, setShowActivo] = useState(false);
   const navigate = useNavigate();
   
-  const Modules: [] = [
-    {
-        nombre: "ÁREA DE PREPARACIÓN"
-    },
-    {
-        nombre: "CATEGORÍA DE PLATO"
-    },
-    {
-        nombre: "FAMILIAS DEL MENÚ"
-    },
-    {
-        nombre: "INGREDIENTES"
-    },
-    {
-        nombre: "PROVEEDORES"
-    },
-    {
-        nombre: "TIPO DE INGREDIENTE"
-    },
-    {
-        nombre: "UNIDAD DE MEDIDA"
-    },
-  ]
+  const Modules: { nombre: string } [] = [
+    { nombre: "ÁREA DE PREPARACIÓN" },
+    { nombre: "CATEGORÍA DE PLATO" },
+    { nombre: "FAMILIAS DEL MENÚ" },
+    { nombre: "INGREDIENTES"},
+    { nombre: "PROVEEDORES" },
+    { nombre: "TIPO DE INGREDIENTE" },
+    { nombre: "UNIDAD DE MEDIDA" },
+  ];
 
   const fields: ModalField<ModelDTO>[] = [
     {
@@ -94,7 +79,7 @@ export default function ProveedorPage() {
     {
       name: "descripcion",
       label: "Descripcion: ",
-      icon: Phone,
+      icon: SquareDashedText,
       colSpan: 6,
       required: true,
       type: "textarea",
@@ -102,7 +87,7 @@ export default function ProveedorPage() {
     // {
     //   name: "dificultad",
     //   label: "Dificultad: ",
-    //   icon: AtSign,
+    //   icon: Shapes,
     //   colSpan: 3,
     //   required: false,
     //   type: "text",
@@ -110,7 +95,7 @@ export default function ProveedorPage() {
     {
       name: "valor",
       label: "Url: ",
-      icon: MapPinned,
+      icon: Link2,
       colSpan: 6,
       required: false,
       type: "text",
@@ -118,7 +103,7 @@ export default function ProveedorPage() {
     {
       name: "fechaDesde",
       label: "Fecha Desde: ",
-      icon: FileType,
+      icon: CalendarArrowUp,
       colSpan: 3,
       required: false,
       type: "date",
@@ -126,7 +111,7 @@ export default function ProveedorPage() {
     {
       name: "fechaHasta",
       label: "Fecha Hasta: ",
-      icon: FileType,
+      icon: CalendarArrowDown,
       colSpan: 3,
       required: false,
       type: "date",

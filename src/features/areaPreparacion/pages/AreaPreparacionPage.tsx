@@ -26,7 +26,7 @@ import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import { useAreaPreparacion } from "../hooks/useAreaPreparacion";
 import { crear, editar } from "../services/areaPreparacion.service";
-import type { ModelDETCreate, ModelDTO } from "../types/areaPreparacion.types";
+import type { ModelDET, ModelDETCreate, ModelDTO } from "../types/areaPreparacion.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
@@ -436,14 +436,7 @@ export default function AreaPreparacionPage() {
               : ""
           }
           title={(row) => row.nombre}
-          subtitle={(row) =>
-            `Nombre: ${row.nombre}`
-          }
           badges={(row) => [
-            {
-              label: row.nombre,
-              variant: "info",
-            },
             {
               label: row.activo ? "Activo" : "Inactivo",
               variant: row.activo
@@ -452,7 +445,7 @@ export default function AreaPreparacionPage() {
             },
           ]}
           renderExtra={(row) => (
-            <div className="text-slate-500">
+            <div className="">
               {row.descripcion}
             </div>
           )}

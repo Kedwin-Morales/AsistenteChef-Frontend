@@ -168,7 +168,7 @@ export default function ProveedorPage() {
   const confirmarDelete = async (item: ModelDTO) => {
 const result = await confirm({
       title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'activo' : 'anuló'}: ${item.razonSocial}?`,
+      text: `¿Desea ${item.activo ? 'anular' : 'activar'}: ${item.razonSocial}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -190,7 +190,7 @@ const result = await confirm({
         });         
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
+          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
         });
         await refetch();
       } catch (error) {

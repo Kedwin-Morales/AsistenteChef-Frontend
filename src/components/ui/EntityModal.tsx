@@ -931,103 +931,177 @@ export default function EntityModal<T extends object, D extends object = any>({
                     </div>
                   </>
                 )} 
-                {/* DETAIL TABLE (visible in all modes including view) */}
+                {/* DETAIL TABLE (Desktop) + CARDS (Mobile) */}
                 {detailColumns && details.length > 0 && (
-                  <div className="w-full overflow-x-auto my-2 rounded-xl border border-(--bordes)">
-                    <table className={`w-full overflow-hidden text-sm`}>
-                      <thead
-                        className={`text-[12px] uppercase font-bold 
-                          ${isDarkMode
-                          ? "bg-neutral-600/50 text-(--texto) "
-                          : "bg-olive-400/50 text-(--texto)"
-                        }`}
-                      >
-                        <tr>
-                          {detailColumns.map((c) => (
-                            <th
-                              key={String(c.key)}
-                              className="p-3 text-left text-sm font-semibold"
-                            >
-                              {c.label}
-                            </th>
-                          ))}
-                          {!isReadOnly && (
-                            <th className="p-3 text-center">Acciones</th>
-                          )}
-                        </tr>
-                      </thead>
-                        
-                      <tbody>
-                        {details.map((row, i) => (
-                          <tr
-                            key={i}
-                            className={`transition md:table-row block                 
-                              ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " 
-                              : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
-                            `}
-                          >
+                  <>
+                    <div className="hidden md:block w-full overflow-x-auto my-2 rounded-xl border border-(--bordes)">
+                      <table className={`w-full overflow-hidden text-sm`}>
+                        <thead
+                          className={`text-[12px] uppercase font-bold 
+                            ${isDarkMode
+                            ? "bg-neutral-600/50 text-(--texto) "
+                            : "bg-olive-400/50 text-(--texto)"
+                          }`}
+                        >
+                          <tr>
                             {detailColumns.map((c) => (
-                              <td key={String(c.key)} className="p-3">
-                                {(() => {
-                                  const field = detailFields?.find(
-                                    (f) => f.name === c.key,
-                                  );
-                                
-                                  if (field?.type === "select") {
-                                    const option = field.options?.find(
-                                      (o) => o.value === row[c.key],
-                                    );
-                                    return option?.label ?? "-";
-                                  }
-                                
-                                  if (field?.type === "autocomplete") {
-                                    const option = field.options?.find(
-                                      (o) => o.value === row[c.key],
-                                    );
-                                    return option?.label ?? `${option?.value}`;
-                                  }
-                                
-                                  if (field?.type === "boolean") {
-                                    return row[c.key] ? "Sí" : "No";
-                                  }
-                                
-                                  return String(row[c.key] ?? "");
-                                })()}
-                              </td>
+                              <th
+                                key={String(c.key)}
+                                className="p-3 text-left text-sm font-semibold"
+                              >
+                                {c.label}
+                              </th>
                             ))}
-      
                             {!isReadOnly && (
-                              <td className="p-3 flex gap-2 justify-center">
+                              <th className="p-3 text-center">Acciones</th>
+                            )}
+                          </tr>
+                        </thead>                        
+                        <tbody>
+                          {details.map((row, i) => (
+                            <tr
+                              key={i}
+                              className={`transition md:table-row block                 
+                                ${isDarkMode ? "bg-(--bg-form) hover:bg-neutral-700 " 
+                                : "bg-(--bg-form) hover:bg-olive-200 border-b border-neutral-200"}
+                              `}
+                            >
+                              {detailColumns.map((c) => (
+                                <td key={String(c.key)} className="p-3">
+                                  {(() => {
+                                    const field = detailFields?.find(
+                                      (f) => f.name === c.key,
+                                    );
+                                
+                                    if (field?.type === "select") {
+                                      const option = field.options?.find(
+                                        (o) => o.value === row[c.key],
+                                      );
+                                      return option?.label ?? "-";
+                                    }
+                                
+                                    if (field?.type === "autocomplete") {
+                                      const option = field.options?.find(
+                                        (o) => o.value === row[c.key],
+                                      );
+                                      return option?.label ?? `${option?.value}`;
+                                    }
+                                
+                                    if (field?.type === "boolean") {
+                                      return row[c.key] ? "Sí" : "No";
+                                    }
+                                
+                                    return String(row[c.key] ?? "");
+                                  })()}
+                                </td>
+                              ))}
+      
+                              {!isReadOnly && (
+                                <td className="p-3 flex gap-2 justify-center">
+                                  <button
+                                    type="button"
+                                    onClick={() => editDetail(i)}
+                                    className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
+                                    ${isDarkMode
+                                      ? "hover:bg-blue-500/20 text-blue-400"
+                                      : "hover:bg-blue-100 text-blue-600"
+                                    }`}
+                                  >
+                                    <Pencil size={16} />
+                                  </button>
+                                  
+                                  <button
+                                    onClick={() => removeDetail(i)}
+                                    type="button"
+                                    className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
+                                    ${isDarkMode
+                                      ? "hover:bg-red-500/20 text-red-400"
+                                      : "hover:bg-red-100 text-red-600"
+                                    }`}
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {/* MÓVIL: lista de cards */}
+                    <div className="md:hidden my-3 space-y-3">
+                      {details.map((row, i) => (
+                        <div
+                          key={i}
+                          className={`rounded-xl border p-3 ${
+                            isDarkMode
+                              ? "bg-neutral-800/50 border-neutral-700/50"
+                              : "bg-(--bg-form) border-(--bordes)"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="font-semibold text-(--texto)">
+                              {(() => {
+                                const first = detailColumns[0];
+                                const field = detailFields?.find((f) => f.name === first.key);
+                                const val = row[first.key];
+                                if (field?.type === "select" || field?.type === "autocomplete") {
+                                  const opt = field.options?.find((o) => o.value === val);
+                                  return opt?.label ?? String(val ?? `Fila ${i + 1}`);
+                                }
+                                return String(val ?? `Fila ${i + 1}`);
+                              })()}
+                            </p>
+                            {!isReadOnly && (
+                              <div className="flex gap-1">
                                 <button
                                   type="button"
                                   onClick={() => editDetail(i)}
-                                  className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500/50
-                                  ${isDarkMode
-                                    ? "hover:bg-blue-500/20 text-blue-400"
-                                    : "hover:bg-blue-100 text-blue-600"
+                                  className={`p-1.5 rounded-lg transition ${
+                                    isDarkMode
+                                      ? "text-blue-400 hover:bg-blue-500/20"
+                                      : "text-blue-600 hover:bg-blue-100"
                                   }`}
                                 >
                                   <Pencil size={16} />
                                 </button>
-                                
                                 <button
-                                  onClick={() => removeDetail(i)}
                                   type="button"
-                                  className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500/50
-                                  ${isDarkMode
-                                    ? "hover:bg-red-500/20 text-red-400"
-                                    : "hover:bg-red-100 text-red-600"
+                                  onClick={() => removeDetail(i)}
+                                  className={`p-1.5 rounded-lg transition ${
+                                    isDarkMode
+                                      ? "text-red-400 hover:bg-red-500/20"
+                                      : "text-red-600 hover:bg-red-100"
                                   }`}
                                 >
                                   <Trash2 size={16} />
                                 </button>
-                              </td>
+                              </div>
                             )}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+                            {detailColumns.slice(1).map((c) => {
+                              const field = detailFields?.find((f) => f.name === c.key);
+                              const val = row[c.key];
+                              let display = String(val ?? "-");
+                              if (field?.type === "select" || field?.type === "autocomplete") {
+                                const opt = field.options?.find((o) => o.value === val);
+                                display = opt?.label ?? String(val ?? "-");
+                              } else if (field?.type === "boolean") {
+                                display = val ? "Sí" : "No";
+                              }
+                              return (
+                                <span key={String(c.key)}>
+                                  {c.label}:{" "}
+                                  <span className="font-medium text-(--texto)">{display}</span>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </fieldset>        
             </>

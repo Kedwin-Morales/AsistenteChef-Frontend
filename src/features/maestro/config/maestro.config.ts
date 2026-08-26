@@ -5,6 +5,7 @@ import {
   RulerDimensionLine,
   Layers2,
   Truck,
+  MessagesSquare,
 } from "lucide-react";
 import type { FeatureCardProps } from "@/components/ui/FeatureCard";
 
@@ -52,8 +53,8 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     title: "Consejos",
     description:
       "Gestión de consejos del sistema.",
-    icon: RulerDimensionLine,
-    image: "/imgMaestro/unidad-medida.png",
+    icon: MessagesSquare,
+    image: "/imgMaestro/consejo.png",
     route: "/consejos",
   },
   {

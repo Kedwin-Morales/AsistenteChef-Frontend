@@ -196,7 +196,7 @@ export default function RecetaIngredientesSection({
       )}
 
       {/* TABLE - Responsive: horizontal en desktop, cards en móvil */}
-      <div className="mt-6 w-full overflow-hidden rounded-xl border border-(--bordes)">
+      <div className="hidden md:block mt-6 w-full overflow-hidden rounded-xl border border-(--bordes)">
         <table className="w-full text-sm ">
           <thead className="hidden md:table-header-group">
             <tr
@@ -254,38 +254,37 @@ export default function RecetaIngredientesSection({
             )}
           </tbody>
         </table>
-
-        {/* MÓVIL: lista de cards */}
-        <div className="md:hidden space-y-3">
-          {detalle.map((row, i) => (
-            <div
-              key={i}
-              className={`rounded-xl border p-3 ${
-                isDarkMode
-                  ? "bg-neutral-800/50 border-neutral-700/50"
-                  : "bg-(--bg-form) border-(--bordes)"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold text-(--texto)">{nombreDe(row.ingredienteId)}</p>
-                {!readOnly && (
-                  <button
-                    type="button"
-                    onClick={() => onRemove(i)}
-                    aria-label={`Eliminar ${nombreDe(row.ingredienteId)}`}
-                    className="p-1.5 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </div>
-              <div className="mt-2 flex gap-4 text-sm text-neutral-600 dark:text-neutral-400">
-                <span>Cantidad: <span className="font-medium text-(--texto)">{row.cantidad}</span></span>
-                <span>U. Medida: <span className="font-medium text-(--texto)">{row.medida}</span></span>
-              </div>
+      </div>
+      {/* MÓVIL: lista de cards */}
+      <div className="md:hidden mt-6 space-y-3">
+        {detalle.map((row, i) => (
+          <div
+            key={i}
+            className={`rounded-xl border p-3 ${
+              isDarkMode
+                ? "bg-neutral-800/50 border-neutral-700/50"
+                : "bg-(--bg-form) border-(--bordes)"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-semibold text-(--texto)">{nombreDe(row.ingredienteId)}</p>
+              {!readOnly && (
+                <button
+                  type="button"
+                  onClick={() => onRemove(i)}
+                  aria-label={`Eliminar ${nombreDe(row.ingredienteId)}`}
+                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
             </div>
-          ))}
-        </div>
+            <div className="mt-2 flex gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+              <span>Cantidad: <span className="font-medium text-(--texto)">{row.cantidad}</span></span>
+              <span>U. Medida: <span className="font-medium text-(--texto)">{row.medida}</span></span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

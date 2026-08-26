@@ -123,7 +123,7 @@ export default function CategoriaPlatoPage() {
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.nombre}?`,
+      text: `¿Desea ${item.activo ? 'anular' : 'activar'}: ${item.nombre}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",

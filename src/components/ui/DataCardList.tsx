@@ -42,8 +42,8 @@ function getBadgeStyles(
 
   const variants = {
     neutral: isDarkMode
-      ? "bg-slate-800 border-slate-700 text-slate-200"
-      : "bg-slate-100 border-slate-200 text-slate-700",
+      ? "bg-neutral-800 border-neutral-700 text-neutral-200"
+      : "bg-neutral-100 border-neutral-200 text-neutral-700",
 
     success: isDarkMode
       ? "bg-emerald-900/40 border-emerald-700 text-emerald-300"
@@ -98,10 +98,10 @@ export default function DataCardList<T>({
         return (
           <div
             key={getKey(row)}
-            className={`rounded-2xl p-5 border transition-all duration-200 ${
+            className={`rounded-2xl p-5 border border-b-5 transition-all duration-200 ${
               isDarkMode
-                ? "bg-slate-900/40 border-slate-800"
-                : "bg-white border-slate-100 shadow-sm hover:shadow-md"
+                ? "bg-(--bg-form) border-(--bordes)"
+                : "bg-(--bg-form) border-(--bordes)"
             }`}
           >
             {/* HEADER */}
@@ -152,7 +152,7 @@ export default function DataCardList<T>({
 
             {/* EXTRA CONTENT */}
             {renderExtra && (
-              <div className="mt-4 text-sm">
+              <div className={`mt-4 text-sm ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}>
                 {renderExtra(row)}
               </div>
             )}
