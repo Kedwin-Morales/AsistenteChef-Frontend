@@ -11,9 +11,7 @@ import {
   MoveLeft,
   CircleCheckBig,
   TrendingUp,
-  TrendingDown,
   Lightbulb,
-  BookOpen,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -35,15 +33,19 @@ import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
+import { useConsejo } from "@/features/consejo/hooks/useConsejo"
 import { useNavigate } from "react-router-dom";
+import DataCardList from '../../../components/ui/DataCardList';
 
 type ModelFilter = "nombre" | "descripcion";
 
 export default function AreaPreparacionPage() {
   const { areas, loading, refetch } = useAreaPreparacion();
   const { ingredientes } = useIngrediente();
+  const { consejos } = useConsejo();
   const { isDarkMode } = useLoginUI();
   const navigate = useNavigate();
+  const consejo = consejos.filter((a)=> a.modulo === "ÁREA DE PREPARACIÓN".toUpperCase() && a.activo );
 
   /* FILTER */
   const [search, setSearch] = useState("");
@@ -57,6 +59,18 @@ export default function AreaPreparacionPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
+
+  // Función auxiliar para darle formato a la fecha en español
+  const formatearFecha = (fechaString: string) => {
+    if (!fechaString) return "";
+    
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
   /* MODAL FIELDS */
   const fields: ModalField<ModelDTO>[] = [
@@ -326,14 +340,14 @@ export default function AreaPreparacionPage() {
         </button>
       </div>
 
-      {/* EJEMPLO DE USO: StatCard y TipCard */}
+      {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Áreas Activas"
           icon={LandPlot}
           value={areas.filter((a) => a.activo).length}
           footerIcon={TrendingUp}
-          footerText="+2 este mes"
+          footerText="Elementos más usados."
           trend="positive"
           delay={100}
         />
@@ -342,18 +356,22 @@ export default function AreaPreparacionPage() {
           icon={LandPlot}
           value={areas.length}
           footerIcon={TrendingUp}
-          footerText="Tendencia positiva"
+          footerText="Control total."
           trend="positive"
           delay={200}
         />
-        <TipCard
-          title="Optimización de Áreas"
-          icon={Lightbulb}
-          description="Agrupa utensilios por frecuencia de uso para reducir tiempos de desplazamiento en la línea de preparación."
-          linkText="Ver guía de optimización"
-          href="/area-preparacion/guia"
-          delay={400}
-        />
+        {consejo.map((c) => (
+          <TipCard
+            key={c.nombre}
+            title={`${c.nombre ? c.nombre : "Optimización de Áreas" } `} 
+            icon={Lightbulb}
+            description={`${c.descripcion ? c.descripcion : "Agrupa utensilios por frecuencia de uso para reducir tiempos de desplazamiento en la línea de preparación." } `}  
+            linkText="Ver más"
+            href={c.valor}
+            delay={400}
+            fecha={c.fechaDesde ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}` : ""}
+          />
+        ))}
       </div>
 
       {/* SEARCH */}
@@ -398,13 +416,63 @@ export default function AreaPreparacionPage() {
           </span>
         </div>
       </div>
-      <DataTable<ModelDTO>
-        data={filtered}
-        columns={columns}
-        rowKey={(row) => row?.areaPreparacionId}
-        emptyMessage="No se encontraron resultados."
-        isDarkMode={isDarkMode}
-      />
+      <div className="hidden md:block">
+        <DataTable<ModelDTO>
+          data={filtered}
+          columns={columns}
+          rowKey={(row) => row?.areaPreparacionId}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
+
+            {/* ================= MOBILE ================= */}
+      <div className="block md:hidden">
+        <DataCardList<ModelDTO>
+          data={filtered}
+          getKey={(row) =>
+            row.areaPreparacionId
+              ? row.areaPreparacionId.toString()
+              : ""
+          }
+          title={(row) => row.nombre}
+          subtitle={(row) =>
+            `Nombre: ${row.nombre}`
+          }
+          badges={(row) => [
+            {
+              label: row.nombre,
+              variant: "info",
+            },
+            {
+              label: row.activo ? "Activo" : "Inactivo",
+              variant: row.activo
+                ? "success"
+                : "danger",
+            },
+          ]}
+          renderExtra={(row) => (
+            <div className="text-slate-500">
+              {row.descripcion}
+            </div>
+          )}
+          onView={(row) => {
+            setSelected(row);
+            setModalMode("view");
+            setModalOpen(true);
+          }}
+          onEdit={(row) => {
+            setSelected(row);
+            setModalMode("edit");
+            setModalOpen(true);
+          }}
+          onDelete={(row) => {
+            confirmarDelete(row);
+          }}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
       {/* MODAL */}
       <EntityModal<ModelDTO>

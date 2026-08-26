@@ -26,27 +26,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     badge: "IMPORTANTE",
     variant: "highlighted",
   },
-  {
-    id: "tipo-ingredientes",
-    feature: "Tipos",
-    title: "Tipo de Ingrediente",
-    description:
-      "Clasificación jerárquica de ingredientes por naturaleza. Define categorías como: proteínas, vegetales, lácteos, secos, entre otros.",
-    icon: UtensilsCrossed,
-    image: "/imgMaestro/tipo-ingrediente.png",
-    route: "/tipo-ingredientes",
-  },
-  {
-    id: "familia-menu",
-    feature: "Familias",
-    title: "Familias del Menú",
-    description:
-      "Agrupación estratégica de las recetas por concepto culinario. Facilita la ingeniería de menús y la asignación por área.",
-    icon: UtensilsCrossed,
-    image: "/imgMaestro/familia-menu.png",
-    route: "/familia-menu",
-  },
-  {
+    {
     id: "area-preparacion",
     feature: "Áreas",
     title: "Áreas de Preparación",
@@ -67,6 +47,26 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     route: "/categoria-plato",
   },
   {
+    id: "consejos",
+    feature: "Consejos",
+    title: "Consejos",
+    description:
+      "Gestión de consejos del sistema.",
+    icon: RulerDimensionLine,
+    image: "/imgMaestro/unidad-medida.png",
+    route: "/consejos",
+  },
+  {
+    id: "familia-menu",
+    feature: "Familias",
+    title: "Familias del Menú",
+    description:
+      "Agrupación estratégica de las recetas por concepto culinario. Facilita la ingeniería de menús y la asignación por área.",
+    icon: UtensilsCrossed,
+    image: "/imgMaestro/familia-menu.png",
+    route: "/familia-menu",
+  },
+  {
     id: "proveedores",
     feature: "Proveedores",
     title: "Proveedores",
@@ -75,6 +75,16 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     icon: Truck,
     image: "/imgMaestro/proveedores.png",
     route: "/proveedores",
+  },
+  {
+    id: "tipo-ingredientes",
+    feature: "Tipos",
+    title: "Tipo de Ingrediente",
+    description:
+      "Clasificación jerárquica de ingredientes por naturaleza. Define categorías como: proteínas, vegetales, lácteos, secos, entre otros.",
+    icon: UtensilsCrossed,
+    image: "/imgMaestro/tipo-ingrediente.png",
+    route: "/tipo-ingredientes",
   },
   {
     id: "unidad-medida",

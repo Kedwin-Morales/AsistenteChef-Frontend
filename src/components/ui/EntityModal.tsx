@@ -509,6 +509,57 @@ export default function EntityModal<T extends object, D extends object = any>({
                 );
 }
               
+              /* DATE */
+              if (field.type === "date") {
+                const Icon = field.icon;
+
+                const formatDateForInput = (val: unknown): string => {
+                  if (!val) return "";
+                  const str = String(val);
+                  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+                  const date = new Date(str);
+                  if (isNaN(date.getTime())) return "";
+                  return date.toISOString().split("T")[0];
+                };
+
+                return (
+                  <div key={String(field.name)} className={colSpanClass}>
+                    <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
+                      {field.label}
+                      {field.required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                    <div className="relative">
+                      {Icon && (
+                        <Icon
+                          size={18}
+                          className={`absolute left-3 top-1/2 -translate-y-1/2
+                            ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}
+                        />
+                      )}
+                      <input
+                        type="date"
+                        disabled={isReadOnly}
+                        required={field.required}
+                        value={formatDateForInput(value)}
+                        onChange={(e) =>
+                          handleChange(
+                            field.name,
+                            e.target.value as unknown as T[keyof T],
+                          )
+                        }
+                        className={`w-full py-2 rounded-xl border transition-all duration-300
+                          focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                          ${Icon ? "pl-10" : "pl-4"} pr-4
+                          ${isDarkMode
+                            ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                            : "bg-(--bg-form) border-(--bordes) text-(--texto)"}
+                          ${isReadOnly ? "opacity-60 cursor-not-allowed" : ""}`}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+
               /* Para componente textarea */
               if (field.type === "textarea") {
                 const Icon = field.icon;
@@ -711,6 +762,57 @@ export default function EntityModal<T extends object, D extends object = any>({
                           );
                         }
                     
+                      /* DATE */
+                      if (f.type === "date") {
+                        const Icon = f.icon;
+
+                        const formatDateForInput = (val: unknown): string => {
+                          if (!val) return "";
+                          const str = String(val);
+                          if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+                          const date = new Date(str);
+                          if (isNaN(date.getTime())) return "";
+                          return date.toISOString().split("T")[0];
+                        };
+
+                        return (
+                          <div key={String(f.name)} className={colSpanClass}>
+                            <label className="block mb-1 font-semibold">
+                              {f.label}
+                            </label>
+                            <div className="relative">
+                              {Icon && (
+                                <Icon
+                                  size={18}
+                                  className={`absolute left-3 top-1/2 -translate-y-1/2
+                                    ${isDarkMode ? "text-neutral-500": "text-neutral-500"}`}
+                                />
+                              )}
+                              <input
+                                type="date"
+                                disabled={isDisabled}
+                                required={f.required}
+                                value={formatDateForInput(value)}
+                                onChange={(e) =>
+                                  handleDetailChange(
+                                    f.name,
+                                    e.target.value as unknown as D[keyof D],
+                                  )
+                                }
+                                className={`w-full py-2 rounded-xl border transition-all duration-300
+                                  focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)
+                                  ${Icon ? "pl-10" : "pl-4"} pr-4
+                                  ${isDarkMode
+                                    ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
+                                    : "bg-(--bg-form) border-(--bordes) text-(--texto)"}
+                                  ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
+                                  ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
+                              />
+                            </div>
+                          </div>
+                        );
+                      }
+
                       /* AUTOCOMPLETE */
                         if (f.type === "autocomplete") {
                           const Icon = f.icon;
@@ -747,7 +849,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                           );
                         }   
 
-                        /* Para componente textarea */
+/* Para componente textarea */
                         if (f.type === "textarea") {
                         const Icon = f.icon;
                       

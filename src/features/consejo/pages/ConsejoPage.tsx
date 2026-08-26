@@ -6,14 +6,14 @@ import {
   WholeWord,
   Ban,
   IdCard,
-  Truck,
-  UserPlus2,
+  MessagesSquare,
   Phone,
   AtSign,
   MapPinned,
   FileType,
   MoveLeft,
   CircleCheckBig,
+  MessageSquarePlus,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -23,9 +23,9 @@ import EntityModal, {
   type ModalField,
   type ModalMode,
 } from "@/components/ui/EntityModal";
-import { useProveedor } from "../hooks/useProveedor";
-import { crear, editar, anular } from "../services/proveedor.service";
-import type { ModelDTO } from "../types/proveedor.types";
+import { useConsejo } from "../hooks/useConsejo";
+import { crear, editar } from "../services/consejo.service";
+import type { ModelDTO } from "../types/consejo.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
@@ -33,67 +33,103 @@ import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
 
-type ModelFilter = "razonSocial" | "ruc" | "tipo";
+type ModelFilter = "modulo" | "descripcion" | "nombre";
 
 export default function ProveedorPage() {
-  const { proveedores, loading, refetch } = useProveedor();
+  const { consejos, loading, refetch } = useConsejo();
   const { isDarkMode } = useLoginUI();
   const [search, setSearch] = useState("");
-  const [filterBy, setFilterBy] = useState<ModelFilter>("razonSocial");
+  const [filterBy, setFilterBy] = useState<ModelFilter>("modulo");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
   const navigate = useNavigate();
   
+  const Modules: [] = [
+    {
+        nombre: "ÁREA DE PREPARACIÓN"
+    },
+    {
+        nombre: "CATEGORÍA DE PLATO"
+    },
+    {
+        nombre: "FAMILIAS DEL MENÚ"
+    },
+    {
+        nombre: "INGREDIENTES"
+    },
+    {
+        nombre: "PROVEEDORES"
+    },
+    {
+        nombre: "TIPO DE INGREDIENTE"
+    },
+    {
+        nombre: "UNIDAD DE MEDIDA"
+    },
+  ]
+
   const fields: ModalField<ModelDTO>[] = [
     {
-      name: "ruc",
-      label: "RIF: ",
-      icon: IdCard,
-      colSpan: 3,
-      required: true,
-      type: "text",
-    },
-    {
-      name: "razonSocial",
-      label: "Razón Social: ",
+      name: "modulo",
+      label: "Modulo: ",
       icon: WholeWord,
-      colSpan: 3,
+      colSpan: 6,
+      required: true,
+      type: "select",
+      options: Modules.map((t) => ({
+        label: t.nombre,
+        value: t.nombre,
+      })),
+    },
+    {
+      name: "nombre",
+      label: "Titulo: ",
+      icon: WholeWord,
+      colSpan: 6,
       required: true,
       type: "text",
     },
     {
-      name: "telefono",
-      label: "Teléfono: ",
+      name: "descripcion",
+      label: "Descripcion: ",
       icon: Phone,
-      colSpan: 3,
-      required: false,
-      type: "text",
+      colSpan: 6,
+      required: true,
+      type: "textarea",
     },
+    // {
+    //   name: "dificultad",
+    //   label: "Dificultad: ",
+    //   icon: AtSign,
+    //   colSpan: 3,
+    //   required: false,
+    //   type: "text",
+    // },
     {
-      name: "email",
-      label: "Correo: ",
-      icon: AtSign,
-      colSpan: 3,
-      required: false,
-      type: "text",
-    },
-    {
-      name: "direccion",
-      label: "Dirección: ",
+      name: "valor",
+      label: "Url: ",
       icon: MapPinned,
-      colSpan: 3,
+      colSpan: 6,
       required: false,
       type: "text",
     },
     {
-      name: "tipo",
-      label: "Tipo: ",
+      name: "fechaDesde",
+      label: "Fecha Desde: ",
       icon: FileType,
       colSpan: 3,
       required: false,
-      type: "text",
+      type: "date",
+    },
+    {
+      name: "fechaHasta",
+      label: "Fecha Hasta: ",
+      icon: FileType,
+      colSpan: 3,
+      required: false,
+      type: "date",
     },
     ...(modalMode === "edit"
       ? [
@@ -109,23 +145,24 @@ export default function ProveedorPage() {
   ];
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
-    if (!data.ruc || !data.razonSocial) {
+    if (!data.modulo || !data.descripcion) {
       return sileo.warning({
         title: "¡Atención!",
         description:
-          "Por favor, revisa los datos ingresados: RIF y Razon Social son obligatorios.",
+          "Por favor, revisa los datos ingresados: Modulo y Descripcion son obligatorios.",
       });
     }
 
     try {
       if (modalMode === "create") {
         await crear({
-          ruc: data.ruc,
-          razonSocial: data.razonSocial,
-          telefono: data.telefono ?? "",
-          email: data.email ?? "",
-          direccion: data.direccion ?? "",
-          tipo: data.tipo ?? "",
+          modulo: data.modulo,
+          nombre: data.nombre ?? "",
+          descripcion: data.descripcion ?? "",
+          dificultad: data.dificultad ?? "",
+          valor: data.valor ?? "",
+          fechaDesde: data.fechaDesde ?? null,
+          fechaHasta: data.fechaHasta ?? null,
         });
         sileo.success({
           title: "¡Operación exitosa!",
@@ -133,15 +170,16 @@ export default function ProveedorPage() {
         });
       }
 
-      if (modalMode === "edit" && selected?.proveedorId) {
-        await editar(selected.proveedorId, {
-          proveedorId: "",
-          ruc: data.ruc,
-          razonSocial: data.razonSocial,
-          telefono: data.telefono ?? "",
-          email: data.email ?? "",
-          direccion: data.direccion ?? "",
-          tipo: data.tipo ?? "",
+      if (modalMode === "edit" && selected?.consejoId) {
+        await editar(selected.consejoId, {
+          consejoId: "",
+          modulo: data.modulo,
+          nombre: data.nombre ?? "",
+          descripcion: data.descripcion ?? "",
+          dificultad: data.dificultad ?? "",
+          valor: data.valor ?? "",
+          fechaDesde: data.fechaDesde ?? null,
+          fechaHasta: data.fechaHasta ?? null,
           activo: data.activo ?? true,
         });
 
@@ -166,9 +204,9 @@ export default function ProveedorPage() {
   };
 
   const confirmarDelete = async (item: ModelDTO) => {
-const result = await confirm({
+  const result = await confirm({
       title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'activo' : 'anuló'}: ${item.razonSocial}?`,
+      text: `¿Desea ${item.activo ? 'activar' : 'anular'}: ${item.modulo}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -178,19 +216,20 @@ const result = await confirm({
     if (result.isConfirmed) {
       try {
         item.activo = !item.activo;
-        await editar(item.proveedorId, {
-          proveedorId: item.proveedorId,
-          ruc: item.ruc,
-          razonSocial: item.razonSocial,
-          telefono: item.telefono ?? "",
-          email: item.email ?? "",
-          direccion: item.direccion ?? "",
-          tipo: item.tipo ?? "",
+        await editar(item.consejoId, {
+          consejoId: item.consejoId,
+          modulo: item.modulo,
+          nombre: item.nombre ?? "",
+          descripcion: item.descripcion ?? "",
+          dificultad: item.dificultad ?? "",
+          valor: item.valor ?? "",
+          fechaDesde: item.fechaDesde ?? null,
+          fechaHasta: item.fechaHasta ?? null,
           activo: item.activo,
         });         
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'anuló' : 'activo'} correctamente.`,
+          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -207,29 +246,24 @@ const result = await confirm({
 
   const esActive = (a: any) => a.activo === false;
 
-  const filtered = proveedores
+  const filtered = consejos
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
-      `${u.razonSocial} ${u.ruc} ${u.tipo}`
+      `${u.modulo} ${u.descripcion} ${u.nombre}`
         .toLowerCase()
         .includes(search.toLowerCase()),
     );
 
   const columns: TableColumn<ModelDTO>[] = [
     {
-      key: "razonSocial",
-      header: "Razón Social",
-      render: (row) => <span className="font-semibold">{row.razonSocial}</span>,
+      key: "modulo",
+      header: "Modulo",
+      render: (row) => <span className="font-semibold">{row.modulo}</span>,
     },
     {
-      key: "ruc",
-      header: "RIF",
-      render: (row) => <span className="font-semibold">{row.ruc}</span>,
-    },
-    {
-      key: "tipo",
-      header: "Tipo",
-      render: (row) => <span>{row.tipo}</span>,
+      key: "descripcion",
+      header: "Descripcion",
+      render: (row) => <span className="font-semibold">{row.descripcion}</span>,
     },
     {
       key: "activo",
@@ -311,11 +345,11 @@ const result = await confirm({
              >
               <MoveLeft size={30} />
             </button>
-            <Truck size={30} />
-            Proveedores
+            <MessagesSquare size={30} />
+            Consejos
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión de proveedores del sistema.
+            Gestión de consejos para cada modulo del sistema.
           </p>
         </div>
         <button
@@ -335,9 +369,9 @@ const result = await confirm({
         searchValue={search}
         placeholder="Buscar..."
         options={[
-          { value: "razonSocial", label: "Razón Social" },
-          { value: "ruc", label: "RIF" },
-          { value: "tipo", label: "Tipo" },
+          { value: "modulo", label: "Modulo" },
+          { value: "descripcion", label: "Descripcion" },
+          { value: "nombre", label: "nombre" },
         ]}
         onFilterChange={setFilterBy}
         onSearchChange={setSearch}
@@ -378,14 +412,14 @@ const result = await confirm({
       <DataTable<ModelDTO>
         data={filtered}
         columns={columns}
-        rowKey={(row) => row?.proveedorId}
+        rowKey={(row) => row?.consejoId}
         emptyMessage="No se encontraron resultados."
         isDarkMode={isDarkMode}
       />
 
       <EntityModal<ModelDTO>
         open={modalOpen}
-        key={`${modalMode}-${selected?.proveedorId ?? "new"}`}
+        key={`${modalMode}-${selected?.consejoId ?? "new"}`}
         title={
           modalMode === "create"
             ? "Crear"
@@ -393,7 +427,7 @@ const result = await confirm({
               ? "Editar"
               : "Detalles"
         }
-        headerIcon={UserPlus2}
+        headerIcon={MessageSquarePlus}
         mode={modalMode}
         data={selected ? { ...selected } : null}
         fields={fields}

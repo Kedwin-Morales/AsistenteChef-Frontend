@@ -16,6 +16,7 @@ import RecetaPage from "@/features/receta/pages/RecetasPage"
 import RecetaNuevaPage from "@/features/receta/pages/RecetaNuevaPage"
 import SubRecetaPage from "@/features/subReceta/pages/SubRecetasPage"
 import SubRecetaNuevaPage from "@/features/subReceta/pages/SubRecetaNuevaPage"
+import ConsejoPage from "@/features/consejo/pages/ConsejoPage"
 
 export default function AppRouter() {
   return (
@@ -42,6 +43,7 @@ export default function AppRouter() {
           <Route path="/sub-recetas/nueva" element={<SubRecetaNuevaPage />} />
           <Route path="/sub-recetas/editar/:id" element={<SubRecetaNuevaPage />} />
           <Route path="/sub-recetas/ver/:id" element={<SubRecetaNuevaPage />} />
+          <Route path="/consejos" element={<ConsejoPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

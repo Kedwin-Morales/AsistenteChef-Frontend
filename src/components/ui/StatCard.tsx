@@ -70,7 +70,7 @@ export default function StatCard({
     <ScrollReveal delay={delay} className={className}>
       <div
         className={`
-          group relative flex flex-col rounded-2xl border border-b-5 border-(--bordes) bg-(--bg-form)
+          group relative flex flex-col rounded-3xl border border-b-5 border-(--bordes) bg-(--bg-form)
           shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.015]
           transition-all duration-300 ease-out
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) focus-visible:ring-offset-2
