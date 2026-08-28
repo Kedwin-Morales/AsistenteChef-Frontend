@@ -122,7 +122,7 @@ export default function ProveedorPage() {
             name: "activo" as keyof ModelDTO,
             label: "Activo: ",
             icon: Tags as typeof Tags,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
@@ -229,7 +229,7 @@ export default function ProveedorPage() {
     }
   };
 
-  const esActive = (a: any) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
   const filtered = consejos
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))

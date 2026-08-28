@@ -20,7 +20,7 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 import { useFamiliaMenu } from "../hooks/useFamiliaMenu";
-import { crear, editar, anular } from "../services/familiaMenu.service";
+import { crear, editar } from "../services/familiaMenu.service";
 import type { ModelDTO } from "../types/familiaMenu.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -65,7 +65,7 @@ export default function FamiliaMenuPage() {
             name: "activo" as keyof ModelDTO,
             label: "Activo: ",
             icon: Tags as typeof Tags,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
@@ -157,7 +157,7 @@ export default function FamiliaMenuPage() {
     }
   };
 
-  const esActive = (a: any) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
   const filtered = familias
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))

@@ -39,6 +39,10 @@ import ExportButton from "@/shared/utils/export/ui/exportButton";
 import { useNavigate } from "react-router-dom";
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
+type IngredienteFormData = Partial<ModelDTO> & {
+  tipoIngredienteId?: string;
+  unidadMedidaId?: string;
+};
 
 export default function IngredientePage() {
   const { ingredientes, tipos, unidades, loading, refetch } = useIngrediente();
@@ -55,9 +59,7 @@ export default function IngredientePage() {
   /* IMPORT */
   const [importOpen, setImportOpen] = useState(false);
 
-  const fields: ModalField<
-    ModelDTO & { tipoIngredienteId?: string } & { unidadMedidaId?: string }
-  >[] = [
+  const fields: ModalField<IngredienteFormData>[] = [
     {
       name: "nombre",
       label: "Nombre: ",
@@ -120,19 +122,15 @@ export default function IngredientePage() {
             name: "activo" as keyof ModelDTO,
             label: "Activo: ",
             icon: Tags as typeof Tags,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
       : []),
   ];
 
-  const handleSubmit = async (data: Partial<ModelDTO>) => {
-    if (
-      !data.nombre ||
-      !(data as any).tipoIngredienteId ||
-      !(data as any).unidadMedidaId
-    ) {
+  const handleSubmit = async (data: IngredienteFormData) => {
+    if (!data.nombre || !data.tipoIngredienteId || !data.unidadMedidaId) {
       return sileo.warning({
         title: "¡Atención!",
         description:
@@ -147,8 +145,8 @@ export default function IngredientePage() {
           descripcion: data.descripcion ?? "",
           costo: data.costo ?? 0,
           codigo: data.codigo ?? "",
-          tipoIngredienteId: (data as any).tipoIngredienteId,
-          unidadMedidaId: (data as any).unidadMedidaId,
+          tipoIngredienteId: data.tipoIngredienteId,
+          unidadMedidaId: data.unidadMedidaId,
         });
         sileo.success({
           title: "¡Operación exitosa!",
@@ -164,8 +162,8 @@ export default function IngredientePage() {
           costo: data.costo ?? 0,
           codigo: data.codigo ?? "",
           activo: data.activo ?? true,
-          tipoIngredienteId: (data as any).tipoIngredienteId,
-          unidadMedidaId: (data as any).unidadMedidaId,
+          tipoIngredienteId: data.tipoIngredienteId,
+          unidadMedidaId: data.unidadMedidaId,
         });
 
         sileo.success({
@@ -208,8 +206,8 @@ export default function IngredientePage() {
             activo: item.activo,
             costo: item.costo ?? 0,
             codigo: item.codigo ?? "",
-            tipoIngredienteId: (item as any).tipoIngredienteId,
-            unidadMedidaId: (item as any).unidadMedidaId,
+            tipoIngredienteId: item.tipoIngrediente?.tipoIngredienteId,
+            unidadMedidaId: item.unidadMedida?.unidadMedidaId,
         });               
         sileo.success({
           title: "¡Operación exitosa!",
@@ -228,7 +226,7 @@ export default function IngredientePage() {
     }
   };
 
-  const esActive = (a: any) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
   const filtered = ingredientes
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
@@ -454,9 +452,7 @@ export default function IngredientePage() {
         />
       )}
 
-      <EntityModal<
-        ModelDTO & { tipoIngredienteId?: string } & { unidadMedidaId?: string }
-      >
+      <EntityModal<IngredienteFormData>
         open={modalOpen}
         key={`${modalMode}-${selected?.ingredienteId ?? "new"}`}
         title={

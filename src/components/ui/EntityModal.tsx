@@ -789,8 +789,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                                 />
                               )}
                               <input
-                                type="date"
-                                disabled={isDisabled}
+                                type="date"                                
                                 required={f.required}
                                 value={formatDateForInput(value)}
                                 onChange={(e) =>
@@ -804,8 +803,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                                   ${Icon ? "pl-10" : "pl-4"} pr-4
                                   ${isDarkMode
                                     ? "bg-(--bg-form) border-(--bordes) text-(--texto)"
-                                    : "bg-(--bg-form) border-(--bordes) text-(--texto)"}
-                                  ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
+                                    : "bg-(--bg-form) border-(--bordes) text-(--texto)"}                                  
                                   ${hasError ? "border-red-500 ring-1 ring-red-400" : ""}`}
                               />
                             </div>
@@ -849,7 +847,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                           );
                         }   
 
-/* Para componente textarea */
+                        /* Para componente textarea */
                         if (f.type === "textarea") {
                         const Icon = f.icon;
                       

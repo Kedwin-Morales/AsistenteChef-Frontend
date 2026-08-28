@@ -22,29 +22,29 @@ import EntityModal, {
   type ModalMode,
   type ModalDetailField,
 } from "@/components/ui/EntityModal";
-import StatCard from "@/components/ui/StatCard";
-import TipCard from "@/components/ui/TipCard";
 import { useAreaPreparacion } from "../hooks/useAreaPreparacion";
 import { crear, editar } from "../services/areaPreparacion.service";
-import type { ModelDET, ModelDETCreate, ModelDTO } from "../types/areaPreparacion.types";
+import type { ModelDETCreate, ModelDTO } from "../types/areaPreparacion.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
-import { useConsejo } from "@/features/consejo/hooks/useConsejo"
 import { useNavigate } from "react-router-dom";
-import DataCardList from '../../../components/ui/DataCardList';
+import { useConsejo } from "@/features/consejo/hooks/useConsejo"
+import StatCard from "@/components/ui/StatCard";
+import TipCard from "@/components/ui/TipCard";
+import DataCardList from "@/components/ui/DataCardList";
 
 type ModelFilter = "nombre" | "descripcion";
 
 export default function AreaPreparacionPage() {
   const { areas, loading, refetch } = useAreaPreparacion();
   const { ingredientes } = useIngrediente();
-  const { consejos } = useConsejo();
   const { isDarkMode } = useLoginUI();
   const navigate = useNavigate();
+  const { consejos } = useConsejo();
   const consejo = consejos.filter((a)=> a.modulo === "ÁREA DE PREPARACIÓN".toUpperCase() && a.activo );
 
   /* FILTER */
@@ -95,7 +95,7 @@ export default function AreaPreparacionPage() {
             name: "activo" as keyof ModelDTO,
             label: "Activo: ",
             icon: Eye as typeof Eye,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
@@ -221,7 +221,7 @@ export default function AreaPreparacionPage() {
   };
 
   /* FILTER DATA */
-  const esActive = (a: { activo: boolean }) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
   const filtered = areas
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
@@ -426,7 +426,7 @@ export default function AreaPreparacionPage() {
         />
       </div>
 
-            {/* ================= MOBILE ================= */}
+      {/* ================= MOBILE ================= */}
       <div className="block md:hidden">
         <DataCardList<ModelDTO>
           data={filtered}
@@ -491,6 +491,8 @@ export default function AreaPreparacionPage() {
         detailKey="detalle"
         detailFields={detalleFields}
         detailColumns={areaDetailColumns}
+        mergeDetailBy="ingredienteId"
+        accumulateField="cantidad"
       />
     </AppLayout>
   );

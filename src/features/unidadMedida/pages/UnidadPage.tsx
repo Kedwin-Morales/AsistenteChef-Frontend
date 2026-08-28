@@ -21,7 +21,7 @@ import EntityModal, {
 } from "@/components/ui/EntityModal";
 //import { useToast } from "@/components/ui/toast/useToast";
 import { useUnidad } from "../hooks/useUnidad";
-import { crear, editar, anular } from "../services/unidad.service";
+import { crear, editar } from "../services/unidad.service";
 import type { ModelDTO } from "../types/unidad.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -67,7 +67,7 @@ export default function UnidadPage() {
             name: "activo" as keyof ModelDTO,
             label: "Activo: ",
             icon: Tags as typeof Tags,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
@@ -158,7 +158,7 @@ export default function UnidadPage() {
     }
   };
 
-  const esActive = (a: any) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
   const filtered = unidades
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))

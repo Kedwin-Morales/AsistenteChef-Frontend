@@ -13,7 +13,7 @@ import SearchFilter from "@/components/ui/SearchFilter";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 import { useSubReceta } from "../hooks/useSubReceta";
 import { editar } from "../services/subReceta.service";
-import type { ModelSubDTO } from "../types/subreceta.types";
+import type { ModelSubDTO } from "../types/subReceta.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";

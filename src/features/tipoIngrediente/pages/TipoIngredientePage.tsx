@@ -20,7 +20,7 @@ import EntityModal, {
   type ModalMode,
 } from "@/components/ui/EntityModal";
 import { useTipoIngrediente } from "../hooks/useTipoIngrediente";
-import { crear, editar, anular } from "../services/tipoIngrediente.service";
+import { crear, editar } from "../services/tipoIngrediente.service";
 import type { ModelDTO } from "../types/tipoIngrediente.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -65,7 +65,7 @@ export default function TipoIngredientePage() {
             name: "activo" as keyof ModelDTO,
             label: "Activo: ",
             icon: Tags as typeof Tags,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
@@ -156,7 +156,7 @@ export default function TipoIngredientePage() {
     }
   };
 
-  const esActive = (a: any) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
   const filtered = tiposIngrediente
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
