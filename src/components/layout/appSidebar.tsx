@@ -13,7 +13,6 @@ import { SidebarGroup } from "./SidebarGroup";
 import { useSidebarStore } from "@/stores//sidebar.store";
 import { X } from "lucide-react";
 import { IoReceiptOutline } from "react-icons/io5";
-import { FaReceipt } from "react-icons/fa";
 import { GiCook } from "react-icons/gi";
 
 interface Props {
@@ -127,26 +126,28 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
             isDarkMode={isDarkMode}
           />
         </SidebarGroup> */}
-        <SidebarGroup
-          title="Configuracion"
-          isDarkMode={isDarkMode}
-          id="configuracion"
-          openGroup={openGroup}
-          setOpenGroup={setOpenGroup}
-        >
-          <NavItem
-            to="/roles"
-            icon={Shield}
-            label="Roles"
+        {user?.role === "Admin" && (
+          <SidebarGroup
+            title="Configuracion"
             isDarkMode={isDarkMode}
-          />
-          <NavItem
-            to="/usuario"
-            icon={UserCog}
-            label="Usuarios"
-            isDarkMode={isDarkMode}
-          />
-        </SidebarGroup>
+            id="configuracion"
+            openGroup={openGroup}
+            setOpenGroup={setOpenGroup}
+          >
+            <NavItem
+              to="/roles"
+              icon={Shield}
+              label="Roles"
+              isDarkMode={isDarkMode}
+            />
+            <NavItem
+              to="/usuario"
+              icon={UserCog}
+              label="Usuarios"
+              isDarkMode={isDarkMode}
+            />
+          </SidebarGroup>
+        )}
       </nav>
       {onClose && (
         <button
