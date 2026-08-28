@@ -363,9 +363,9 @@ export default function AreaPreparacionPage() {
         {consejo.map((c) => (
           <TipCard
             key={c.nombre}
-            title={`${c.nombre ? c.nombre : "Optimización de Áreas" } `} 
+            title={`${c.nombre ? c.nombre : "Regla de Oro" } `} 
             icon={Lightbulb}
-            description={`${c.descripcion ? c.descripcion : "Agrupa utensilios por frecuencia de uso para reducir tiempos de desplazamiento en la línea de preparación." } `}  
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha." } `}  
             linkText="Ver más"
             href={c.valor}
             delay={400}

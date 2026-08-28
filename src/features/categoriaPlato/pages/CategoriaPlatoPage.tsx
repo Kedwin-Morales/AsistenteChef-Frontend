@@ -10,7 +10,6 @@ import {
   LayersPlus,
   MoveLeft,
   CircleCheckBig,
-  LandPlot,
   TrendingUp,
   Lightbulb,
 } from "lucide-react";
@@ -305,8 +304,8 @@ export default function CategoriaPlatoPage() {
       {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
-          title="Áreas Activas"
-          icon={LandPlot}
+          title="Categorías Activas"
+          icon={Layers2}
           value={categorias.filter((a) => a.activo).length}
           footerIcon={TrendingUp}
           footerText="Elementos más usados."
@@ -314,8 +313,8 @@ export default function CategoriaPlatoPage() {
           delay={100}
         />
         <StatCard
-          title="Total Áreas"
-          icon={LandPlot}
+          title="Total Categorías"
+          icon={Layers2}
           value={categorias.length}
           footerIcon={TrendingUp}
           footerText="Control total."
@@ -325,9 +324,9 @@ export default function CategoriaPlatoPage() {
         {consejo.map((c) => (
           <TipCard
             key={c.nombre}
-            title={`${c.nombre ? c.nombre : "Optimización de Categoría de Platos"} `}
+            title={`${c.nombre ? c.nombre : "Regla de Oro"} `}
             icon={Lightbulb}
-            description={`${c.descripcion ? c.descripcion : "Agrupa utensilios por frecuencia de uso para reducir tiempos de desplazamiento en la línea de preparación."} `}
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha."} `}
             linkText="Ver más"
             href={c.valor}
             delay={400}

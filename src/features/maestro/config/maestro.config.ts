@@ -6,6 +6,7 @@ import {
   Layers2,
   Truck,
   MessagesSquare,
+  NotebookPen,
 } from "lucide-react";
 import type { FeatureCardProps } from "@/components/ui/FeatureCard";
 
@@ -63,7 +64,7 @@ export const MAESTRO_MODULES: MaestroModuleConfig[] = [
     title: "Familias del Menú",
     description:
       "Agrupación estratégica de las recetas por concepto culinario. Facilita la ingeniería de menús y la asignación por área.",
-    icon: UtensilsCrossed,
+    icon: NotebookPen,
     image: "/imgMaestro/familia-menu.png",
     route: "/familia-menu",
   },

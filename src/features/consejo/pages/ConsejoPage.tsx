@@ -13,6 +13,7 @@ import {
   MoveLeft,
   CircleCheckBig,
   MessageSquarePlus,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -31,6 +32,8 @@ import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
+import StatCard from "@/components/ui/StatCard";
+import DataCardList from "@/components/ui/DataCardList";
 
 type ModelFilter = "modulo" | "descripcion" | "nombre";
 
@@ -51,6 +54,8 @@ export default function ProveedorPage() {
     { nombre: "FAMILIAS DEL MENÚ" },
     { nombre: "INGREDIENTES"},
     { nombre: "PROVEEDORES" },
+    { nombre: "RECETAS" },
+    { nombre: "SUB-RECETAS" },
     { nombre: "TIPO DE INGREDIENTE" },
     { nombre: "UNIDAD DE MEDIDA" },
   ];
@@ -73,7 +78,7 @@ export default function ProveedorPage() {
       label: "Titulo: ",
       icon: WholeWord,
       colSpan: 6,
-      required: true,
+      required: false,
       type: "text",
     },
     {
@@ -81,7 +86,7 @@ export default function ProveedorPage() {
       label: "Descripcion: ",
       icon: SquareDashedText,
       colSpan: 6,
-      required: true,
+      required: false,
       type: "textarea",
     },
     // {
@@ -130,7 +135,7 @@ export default function ProveedorPage() {
   ];
 
   const handleSubmit = async (data: Partial<ModelDTO>) => {
-    if (!data.modulo || !data.descripcion) {
+    if (!data.modulo) {
       return sileo.warning({
         title: "¡Atención!",
         description:
@@ -348,6 +353,28 @@ export default function ProveedorPage() {
           <PlusCircle size={18} /> Nuevo
         </button>
       </div>
+      
+            {/* StatCard y TipCard */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard
+          title="Consejos Activos"
+          icon={MessagesSquare}
+          value={consejos.filter((a) => a.activo).length}
+          footerIcon={TrendingUp}
+          footerText="Elementos más usados."
+          trend="positive"
+          delay={100}
+        />
+        <StatCard
+          title="Total Consejos"
+          icon={MessagesSquare}
+          value={consejos.length}
+          footerIcon={TrendingUp}
+          footerText="Control total."
+          trend="positive"
+          delay={200}
+        />
+      </div>
 
       <SearchFilter<ModelFilter>
         filterValue={filterBy}
@@ -393,14 +420,57 @@ export default function ProveedorPage() {
           </span>
         </div>
       </div>
-
-      <DataTable<ModelDTO>
-        data={filtered}
-        columns={columns}
-        rowKey={(row) => row?.consejoId}
-        emptyMessage="No se encontraron resultados."
-        isDarkMode={isDarkMode}
-      />
+      
+      <div className="hidden md:block">
+        <DataTable<ModelDTO>
+          data={filtered}
+          columns={columns}
+          rowKey={(row) => row?.consejoId}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
+      
+      {/* ================= MOBILE ================= */}
+      <div className="block md:hidden">
+        <DataCardList<ModelDTO>
+          data={filtered}
+          getKey={(row) =>
+            row.consejoId
+              ? row.consejoId.toString()
+              : ""
+          }
+          title={(row) => row.nombre}
+          badges={(row) => [
+            {
+              label: row.activo ? "Activo" : "Inactivo",
+              variant: row.activo
+                ? "success"
+                : "danger",
+            },
+          ]}
+          renderExtra={(row) => (
+            <div className="">
+              {row.descripcion}
+            </div>
+          )}
+          onView={(row) => {
+            setSelected(row);
+            setModalMode("view");
+            setModalOpen(true);
+          }}
+          onEdit={(row) => {
+            setSelected(row);
+            setModalMode("edit");
+            setModalOpen(true);
+          }}
+          onDelete={(row) => {
+            confirmarDelete(row);
+          }}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
       <EntityModal<ModelDTO>
         open={modalOpen}

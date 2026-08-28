@@ -10,6 +10,8 @@ import {
   SquareDashedText,
   MoveLeft,
   CircleCheckBig,
+  TrendingUp,
+  Lightbulb,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -28,6 +30,10 @@ import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
+import { useConsejo } from "@/features/consejo/hooks/useConsejo"
+import StatCard from "@/components/ui/StatCard";
+import TipCard from "@/components/ui/TipCard";
+import DataCardList from "@/components/ui/DataCardList";
 
 type ModelFilter = "nombre" | "descripcion";
 
@@ -41,6 +47,20 @@ export default function TipoIngredientePage() {
   const [selected, setSelected] = useState<ModelDTO | null>(null);
   const [showActivo, setShowActivo] = useState(false);
   const navigate = useNavigate();
+  const { consejos } = useConsejo();
+  const consejo = consejos.filter((a)=> a.modulo === "Tipo de ingrediente".toUpperCase() && a.activo );
+  
+  // Función auxiliar para darle formato a la fecha en español
+  const formatearFecha = (fechaString: string) => {
+    if (!fechaString) return "";
+    
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
   
   const fields: ModalField<ModelDTO>[] = [
     {
@@ -275,7 +295,41 @@ export default function TipoIngredientePage() {
           <PlusCircle size={18} /> Nuevo
         </button>
       </div>
-
+      
+            {/* StatCard y TipCard */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard
+          title="Tipos Activos"
+          icon={UtensilsCrossed}
+          value={tiposIngrediente.filter((a) => a.activo).length}
+          footerIcon={TrendingUp}
+          footerText="Elementos más usados."
+          trend="positive"
+          delay={100}
+        />
+        <StatCard
+          title="Total Tipos"
+          icon={UtensilsCrossed}
+          value={tiposIngrediente.length}
+          footerIcon={TrendingUp}
+          footerText="Control total."
+          trend="positive"
+          delay={200}
+        />
+        {consejo.map((c) => (
+          <TipCard
+            key={c.nombre}
+            title={`${c.nombre ? c.nombre : "Regla de Oro" } `} 
+            icon={Lightbulb}
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha." } `}  
+            linkText="Ver más"
+            href={c.valor}
+            delay={400}
+            fecha={c.fechaDesde ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}` : ""}
+          />
+        ))}
+      </div>
+    
       <SearchFilter<ModelFilter>
         filterValue={filterBy}
         searchValue={search}
@@ -319,14 +373,57 @@ export default function TipoIngredientePage() {
           </span>
         </div>
       </div>
-
-      <DataTable<ModelDTO>
-        data={filtered}
-        columns={columns}
-        rowKey={(row) => row?.tipoIngredienteId}
-        emptyMessage="No se encontraron resultados."
-        isDarkMode={isDarkMode}
-      />
+      
+      <div className="hidden md:block">
+        <DataTable<ModelDTO>
+          data={filtered}
+          columns={columns}
+          rowKey={(row) => row?.tipoIngredienteId}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
+      
+      {/* ================= MOBILE ================= */}
+      <div className="block md:hidden">
+        <DataCardList<ModelDTO>
+          data={filtered}
+          getKey={(row) =>
+            row.tipoIngredienteId
+              ? row.tipoIngredienteId.toString()
+              : ""
+          }
+          title={(row) => row.nombre}
+          badges={(row) => [
+            {
+              label: row.activo ? "Activo" : "Inactivo",
+              variant: row.activo
+                ? "success"
+                : "danger",
+            },
+          ]}
+          renderExtra={(row) => (
+            <div className="">
+              {row.descripcion}
+            </div>
+          )}
+          onView={(row) => {
+            setSelected(row);
+            setModalMode("view");
+            setModalOpen(true);
+          }}
+          onEdit={(row) => {
+            setSelected(row);
+            setModalMode("edit");
+            setModalOpen(true);
+          }}
+          onDelete={(row) => {
+            confirmarDelete(row);
+          }}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
       <EntityModal<ModelDTO>
         open={modalOpen}

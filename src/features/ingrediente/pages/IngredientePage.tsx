@@ -13,7 +13,9 @@ import {
   ShoppingBasket,
   Upload,
   MoveLeft,
-  CircleCheckBig
+  CircleCheckBig,
+  TrendingUp,
+  Lightbulb,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -37,6 +39,10 @@ import { useAuthStore } from "@/features/auth/store/auth.store";
 import { exportConfigs } from "@/shared/utils/export/config/exportConfigs";
 import ExportButton from "@/shared/utils/export/ui/exportButton";
 import { useNavigate } from "react-router-dom";
+import { useConsejo } from "@/features/consejo/hooks/useConsejo";
+import StatCard from "@/components/ui/StatCard";
+import TipCard from "@/components/ui/TipCard";
+import DataCardList from "@/components/ui/DataCardList";
 
 type ModelFilter = "nombre" | "codigo" | "tipo" | "unidad";
 type IngredienteFormData = Partial<ModelDTO> & {
@@ -55,6 +61,22 @@ export default function IngredientePage() {
   const [showActivo, setShowActivo] = useState(false);
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const { consejos } = useConsejo();
+  const consejo = consejos.filter(
+    (a) => a.modulo === "ingredientes".toUpperCase() && a.activo,
+  );
+
+  // Función auxiliar para darle formato a la fecha en español
+  const formatearFecha = (fechaString: string) => {
+    if (!fechaString) return "";
+
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
   /* IMPORT */
   const [importOpen, setImportOpen] = useState(false);
@@ -188,8 +210,8 @@ export default function IngredientePage() {
 
   const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
-      title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'Anular' : 'Activar'}: ${item.nombre}?`,
+      title: `${item.activo ? "Anular" : "Activar"}`,
+      text: `¿Desea ${item.activo ? "Anular" : "Activar"}: ${item.nombre}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -200,18 +222,18 @@ export default function IngredientePage() {
       try {
         item.activo = !item.activo;
         await editar(item.ingredienteId, {
-            ingredienteId: item.ingredienteId,
-            nombre: item.nombre,
-            descripcion: item.descripcion ?? "",
-            activo: item.activo,
-            costo: item.costo ?? 0,
-            codigo: item.codigo ?? "",
-            tipoIngredienteId: item.tipoIngrediente?.tipoIngredienteId,
-            unidadMedidaId: item.unidadMedida?.unidadMedidaId,
-        });               
+          ingredienteId: item.ingredienteId,
+          nombre: item.nombre,
+          descripcion: item.descripcion ?? "",
+          activo: item.activo,
+          costo: item.costo ?? 0,
+          codigo: item.codigo ?? "",
+          tipoIngredienteId: item.tipoIngrediente?.tipoIngredienteId,
+          unidadMedidaId: item.unidadMedida?.unidadMedidaId,
+        });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
+          description: `El registro se ${item.activo ? "activo" : "anuló"} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -292,7 +314,7 @@ export default function IngredientePage() {
           >
             <Eye size={16} />
           </button>
-          {row.activo ? 
+          {row.activo ? (
             <button
               onClick={() => {
                 setSelected(row);
@@ -302,17 +324,18 @@ export default function IngredientePage() {
               className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
             >
               <Pencil size={16} />
-            </button> : <></> 
-          }          
+            </button>
+          ) : (
+            <></>
+          )}
           <button
-            onClick={() =>              
-              confirmarDelete(row)}
-            className={`p-2 ${row.activo ? 'text-red-500 hover:bg-red-100' : 'text-emerald-600 hover:bg-emerald-100'} rounded-lg`}
+            onClick={() => confirmarDelete(row)}
+            className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
             data-bs-toggle="tooltip"
-            title={`${row.activo ? 'Anular' : 'Activar'}`}
+            title={`${row.activo ? "Anular" : "Activar"}`}
           >
-            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}            
-          </button>           
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
+          </button>
         </div>
       ),
     },
@@ -333,16 +356,18 @@ export default function IngredientePage() {
   return (
     <AppLayout>
       <div className="flex justify-between mb-8">
-        <div>        
+        <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
             <button
               type="button"
-              onClick={() => {navigate("/maestro");}}
+              onClick={() => {
+                navigate("/maestro");
+              }}
               className={`flex items-center mr-5 text-sm hover:text-(--texto)
                 ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
               data-bs-toggle="tooltip"
               title="Volver"
-             >
+            >
               <MoveLeft size={30} />
             </button>
             <ShoppingBasket size={30} />
@@ -366,17 +391,55 @@ export default function IngredientePage() {
           </button>
 
           {(user?.role === "Admin" || user?.role === "Gerente") && (
-          <>
-            <button
-              onClick={() => setImportOpen(true)}
-              className="btn-gradient bg-gradient-import"
-            >
-              <Upload size={18} />
-              Importar
-            </button>
-          </>
+            <>
+              <button
+                onClick={() => setImportOpen(true)}
+                className="btn-gradient bg-gradient-import"
+              >
+                <Upload size={18} />
+                Importar
+              </button>
+            </>
           )}
         </div>
+      </div>
+
+      {/* StatCard y TipCard */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard
+          title="Ingredientes Activos"
+          icon={ShoppingBasket}
+          value={ingredientes.filter((a) => a.activo).length}
+          footerIcon={TrendingUp}
+          footerText="Elementos más usados."
+          trend="positive"
+          delay={100}
+        />
+        <StatCard
+          title="Total Ingredientes"
+          icon={ShoppingBasket}
+          value={ingredientes.length}
+          footerIcon={TrendingUp}
+          footerText="Control total."
+          trend="positive"
+          delay={200}
+        />
+        {consejo.map((c) => (
+          <TipCard
+            key={c.nombre}
+            title={`${c.nombre ? c.nombre : "Regla de Oro"} `}
+            icon={Lightbulb}
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha."} `}
+            linkText="Ver más"
+            href={c.valor}
+            delay={400}
+            fecha={
+              c.fechaDesde
+                ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}`
+                : ""
+            }
+          />
+        ))}
       </div>
 
       <SearchFilter<ModelFilter>
@@ -430,17 +493,52 @@ export default function IngredientePage() {
             data={[]}
             onSuccess={refetch}
             format={true}
-          /> 
+          />
         </div>
       </div>
+      
+      <div className="hidden md:block">
+        <DataTable<ModelDTO>
+          data={filtered}
+          columns={columns}
+          rowKey={(row) => row?.ingredienteId}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
-      <DataTable<ModelDTO>
-        data={filtered}
-        columns={columns}
-        rowKey={(row) => row?.ingredienteId}
-        emptyMessage="No se encontraron resultados."
-        isDarkMode={isDarkMode}
-      />
+      {/* ================= MOBILE ================= */}
+      <div className="block md:hidden">
+        <DataCardList<ModelDTO>
+          data={filtered}
+          getKey={(row) =>
+            row.ingredienteId ? row.ingredienteId.toString() : ""
+          }
+          title={(row) => row.nombre}
+          badges={(row) => [
+            {
+              label: row.activo ? "Activo" : "Inactivo",
+              variant: row.activo ? "success" : "danger",
+            },
+          ]}
+          renderExtra={(row) => <div className="">{row.descripcion}</div>}
+          onView={(row) => {
+            setSelected(row);
+            setModalMode("view");
+            setModalOpen(true);
+          }}
+          onEdit={(row) => {
+            setSelected(row);
+            setModalMode("edit");
+            setModalOpen(true);
+          }}
+          onDelete={(row) => {
+            confirmarDelete(row);
+          }}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
       {/* ================= IMPORT MODAL ================= */}
       {importOpen && (

@@ -5,6 +5,7 @@ import {
   Trash2,
   Shield,
   ShieldPlus,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -22,6 +23,8 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
+import StatCard from "@/components/ui/StatCard";
+import DataCardList from "@/components/ui/DataCardList";
 
 export default function RolePage() {
   const { roles, loading, refetch } = useRoles();
@@ -200,6 +203,18 @@ export default function RolePage() {
           <PlusCircle size={18} /> Nuevo
         </button>
       </div>
+            {/* StatCard y TipCard */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard
+          title="Total Roles"
+          icon={Shield}
+          value={roles.length}
+          footerIcon={TrendingUp}
+          footerText="Control total."
+          trend="positive"
+          delay={200}
+        />
+      </div>
       <SearchFilter
         filterValue="name"
         searchValue={search}
@@ -209,13 +224,44 @@ export default function RolePage() {
         onSearchChange={setSearch}
         isDarkMode={isDarkMode}
       />
-      <DataTable<RoleDTO>
-        data={filtered}
-        columns={columns}
-        rowKey={(row) => row.id}
-        emptyMessage="No se encontraron resultados."
-        isDarkMode={isDarkMode}
-      />
+      
+      <div className="hidden md:block">
+        <DataTable<RoleDTO>
+          data={filtered}
+          columns={columns}
+          rowKey={(row) => row.id}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
+      
+      {/* ================= MOBILE ================= */}
+      <div className="block md:hidden">
+        <DataCardList<RoleDTO>
+          data={filtered}
+          getKey={(row) =>
+            row.id
+              ? row.id.toString()
+              : ""
+          }
+          title={(row) => row.name}
+          onView={(row) => {
+            setSelected(row);
+            setModalMode("view");
+            setModalOpen(true);
+          }}
+          onEdit={(row) => {
+            setSelected(row);
+            setModalMode("edit");
+            setModalOpen(true);
+          }}
+          onDelete={(row) => {
+            confirmarDelete(row);
+          }}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
       <EntityModal<RoleDTO>
         open={modalOpen}

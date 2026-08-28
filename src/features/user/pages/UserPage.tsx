@@ -10,6 +10,7 @@ import {
   IdCard,
   User,
   Ban,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -28,8 +29,14 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
+import StatCard from "@/components/ui/StatCard";
+import DataCardList from "@/components/ui/DataCardList";
 
 type UserFilter = "nombre" | "documento";
+type UserFormData = UserDTO & {
+  password?: string;
+  rolId?: string;
+};
 
 export default function UserPage() {
   const toast = useToast();
@@ -82,7 +89,7 @@ export default function UserPage() {
             name: "password" as keyof UserDTO,
             label: "Contraseña",
             icon: KeyRound,
-            colSpan: 6,
+            colSpan: 6 as const,
             required: true,
             type: "password" as const,
           },
@@ -94,14 +101,14 @@ export default function UserPage() {
             name: "activo" as keyof UserDTO,
             label: "Activo: ",
             icon: Tags as typeof Tags,
-            colSpan: 6,
+            colSpan: 6 as const,
             type: "boolean" as const,
           },
         ]
       : []),
   ];
 
-  const handleSubmit = async (data: Partial<UserDTO>) => {
+  const handleSubmit = async (data: Partial<UserFormData>) => {
     if (!data.nombre || !data.apellido || !data.documento) {
       return sileo.warning({
         title: "¡Atención!",
@@ -112,14 +119,14 @@ export default function UserPage() {
 
     try {
       if (modalMode === "create") {
-        const password = (data as any).password;
+        const password = data.password;
         if (!password) return toast.error("Contraseña es obligatoria");
         await createUser({
           documento: data.documento,
           nombre: data.nombre,
           apellido: data.apellido,
           password,
-          rolId: (data as any).rolId,
+          rolId: data.rolId ?? "",
         });
         sileo.success({
           title: "¡Operación exitosa!",
@@ -133,7 +140,7 @@ export default function UserPage() {
           nombre: data.nombre,
           apellido: data.apellido,
           activo: data.activo ?? true,
-          rolId: (data as any).rolId,
+          rolId: data.rolId,
         });
 
         sileo.success({
@@ -300,6 +307,28 @@ export default function UserPage() {
         </button>
       </div>
 
+      {/* StatCard y TipCard */}
+      <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard
+          title="Usuarios Activos"
+          icon={User}
+          value={users.filter((a) => a.activo).length}
+          footerIcon={TrendingUp}
+          footerText="Usuarios mas constantes."
+          trend="positive"
+          delay={100}
+        />
+        <StatCard
+          title="Total Usuarios"
+          icon={User}
+          value={users.length}
+          footerIcon={TrendingUp}
+          footerText="Control total."
+          trend="positive"
+          delay={200}
+        />
+      </div>
+
       <SearchFilter<UserFilter>
         filterValue={filterBy}
         searchValue={search}
@@ -313,13 +342,46 @@ export default function UserPage() {
         isDarkMode={isDarkMode}
       />
 
-      <DataTable<UserDTO>
-        data={filtered}
-        columns={columns}
-        rowKey={(row) => row?.id}
-        emptyMessage="No se encontraron resultados."
-        isDarkMode={isDarkMode}
-      />
+      <div className="hidden md:block">
+        <DataTable<UserDTO>
+          data={filtered}
+          columns={columns}
+          rowKey={(row) => row?.id}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
+
+      {/* ================= MOBILE ================= */}
+      <div className="block md:hidden">
+        <DataCardList<UserDTO>
+          data={filtered}
+          getKey={(row) => (row.id ? row.id.toString() : "")}
+          title={(row) => row.nombre}
+          badges={(row) => [
+            {
+              label: row.activo ? "Activo" : "Inactivo",
+              variant: row.activo ? "success" : "danger",
+            },
+          ]}
+          renderExtra={(row) => <div className="">{row.documento}</div>}
+          onView={(row) => {
+            setSelected(row);
+            setModalMode("view");
+            setModalOpen(true);
+          }}
+          onEdit={(row) => {
+            setSelected(row);
+            setModalMode("edit");
+            setModalOpen(true);
+          }}
+          onDelete={(row) => {
+            confirmarDelete(row);
+          }}
+          emptyMessage="No se encontraron resultados."
+          isDarkMode={isDarkMode}
+        />
+      </div>
 
       <EntityModal<UserDTO & { rolId?: string }>
         open={modalOpen}
