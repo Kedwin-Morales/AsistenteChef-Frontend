@@ -25,6 +25,7 @@ import { useUsers } from "../hooks/useUsers";
 import { createUser, deleteUser, updateUser } from "../services/user.service";
 import type { UserDTO } from "../types/user.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
+import { useAuthStore } from "@/features/auth/store/auth.store";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
@@ -47,6 +48,9 @@ export default function UserPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<UserDTO | null>(null);
+  const currentUserId = useAuthStore((s) => s.user?.id);
+
+  const isSelf = (u: UserDTO) => u.id === currentUserId;
 
   const fields: ModalField<UserDTO & { rolId?: string }>[] = [
     {
@@ -135,6 +139,13 @@ export default function UserPage() {
       }
 
       if (modalMode === "edit" && selected?.id) {
+        if (isSelf(selected)) {
+          return sileo.warning({
+            title: "¡Acción no permitida!",
+            description: "No puedes editar tu propio usuario.",
+          });
+        }
+
         await updateUser(selected.id, {
           documento: data.documento,
           nombre: data.nombre,
@@ -164,6 +175,13 @@ export default function UserPage() {
   };
 
   const confirmarDelete = async (model: UserDTO) => {
+    if (isSelf(model)) {
+      return sileo.warning({
+        title: "¡Acción no permitida!",
+        description: "No puedes anularte a ti mismo.",
+      });
+    }
+
     const result = await confirm({
       title: "Anular",
       text: `¿Desea anular: ${model.nombre} ${model.apellido}?`,
@@ -250,22 +268,26 @@ export default function UserPage() {
           >
             <Eye size={16} />
           </button>
-          <button
-            onClick={() => {
-              setSelected(row);
-              setModalMode("edit");
-              setModalOpen(true);
-            }}
-            className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
-          >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => confirmarDelete(row)}
-            className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-          >
-            <Ban size={16} />
-          </button>
+          {!isSelf(row) && (
+            <>
+              <button
+                onClick={() => {
+                  setSelected(row);
+                  setModalMode("edit");
+                  setModalOpen(true);
+                }}
+                className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => confirmarDelete(row)}
+                className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+              >
+                <Ban size={16} />
+              </button>
+            </>
+          )}
         </div>
       ),
     },
@@ -371,6 +393,12 @@ export default function UserPage() {
             setModalOpen(true);
           }}
           onEdit={(row) => {
+            if (isSelf(row)) {
+              return sileo.warning({
+                title: "¡Acción no permitida!",
+                description: "No puedes editar tu propio usuario.",
+              });
+            }
             setSelected(row);
             setModalMode("edit");
             setModalOpen(true);

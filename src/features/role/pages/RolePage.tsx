@@ -34,6 +34,8 @@ export default function RolePage() {
   const [modalMode, setModalMode] = useState<ModalMode>("create");
   const [selected, setSelected] = useState<RoleDTO | null>(null);
 
+  const isAdminRole = (r: RoleDTO) => r.name.toLowerCase() === "admin";
+
   const fields: ModalField<RoleDTO>[] = [
     {
       name: "name",
@@ -64,6 +66,13 @@ export default function RolePage() {
       }
 
       if (modalMode === "edit" && selected?.id) {
+        if (isAdminRole(selected)) {
+          return sileo.warning({
+            title: "¡Acción no permitida!",
+            description: "El rol Administrador no puede ser modificado.",
+          });
+        }
+
         await updateRole(selected.id, data.name);
         sileo.success({
           title: "¡Operación exitosa!",
@@ -86,6 +95,13 @@ export default function RolePage() {
   };
 
   const confirmarDelete = async (role: RoleDTO) => {
+    if (isAdminRole(role)) {
+      return sileo.warning({
+        title: "¡Acción no permitida!",
+        description: "El rol Administrador no puede ser eliminado.",
+      });
+    }
+
     const result = await confirm({
       title: "Eliminar",
       text: `¿Eliminar: "${role.name}"?`,
@@ -147,22 +163,26 @@ export default function RolePage() {
           >
             <Eye size={16} />
           </button>
-          <button
-            onClick={() => {
-              setSelected(row);
-              setModalMode("edit");
-              setModalOpen(true);
-            }}
-            className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
-          >
-            <Pencil size={16} />
-          </button>
-          <button
-            onClick={() => confirmarDelete(row)}
-            className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-          >
-            <Trash2 size={16} />
-          </button>
+          {!isAdminRole(row) && (
+            <>
+              <button
+                onClick={() => {
+                  setSelected(row);
+                  setModalMode("edit");
+                  setModalOpen(true);
+                }}
+                className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => confirmarDelete(row)}
+                className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
+              >
+                <Trash2 size={16} />
+              </button>
+            </>
+          )}
         </div>
       ),
     },
@@ -251,6 +271,12 @@ export default function RolePage() {
             setModalOpen(true);
           }}
           onEdit={(row) => {
+            if (isAdminRole(row)) {
+              return sileo.warning({
+                title: "¡Acción no permitida!",
+                description: "El rol Administrador no puede ser modificado.",
+              });
+            }
             setSelected(row);
             setModalMode("edit");
             setModalOpen(true);
