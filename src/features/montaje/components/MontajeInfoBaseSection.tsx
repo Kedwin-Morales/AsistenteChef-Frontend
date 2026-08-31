@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   WholeWord,
   SquareDashedText,
@@ -6,7 +7,8 @@ import {
   UtensilsCrossed,
   LandPlot,
   CalendarArrowDown,
-  ImagePlus, // Importamos un icono para la carga de imágenes
+  ImagePlus,
+  Trash2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import InputField from "@/components/ui/InputField";
@@ -15,6 +17,7 @@ import type { CreateDTO } from "../types/montaje.types";
 import type { ModelDTO as CategoriaPlatoDTO } from "@/features/categoriaPlato/types/categoria.types";
 import type { ModelDTO as AreaPreparacionDTO } from "@/features/areaPreparacion/types/areaPreparacion.types";
 import { BiDish } from "react-icons/bi";
+import { sileo } from "sileo";
 
 interface Props {
   isDarkMode: boolean;
@@ -28,6 +31,9 @@ interface Props {
 
 const SELECT_CLASS =
   "w-full h-10 appearance-none rounded-xl border border-(--bordes) bg-(--bg-form) px-3 pr-10 text-(--texto) outline-none transition-all duration-300 focus:border-(--secondary) focus:ring-2 focus:ring-(--secondary)";
+
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const formatDateInputValue = (value?: string | Date | null) => {
   if (!value) return "";
@@ -104,6 +110,73 @@ export default function MontajeInfoBaseSection({
   onChange,
   readOnly = false,
 }: Props) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      sileo.warning({
+        title: "Formato no permitido",
+        description: "Solo se permiten imágenes JPG, PNG o WebP.",
+      });
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      sileo.warning({
+        title: "Archivo muy grande",
+        description: "La imagen no debe exceder 5 MB.",
+      });
+      e.target.value = "";
+      return;
+    }
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    const newPreviewUrl = URL.createObjectURL(file);
+    setPreviewUrl(newPreviewUrl);
+
+    onChange({
+      file,
+      urlImagen: "",
+    });
+  };
+
+  const handleRemoveImage = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+    onChange({
+      file: undefined,
+      urlImagen: "",
+    });
+  };
+
+  const getPreviewSrc = () => {
+    if (form.file) {
+      return previewUrl;
+    }
+    if (form.urlImagen) {
+      return 'https://localhost:7256/montaje/' + form.urlImagen;
+    }
+    return null;
+  };
+
+  const hasImage = !!getPreviewSrc();
+
   return (
     <section
       className={`rounded-2xl border border-b-5 border-(--bordes) p-6 ${
@@ -119,10 +192,7 @@ export default function MontajeInfoBaseSection({
         Información Base
       </h2>
 
-      {/* Contenedor principal de la cuadrícula: 2 columnas en desktop, 1 en mobile */}
       <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
-        
-        {/* Columna izquierda (Datos): Ocupa 7/10 de la cuadrícula en desktop */}
         <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
           <div className="md:col-span-6">
             <InputField
@@ -248,14 +318,15 @@ export default function MontajeInfoBaseSection({
               label="Precio de venta:"
               icon={CircleDollarSign}
               type="text"
-              value={form.costoUnidad ?? ""}
-              required={required.costoUnidad}
+              value={form.precio ?? ""}
+              required={required.precio}
               isDarkMode={isDarkMode}
               placeholder="10$"
               onChange={(e) => onChange({ precio: toNumber(e.target.value) })}
               disabled={readOnly}
             />
           </div>
+
           <div className="md:col-span-3">
             <InputField
               label="Fecha:"
@@ -269,8 +340,7 @@ export default function MontajeInfoBaseSection({
             />
           </div>
         </div>
-        
-        {/* Columna derecha (Carga de Foto) */}
+
         <div className="md:col-span-3 flex flex-col h-full">
           <label
             className={`block mb-1 font-semibold text-base ${
@@ -280,31 +350,37 @@ export default function MontajeInfoBaseSection({
             Subir foto del plato:
             {required.urlImagen && <span className="text-red-500 ml-1">*</span>}
           </label>
-        
+
           <label
             htmlFor="image-upload"
-            className={`flex grow flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--bordes) px-4 py-12 text-center transition-all duration-300       hover:border-(--secondary) hover:bg-(--secondary)/5 cursor-pointer ${
+            className={`flex grow flex-col items-center justify-center rounded-xl border-2 border-dashed border-(--bordes) px-4 py-12 text-center transition-all duration-300 hover:border-(--secondary) hover:bg-(--secondary)/5 cursor-pointer ${
               isDarkMode ? "bg-neutral-800/30" : "bg-(--bg-form)"
-            } group`}
+            } group ${readOnly ? "cursor-not-allowed opacity-60" : ""}`}
           >
-            {form.file || form.urlImagen ? (
-              // Vista previa (prioriza el archivo físico cargado usando URL.createObjectURL)
+            {hasImage ? (
               <div className="relative w-full h-full min-h-37 flex items-center justify-center">
                 <img
-                  src={
-                    form.file
-                      ? URL.createObjectURL(form.file)
-                      : form.urlImagen
-                  }
+                  src={`${getPreviewSrc()!}`}
                   alt="Vista previa del plato"
                   className="max-h-full max-w-full rounded-lg object-cover"
                 />
-                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                  <p className="text-white text-sm font-medium">Cambiar imagen</p>
-                </div>
+                {!readOnly && (
+                  <>
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                      <p className="text-white text-sm font-medium">Cambiar imagen</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500/90 text-white hover:bg-red-600 transition-opacity"
+                      aria-label="Eliminar imagen"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
-              // Estado vacío
               <>
                 <ImagePlus
                   size={32}
@@ -313,29 +389,20 @@ export default function MontajeInfoBaseSection({
                 <p className="text-sm font-medium text-(--texto)">
                   Arrastrar archivo o clic para subir
                 </p>
-                <p className="mt-1 text-xs text-neutral-400">(JPG, PNG, Máx 5MB)</p>
+                <p className="mt-1 text-xs text-neutral-400">(JPG, PNG, WebP, Máx 5MB)</p>
               </>
             )}
-        
+
             <input
               id="image-upload"
               type="file"
               className="hidden"
-              accept="image/*"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
               disabled={readOnly}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  // Se envía el nombre del archivo a urlImagen y el objeto File a imagenFile
-                  onChange({
-                    urlImagen: file.name, // Ej: "plato1.png"
-                    file: file,    // Objeto File físico
-                  });
-                }
-              }}
+              onChange={handleFileChange}
             />
           </label>
-        </div>        
+        </div>
       </div>
     </section>
   );

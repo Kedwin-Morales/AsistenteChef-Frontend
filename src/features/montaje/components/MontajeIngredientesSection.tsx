@@ -15,6 +15,7 @@ import { toNumber } from "@/features/receta/utils/number.utils";
 import type { ModelDETCreate } from "../types/montaje.types";
 import type { ModelDTO as IngredienteDTO } from "@/features/ingrediente/types/ingrediente.types";
 import type { ModelDTO as RecetaDTO } from "@/features/receta/types/receta.types";
+import type { ModelSubDTO as SubRecetaDTO } from "@/features/subReceta/types/subReceta.types";
 import type { UnidadMedidaDTO } from "@/features/ingrediente/types/ingrediente.types";
 import { IoReceiptOutline } from "react-icons/io5";
 
@@ -23,6 +24,7 @@ interface Props {
   detalle: ModelDETCreate[];
   ingredientes: IngredienteDTO[];
   recetas: RecetaDTO[];
+  subRecetas: SubRecetaDTO[];
   unidades: UnidadMedidaDTO[];
   onAdd: (item: ModelDETCreate) => void;
   onUpdate: (index: number, cantidad: number, medida: string) => void;
@@ -32,11 +34,12 @@ interface Props {
   currentMontajeId?: string;
 }
 
-type DetailType = "ingrediente" | "receta";
+type DetailType = "ingrediente" | "receta" | "subReceta";
 
 interface Draft {
   ingredienteId: string;
   recetaId: string;
+  subRecetaId: string;
   cantidad: string;
   medida: string;
 }
@@ -44,6 +47,7 @@ interface Draft {
 const EMPTY_DRAFT: Draft = {
   ingredienteId: "",
   recetaId: "",
+  subRecetaId: "",
   cantidad: "",
   medida: "",
 };
@@ -64,7 +68,20 @@ function getTipoBadge({ isDarkMode, tipo }: { isDarkMode: boolean; tipo: DetailT
         <ShoppingBasket size={12} /> Ingrediente
       </span>
     );
-  }
+  }  
+  if (tipo === "subReceta") {
+    return (
+      <span
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+          isDarkMode
+            ? "bg-amber-900/30 text-amber-300 border border-amber-700/50"
+            : "bg-amber-100 text-amber-800 border border-amber-200"
+        }`}
+      >
+        <ShoppingBasket size={12} /> SubReceta
+      </span>
+    );
+  }  
   return (
     <span
       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -81,7 +98,8 @@ function getTipoBadge({ isDarkMode, tipo }: { isDarkMode: boolean; tipo: DetailT
 function getNombre(
   item: ModelDETCreate,
   ingredientes: IngredienteDTO[],
-  recetas: RecetaDTO[]
+  recetas: RecetaDTO[],
+  subRecetas: SubRecetaDTO[]
 ): string {
   if (item.ingredienteId) {
     return ingredientes.find((i) => i.ingredienteId === item.ingredienteId)?.nombre ?? "—";
@@ -89,11 +107,14 @@ function getNombre(
   if (item.recetaId) {
     return recetas.find((r) => r.recetaId === item.recetaId)?.nombre ?? "—";
   }
+  if (item.subRecetaId) {
+    return subRecetas.find((r) => r.subRecetaId === item.subRecetaId)?.nombre ?? "—";
+  }
   return "—";
 }
 
 function getTipo(item: ModelDETCreate): DetailType {
-  return item.ingredienteId ? "ingrediente" : "receta";
+  return item.ingredienteId ? "ingrediente" : item.recetaId ? "receta" : "subReceta";
 }
 
 export default function MontajeIngredientesSection({
@@ -101,6 +122,7 @@ export default function MontajeIngredientesSection({
   detalle,
   ingredientes,
   recetas,
+  subRecetas,
   unidades,
   onAdd,
   onUpdate,
@@ -123,6 +145,13 @@ export default function MontajeIngredientesSection({
       label: r.nombre,
     }));
 
+  const subRecetaOptions = subRecetas
+    .filter((r) => r.subRecetaId !== currentMontajeId)
+    .map((r) => ({
+      value: r.subRecetaId,
+      label: r.nombre,
+    }));
+
   const unidadOptions = unidades.map((u) => ({
     value: u.simbolo || u.nombre,
     label: u.simbolo ? `${u.nombre} (${u.simbolo})` : u.nombre,
@@ -133,9 +162,11 @@ export default function MontajeIngredientesSection({
       if (readOnly) return;
 
       if (name === "ingredienteId" && value) {
-        setDraft((prev) => ({ ...prev, [name]: value, recetaId: "" }));
+        setDraft((prev) => ({ ...prev, [name]: value, recetaId: "", subRecetaId: "" }));
       } else if (name === "recetaId" && value) {
-        setDraft((prev) => ({ ...prev, [name]: value, ingredienteId: "" }));
+        setDraft((prev) => ({ ...prev, [name]: value, ingredienteId: "", subRecetaId: "" }));
+      } else if (name === "subRecetaId" && value) {
+        setDraft((prev) => ({ ...prev, [name]: value, ingredienteId: "", recetaId: "" }));
       } else {
         setDraft((prev) => ({ ...prev, [name]: value }));
       }
@@ -157,19 +188,21 @@ export default function MontajeIngredientesSection({
 
     const hasIngrediente = draft.ingredienteId !== "";
     const hasReceta = draft.recetaId !== "";
+    const hasSubReceta = draft.subRecetaId !== "";
 
-    if (!hasIngrediente && !hasReceta) {
+    if (!hasIngrediente && !hasReceta && !hasSubReceta) {
       sileo.warning({
         title: "¡Atención!",
-        description: "Selecciona un ingrediente o una receta.",
+        description: "Selecciona un ingrediente, una receta o una sub-receta.",
       });
       return;
     }
 
-    if (hasIngrediente && hasReceta) {
+    const selectedCount = [hasIngrediente, hasReceta, hasSubReceta].filter(Boolean).length;
+    if (selectedCount > 1) {
       sileo.warning({
         title: "¡Atención!",
-        description: "Solo puede seleccionar un ingrediente O una receta, no ambos.",
+        description: "Solo puede seleccionar un ingrediente, una receta O una sub-receta, no varios a la vez.",
       });
       return;
     }
@@ -199,35 +232,50 @@ export default function MontajeIngredientesSection({
       return;
     }
 
-    const tipo = hasIngrediente ? "ingrediente" : "receta";
-    const id = hasIngrediente ? draft.ingredienteId : draft.recetaId;
+    let tipo: DetailType;
+    let id: string;
+    if (hasIngrediente) {
+      tipo = "ingrediente";
+      id = draft.ingredienteId;
+    } else if (hasReceta) {
+      tipo = "receta";
+      id = draft.recetaId;
+    } else {
+      tipo = "subReceta";
+      id = draft.subRecetaId;
+    }
 
     const existingIndex = detalle.findIndex((item) => {
       if (tipo === "ingrediente") {
         return item.ingredienteId === id;
       }
-      return item.recetaId === id;
+      if (tipo === "receta") {
+        return item.recetaId === id;
+      }
+      return item.subRecetaId === id;
     });
 
     if (existingIndex >= 0) {
       const existingItem = detalle[existingIndex];
       const nuevaCantidad = (existingItem.cantidad ?? 0) + cantidad;
       onUpdate(existingIndex, nuevaCantidad, existingItem.medida ?? "");
-      const nombre = getNombre(existingItem, ingredientes, recetas);
+      const nombre = getNombre(existingItem, ingredientes, recetas, subRecetas);
       sileo.success({
         title: "Elemento actualizado",
         description: `Se sumó ${cantidad} ${draft.medida} a ${nombre}.`,
       });
     } else {
       const newItem: ModelDETCreate = {
-        ...(hasIngrediente ? { ingredienteId: id } : { recetaId: id }),
+        ...(tipo === "ingrediente" ? { ingredienteId: id } : tipo === "receta" ? { recetaId: id } : { subRecetaId: id }),
         cantidad,
         medida: draft.medida,
       };
       onAdd(newItem);
-      const nombre = hasIngrediente
+      const nombre = tipo === "ingrediente"
         ? ingredientes.find((i) => i.ingredienteId === id)?.nombre ?? "—"
-        : recetas.find((r) => r.recetaId === id)?.nombre ?? "—";
+        : tipo === "receta"
+        ? recetas.find((r) => r.recetaId === id)?.nombre ?? "—"
+        : subRecetas.find((r) => r.subRecetaId === id)?.nombre ?? "—";
       sileo.success({
         title: "Elemento agregado",
         description: `${nombre} agregado correctamente.`,
@@ -242,6 +290,7 @@ export default function MontajeIngredientesSection({
     detalle,
     ingredientes,
     recetas,
+    subRecetas,
     onAdd,
     onUpdate,
     onDirty,
@@ -251,12 +300,12 @@ export default function MontajeIngredientesSection({
     async (index: number) => {
       if (readOnly) return;
       const item = detalle[index];
-      const nombre = getNombre(item, ingredientes, recetas);
+      const nombre = getNombre(item, ingredientes, recetas, subRecetas);
       const tipo = getTipo(item);
 
       const result = await confirm({
         title: "¿Eliminar elemento?",
-        text: `Se eliminará "${nombre}" (${tipo === "ingrediente" ? "Ingrediente" : "Receta"}) de la composición.`,
+        text: `Se eliminará "${nombre}" (${tipo === "ingrediente" ? "Ingrediente" : tipo === "receta" ? "Receta" : "Sub-Receta"}) de la composición.`,
         icon: "warning",
         confirmButtonText: "Eliminar",
         cancelButtonText: "Cancelar",
@@ -267,7 +316,7 @@ export default function MontajeIngredientesSection({
         onRemove(index);
       }
     },
-    [readOnly, detalle, ingredientes, recetas, onRemove, isDarkMode]
+    [readOnly, detalle, ingredientes, recetas, subRecetas, onRemove, isDarkMode]
   );
 
   return (
@@ -319,15 +368,38 @@ export default function MontajeIngredientesSection({
                   options={recetaOptions}
                   icon={Search}
                   isDarkMode={isDarkMode}
-                  disabled={draft.ingredienteId !== ""}
+                  disabled={draft.ingredienteId !== "" || draft.subRecetaId !== ""}
                   onChange={(v) => handleChange("recetaId", v as unknown as string)}
                 />
-                {draft.recetaId && !draft.ingredienteId && (
+                {draft.recetaId && !draft.ingredienteId && !draft.subRecetaId && (
                   <button
                     type="button"
                     onClick={() => handleChange("recetaId", "")}
                     className="absolute right-1 top-2/3 -translate-y-1/2 z-20 p-1.5 text-neutral-400 hover:text-(--secondary) hover:bg-(--secondary)/30 dark:hover:bg-neutral-800 rounded-lg transition"
                     aria-label="Limpiar receta"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="col-span-2 lg:col-span-3 relative z-100">
+              <div className="relative">
+                <AutocompleteField
+                  label="Sub-Receta: "
+                  value={draft.subRecetaId}
+                  options={subRecetaOptions}
+                  icon={Search}
+                  isDarkMode={isDarkMode}
+                  disabled={draft.ingredienteId !== "" || draft.recetaId !== ""}
+                  onChange={(v) => handleChange("subRecetaId", v as unknown as string)}
+                />
+                {draft.subRecetaId && !draft.ingredienteId && !draft.recetaId && (
+                  <button
+                    type="button"
+                    onClick={() => handleChange("subRecetaId", "")}
+                    className="absolute right-1 top-2/3 -translate-y-1/2 z-20 p-1.5 text-neutral-400 hover:text-(--secondary) hover:bg-(--secondary)/30 dark:hover:bg-neutral-800 rounded-lg transition"
+                    aria-label="Limpiar sub-receta"
                   >
                     <X size={16} />
                   </button>
@@ -363,7 +435,7 @@ export default function MontajeIngredientesSection({
                   value={draft.medida}
                   onChange={(e) => handleChange("medida", e.target.value)}
                   className={`${SELECT_CLASS} pl-10 items-center`}
-                  disabled={draft.ingredienteId === "" && draft.recetaId === ""}
+                  disabled={draft.ingredienteId === "" && draft.recetaId === "" && draft.subRecetaId === ""}
                 >
                   <option value="">Seleccione...</option>
                   {unidadOptions.map((o) => (
@@ -397,7 +469,7 @@ export default function MontajeIngredientesSection({
                   : "bg-olive-400/50 text-(--texto)"
               }`}
             >
-              <th className="p-3 text-left font-semibold">Ingrediente / Receta</th>
+              <th className="p-3 text-left font-semibold">Ingrediente / Receta / Sub-Receta</th>
               <th className="p-3 text-left font-semibold">Cantidad</th>
               <th className="p-3 text-left font-semibold">U. Medida</th>
               {!readOnly && <th className="p-3 text-center font-semibold">Acciones</th>}
@@ -410,7 +482,7 @@ export default function MontajeIngredientesSection({
                   colSpan={readOnly ? 3 : 4}
                   className="p-6 text-center text-sm text-neutral-500"
                 >
-                  Aún no has agregado ingredientes ni recetas.
+                  Aún no has agregado ingredientes, recetas ni sub-recetas.
                 </td>
               </tr>
             ) : (
@@ -426,7 +498,7 @@ export default function MontajeIngredientesSection({
                   <td className="p-3 md:px-4 md:py-3">
                     <div className="flex items-center gap-2">
                       {getTipoBadge({ isDarkMode, tipo: getTipo(row) })}
-                      <span className="font-semibold">{getNombre(row, ingredientes, recetas)}</span>
+                      <span className="font-semibold">{getNombre(row, ingredientes, recetas, subRecetas)}</span>
                     </div>
                   </td>
                   <td className="p-3 md:px-4 md:py-3">{row.cantidad}</td>
@@ -436,7 +508,7 @@ export default function MontajeIngredientesSection({
                       <button
                         type="button"
                         onClick={() => handleRemove(i)}
-                        aria-label={`Eliminar ${getNombre(row, ingredientes, recetas)}`}
+                        aria-label={`Eliminar ${getNombre(row, ingredientes, recetas, subRecetas)}`}
                         className="inline-flex p-2 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition"
                       >
                         <Trash2 size={16} />
@@ -452,7 +524,7 @@ export default function MontajeIngredientesSection({
         <div className="md:hidden space-y-3 p-3">
           {detalle.length === 0 ? (
             <p className="text-center text-sm text-neutral-500 py-4">
-              Aún no has agregado ingredientes ni recetas.
+              Aún no has agregado ingredientes, recetas ni sub-recetas.
             </p>
           ) : (
             detalle.map((row, i) => (
@@ -468,14 +540,14 @@ export default function MontajeIngredientesSection({
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {getTipoBadge({ isDarkMode, tipo: getTipo(row) })}
                     <p className="font-semibold text-(--texto) truncate">
-                      {getNombre(row, ingredientes, recetas)}
+                      {getNombre(row, ingredientes, recetas, subRecetas)}
                     </p>
                   </div>
                   {!readOnly && (
                     <button
                       type="button"
                       onClick={() => handleRemove(i)}
-                      aria-label={`Eliminar ${getNombre(row, ingredientes, recetas)}`}
+                      aria-label={`Eliminar ${getNombre(row, ingredientes, recetas, subRecetas)}`}
                       className="p-1.5 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition shrink-0"
                     >
                       <Trash2 size={16} />

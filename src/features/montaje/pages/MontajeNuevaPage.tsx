@@ -22,7 +22,7 @@ import MontajeInfoBaseSection from "../components/MontajeInfoBaseSection";
 import MontajeIngredientesSection from "../components/MontajeIngredientesSection";
 import MontajePreparacionSection from "../components/MontajePreparacionSection";
 import { MorphIcon } from "morphicons/react";
-import { Eye, Pencil } from "lucide"; // data, not components
+import { Eye, Pencil } from "lucide";
 
 type WizardStep = 1 | 2 | 3;
 type PageMode = "create" | "edit" | "view";
@@ -88,7 +88,16 @@ function isFilled(value: unknown): boolean {
   return true;
 }
 
+function parseDate(value: string | Date | null | undefined): Date | undefined {
+  if (!value) return undefined;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
 function mapModelToForm(model: ModelDTO): CreateDTO {
+  const categoria = model.CategoriasPlato ?? (model as Record<string, unknown>).categoriaPlato as typeof model.CategoriasPlato ?? null;
+  const area = model.areaPreparacion ?? (model as Record<string, unknown>).areaPreparacionObj as typeof model.areaPreparacion ?? null;
+
   return {
     nombre: model.nombre ?? "",
     descripcion: model.descripcion ?? "",
@@ -114,10 +123,11 @@ function mapModelToForm(model: ModelDTO): CreateDTO {
       model.precio !== null && model.precio !== undefined && model.precio !== ""
         ? Number(model.precio)
         : undefined,
-    fecha: model.fecha ?? "",
+    fecha: parseDate(model.fecha),
     urlImagen: model.urlImagen ?? "",
-    categoriaId: model.CategoriasPlato?.categoriaId ?? "",
-    areaPreparacionId: model.areaPreparacion?.areaPreparacionId ?? "",
+    activo: model.activo,
+    categoriaId: categoria?.categoriaId ?? model.categoriaId ?? "",
+    areaPreparacionId: area?.areaPreparacionId ?? model.areaPreparacionId ?? "",
     detalle: (model.detalle ?? []).map((d) => ({
       ingredienteId: d.ingredienteId ?? "",
       recetaId: d.recetaId ?? "",
@@ -169,7 +179,6 @@ export default function MontajeNuevaPage() {
     }, 800);
   };
 
-  /* ---- Cargar datos en modo edición ---- */
   useEffect(() => {
     let mounted = true;
     if (mode !== "create" && id) {
@@ -265,7 +274,6 @@ export default function MontajeNuevaPage() {
     markDirty();
   };
 
-  /* ---- beforeunload ---- */
   useEffect(() => {
     if (mode === "view") return;
     const handler = (e: BeforeUnloadEvent) => {
@@ -278,7 +286,6 @@ export default function MontajeNuevaPage() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [mode]);
 
-  /* ---- validaciones ---- */
   const validateSection1 = (): boolean => {
     const missing = (
       Object.keys(SECTION1_REQUIRED) as (keyof typeof SECTION1_REQUIRED)[]
@@ -295,7 +302,6 @@ export default function MontajeNuevaPage() {
     return true;
   };
 
-  /* ---- navegación ---- */
   const handleNext = () => {
     if (currentStep === 1) {
       if (!validateSection1()) return;
@@ -372,21 +378,7 @@ export default function MontajeNuevaPage() {
     setSaving(true);
     try {
       if (mode === "edit" && id) {
-        await editar(id, {
-          recetaId: id,
-          nombre: cleanPayload.nombre ?? "",
-          descripcion: cleanPayload.descripcion ?? "",
-          porciones: cleanPayload.porciones?.toString() ?? "",
-          costoPorcion: cleanPayload.costoPorcion?.toString() ?? "",
-          costoUnidad: cleanPayload.costoUnidad?.toString() ?? "",
-          precio: cleanPayload.precio?.toString() ?? "",
-          fecha: cleanPayload.fecha!,
-          urlImagen: cleanPayload.urlImagen ?? "",
-          categoriaId: cleanPayload.categoriaId ?? "",
-          areaPreparacionId: cleanPayload.areaPreparacionId ?? "",
-          detalle: cleanPayload.detalle ?? [],
-          detPreparacion: cleanPayload.detPreparacion ?? [],
-        });
+        await editar(id, cleanPayload);
         sileo.success({
           title: "¡Operación exitosa!",
           description: "El montaje se actualizó correctamente.",
@@ -490,7 +482,6 @@ export default function MontajeNuevaPage() {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
         <header className="mb-8">
           <button
             type="button"
@@ -513,25 +504,23 @@ export default function MontajeNuevaPage() {
                 aria-expanded={open}
                 className="flex gap-1 items-center p-2 text-base font-semibold text-(--secondary) rounded-xl hover:opacity-90 hover:text-(--primary) hover:bg-(--secondary)/20 transition"
               >
-                <MorphIcon spring="snappy" icon={open ? Eye : Pencil} /> Editar
+                <MorphIcon spring="snappy" icon={open ? Eye : Pencil} />
+                Editar
               </button>
             )}
           </div>
           <p className="mt-1 text-neutral-500">{subtitles[mode]}</p>
         </header>
 
-        {/* STEPS */}
         <MontajeWizardSteps
           currentStep={currentStep}
           onStepClick={handleStepClick}
         />
 
-        {/* SECTION */}
         <div key={currentStep} className={animClass}>
           {renderStep()}
         </div>
 
-        {/* ACTIONS */}
         <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-5">
           <button type="button" onClick={handleCancel} className="btn-cancelar">
             {mode === "view" ? "Volver" : "Cancelar"}

@@ -11,7 +11,7 @@ export interface ModelDTO {
   activo: boolean;
   categoriaId: string;
   CategoriasPlato: {
-    categoriaId: string;
+    categoriaPlatoId: string;
     nombre: string;
     descripcion: string;
     activo: boolean;
@@ -35,6 +35,7 @@ export interface ModelDET {
   medida?: string;
   ingredienteId?: string;
   recetaId?: string;
+  subRecetaId?: string;
 }
 
 export interface DetPreparacion {
@@ -66,6 +67,7 @@ export interface CreateDTO {
 export interface ModelDETCreate {
   ingredienteId?: string;
   recetaId?: string;
+  subRecetaId?: string;
   cantidad?: number;
   medida?: string;
 }

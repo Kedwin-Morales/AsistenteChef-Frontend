@@ -23,6 +23,10 @@ export function useMontaje() {
         fecha: t.fecha,
         urlImagen: t.urlImagen,
         activo: t.activo,
+        categoriaId: t.categoriaId ?? "",
+        CategoriasPlato: t.CategoriasPlato ?? t.categoriaPlato ?? null,
+        areaPreparacionId: t.areaPreparacionId ?? "",
+        areaPreparacion: t.areaPreparacion ?? null,
         detalle: t.detalle,
         detPreparacion: t.detPreparacion,
       }));
