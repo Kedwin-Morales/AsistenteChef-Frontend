@@ -96,7 +96,7 @@ export default function RecetaIngredientesSection({
     if (existingIndex >= 0) {
       const existingItem = detalle[existingIndex];
       const nuevaCantidad = (existingItem.cantidad ?? 0) + cantidad;
-      onUpdate(existingIndex, nuevaCantidad, existingItem.medida);
+      onUpdate(existingIndex, nuevaCantidad, existingItem.medida!);
       sileo.success({
         title: "Ingrediente actualizado",
         description: `Se sumó ${cantidad} ${draft.medida} a ${nombreDe(draft.ingredienteId)}.`,

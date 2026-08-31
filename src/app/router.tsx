@@ -12,11 +12,13 @@ import FamiliaMenuPage from "@/features/familiaMenu/pages/FamiliaMenuPage";
 import CategoriaPlatoPage from "@/features/categoriaPlato/pages/CategoriaPlatoPage";
 import AreaPreparacionPage from "@/features/areaPreparacion/pages/AreaPreparacionPage";
 import MaestroPage from "@/features/maestro/page/MaestroPage";
-import RecetaPage from "@/features/receta/pages/RecetasPage"
-import RecetaNuevaPage from "@/features/receta/pages/RecetaNuevaPage"
-import SubRecetaPage from "@/features/subReceta/pages/SubRecetasPage"
-import SubRecetaNuevaPage from "@/features/subReceta/pages/SubRecetaNuevaPage"
-import ConsejoPage from "@/features/consejo/pages/ConsejoPage"
+import RecetaPage from "@/features/receta/pages/RecetasPage";
+import RecetaNuevaPage from "@/features/receta/pages/RecetaNuevaPage";
+import SubRecetaPage from "@/features/subReceta/pages/SubRecetasPage";
+import SubRecetaNuevaPage from "@/features/subReceta/pages/SubRecetaNuevaPage";
+import ConsejoPage from "@/features/consejo/pages/ConsejoPage";
+import MontajePage from "@/features/montaje/pages/MontajePage";
+import MontajeNuevaPage from "@/features/montaje/pages/MontajeNuevaPage";
 
 export default function AppRouter() {
   return (
@@ -44,6 +46,10 @@ export default function AppRouter() {
           <Route path="/sub-recetas/editar/:id" element={<SubRecetaNuevaPage />} />
           <Route path="/sub-recetas/ver/:id" element={<SubRecetaNuevaPage />} />
           <Route path="/consejos" element={<ConsejoPage />} />
+          <Route path="/montajes" element={<MontajePage/>} />
+          <Route path="/montajes/nueva" element={<MontajeNuevaPage />} />
+          <Route path="/montajes/editar/:id" element={<MontajeNuevaPage />} />
+          <Route path="/montajes/ver/:id" element={<MontajeNuevaPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

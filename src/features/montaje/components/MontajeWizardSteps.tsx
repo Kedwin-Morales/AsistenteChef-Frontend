@@ -14,11 +14,14 @@ interface Props {
 
 const STEPS: WizardStepConfig[] = [
   { id: 1, label: "Información Base", shortLabel: "Información" },
-  { id: 2, label: "Ingredientes y Recetas", shortLabel: "Ingredientes" },
+  { id: 2, label: "Ingredientes/Recetas", shortLabel: "Ingredientes" },
   { id: 3, label: "Método de Preparación", shortLabel: "Preparación" },
 ];
 
-export default function RecetaWizardSteps({ currentStep, onStepClick }: Props) {
+export default function MontajeWizardSteps({
+  currentStep,
+  onStepClick,
+}: Props) {
   return (
     <div className="mb-8">
       {/* DESKTOP */}
@@ -35,7 +38,9 @@ export default function RecetaWizardSteps({ currentStep, onStepClick }: Props) {
                   <li
                     aria-hidden="true"
                     className={`flex-1 h-1 mx-3 rounded-full transition-colors duration-300 ${
-                      currentStep >= step.id ? "bg-(--secondary)" : "bg-(--bordes)"
+                      currentStep >= step.id
+                        ? "bg-(--secondary)"
+                        : "bg-(--bordes)"
                     }`}
                   />
                 )}

@@ -1,22 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { MoveLeft, ArrowLeft, ArrowRight, CloudCheck} from "lucide-react";
+import { MoveLeft, ArrowLeft, ArrowRight, CloudCheck } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
-import { useFamiliaMenu } from "@/features/familiaMenu/hooks/useFamiliaMenu";
+import { useCategoriaPlato } from "@/features/categoriaPlato/hooks/useCategoriaPlato";
 import { useAreaPreparacion } from "@/features/areaPreparacion/hooks/useAreaPreparacion";
 import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
 import { useReceta } from "@/features/receta/hooks/useReceta";
 import { sileo } from "sileo";
 import { confirm } from "@/shared/utils/swal";
 import { getErrorMessage } from "@/shared/services/error.utils";
-import { crear, editar, getById } from "../services/subReceta.service";
-import type { CreateSubDTO, ModelSubDETCreate, ModelSubDTO } from "../types/subReceta.types";
-import RecetaWizardSteps from "../components/SubRecetaWizardSteps";
-import SubRecetaInfoBaseSection from "../components/SubRecetaInfoBaseSection";
-import SubRecetaIngredientesSection from "../components/SubRecetaIngredientesSection";
-import SubRecetaPreparacionSection from "../components/SubRecetaPreparacionSection";
+import { crear, editar, getById } from "../services/montaje.service";
+import type {
+  CreateDTO,
+  ModelDETCreate,
+  ModelDTO,
+} from "../types/montaje.types";
+import MontajeWizardSteps from "../components/MontajeWizardSteps";
+import MontajeInfoBaseSection from "../components/MontajeInfoBaseSection";
+import MontajeIngredientesSection from "../components/MontajeIngredientesSection";
+import MontajePreparacionSection from "../components/MontajePreparacionSection";
 import { MorphIcon } from "morphicons/react";
 import { Eye, Pencil } from "lucide"; // data, not components
 
@@ -24,32 +28,54 @@ type WizardStep = 1 | 2 | 3;
 type PageMode = "create" | "edit" | "view";
 
 const SECTION1_REQUIRED: Record<
-  "nombre" | "descripcion" | "porciones" | "rendimiento" | "familiaMenuId" | "areaPreparacionId",
+  | "nombre"
+  | "descripcion"
+  | "porciones"
+  | "costoPorcion"
+  | "costoUnidad"
+  | "precio"
+  | "fecha"
+  | "urlImagen"
+  | "categoriaId"
+  | "areaPreparacionId",
   boolean
 > = {
   nombre: true,
   descripcion: false,
   porciones: false,
-  rendimiento: false,
-  familiaMenuId: true,
+  costoPorcion: false,
+  costoUnidad: false,
+  precio: false,
+  fecha: false,
+  urlImagen: false,
+  categoriaId: true,
   areaPreparacionId: true,
 };
 
 const FIELD_LABELS: Record<string, string> = {
-  nombre: "Nombre de la Sub-Receta",
+  nombre: "Nombre del Montaje",
   descripcion: "Descripción",
   porciones: "Porciones",
-  rendimiento: "Rendimiento",
-  familiaMenuId: "Familia del menú",
+  costoPorcion: "Costo por Porcion",
+  costoUnidad: "Costo por Unidad",
+  precio: "Precio de Venta",
+  fecha: "Fecha de Elaboración",
+  urlImagen: "Foto del Plato",
+  categoriaId: "Categoria del Plato",
   areaPreparacionId: "Área de preparación",
 };
 
-const EMPTY_FORM: CreateSubDTO = {
+const EMPTY_FORM: CreateDTO = {
   nombre: "",
   descripcion: "",
   porciones: undefined,
-  rendimiento: "",
-  familiaMenuId: "",
+  costoPorcion: undefined,
+  costoUnidad: undefined,
+  precio: undefined,
+  fecha: undefined,
+  urlImagen: "",
+  activo: undefined,
+  categoriaId: "",
   areaPreparacionId: "",
   detalle: [],
   detPreparacion: [],
@@ -62,13 +88,35 @@ function isFilled(value: unknown): boolean {
   return true;
 }
 
-function mapModelToForm(model: ModelSubDTO): CreateSubDTO {
+function mapModelToForm(model: ModelDTO): CreateDTO {
   return {
     nombre: model.nombre ?? "",
     descripcion: model.descripcion ?? "",
-    porciones: model.porciones !== null && model.porciones !== undefined && model.porciones !== "" ? Number(model.porciones) : undefined,
-    rendimiento: model.rendimiento ?? "",
-    familiaMenuId: model.familiaMenu?.familiaMenuId ?? "",
+    porciones:
+      model.porciones !== null &&
+      model.porciones !== undefined &&
+      model.porciones !== ""
+        ? Number(model.porciones)
+        : undefined,
+    costoPorcion:
+      model.costoPorcion !== null &&
+      model.costoPorcion !== undefined &&
+      model.costoPorcion !== ""
+        ? Number(model.costoPorcion)
+        : undefined,
+    costoUnidad:
+      model.costoUnidad !== null &&
+      model.costoUnidad !== undefined &&
+      model.costoUnidad !== ""
+        ? Number(model.costoUnidad)
+        : undefined,
+    precio:
+      model.precio !== null && model.precio !== undefined && model.precio !== ""
+        ? Number(model.precio)
+        : undefined,
+    fecha: model.fecha ?? "",
+    urlImagen: model.urlImagen ?? "",
+    categoriaId: model.CategoriasPlato?.categoriaId ?? "",
     areaPreparacionId: model.areaPreparacion?.areaPreparacionId ?? "",
     detalle: (model.detalle ?? []).map((d) => ({
       ingredienteId: d.ingredienteId ?? "",
@@ -83,38 +131,41 @@ function mapModelToForm(model: ModelSubDTO): CreateSubDTO {
   };
 }
 
-export default function SubRecetaNuevaPage() {
+export default function MontajeNuevaPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams<{ id?: string }>();
   const { isDarkMode } = useLoginUI();
-  const { familias, loading: loadingFamilias } = useFamiliaMenu();
+  const { categorias, loading: loadingCategoria } = useCategoriaPlato();
   const { areas, loading: loadingAreas } = useAreaPreparacion();
-  const { ingredientes, unidades, loading: loadingIngredientes } =
-    useIngrediente();
+  const {
+    ingredientes,
+    unidades,
+    loading: loadingIngredientes,
+  } = useIngrediente();
   const { recetas, loading: loadingRecetas } = useReceta();
 
-  const isViewRoute = location.pathname.startsWith("/sub-recetas/ver/");
-  const isEditRoute = location.pathname.startsWith("/sub-recetas/editar/");
+  const isViewRoute = location.pathname.startsWith("/montajes/ver/");
+  const isEditRoute = location.pathname.startsWith("/montajes/editar/");
   const mode: PageMode = isViewRoute ? "view" : isEditRoute ? "edit" : "create";
 
   const [currentStep, setCurrentStep] = useState<WizardStep>(1);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
-  const [formData, setFormData] = useState<CreateSubDTO>(EMPTY_FORM);
+  const [formData, setFormData] = useState<CreateDTO>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(mode !== "create");
   const dirtyRef = useRef(false);
 
-  const familiasActivas = familias.filter((f) => f.activo);
+  const categoriasActivas = categorias.filter((f) => f.activo);
   const areasActivas = areas.filter((a) => a.activo);
   const ingredientesActivos = ingredientes.filter((i) => i.activo);
   const recetasActivos = recetas.filter((i) => i.activo);
   const [open, setOpen] = useState(false);
 
   const handleEdit = () => {
-    setOpen(true);    
+    setOpen(true);
     setTimeout(() => {
-      navigate(`/sub-recetas/editar/${id}`);
+      navigate(`/montajes/editar/${id}`);
     }, 800);
   };
 
@@ -133,9 +184,12 @@ export default function SubRecetaNuevaPage() {
           if (mounted) {
             sileo.error({
               title: "Error",
-              description: getErrorMessage(error, "No se pudo cargar la receta."),
+              description: getErrorMessage(
+                error,
+                "No se pudo cargar la información.",
+              ),
             });
-            navigate("/sub-recetas");
+            navigate("/montajes");
           }
         } finally {
           if (mounted) setLoading(false);
@@ -152,12 +206,12 @@ export default function SubRecetaNuevaPage() {
     dirtyRef.current = true;
   }, []);
 
-  const handleFieldChange = (patch: Partial<CreateSubDTO>) => {
+  const handleFieldChange = (patch: Partial<CreateDTO>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
     markDirty();
   };
 
-  const addIngrediente = (item: ModelSubDETCreate) => {
+  const addIngrediente = (item: ModelDETCreate) => {
     setFormData((prev) => ({
       ...prev,
       detalle: [...(prev.detalle ?? []), item],
@@ -173,11 +227,15 @@ export default function SubRecetaNuevaPage() {
     markDirty();
   };
 
-  const updateIngrediente = (index: number, cantidad: number, medida: string) => {
+  const updateIngrediente = (
+    index: number,
+    cantidad: number,
+    medida: string,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       detalle: (prev.detalle ?? []).map((item, i) =>
-        i === index ? { ...item, cantidad, medida } : item
+        i === index ? { ...item, cantidad, medida } : item,
       ),
     }));
     markDirty();
@@ -283,7 +341,7 @@ export default function SubRecetaNuevaPage() {
       });
       if (!result.isConfirmed) return;
     }
-    navigate("/sub-recetas");
+    navigate("/montajes");
   };
 
   const handleSave = async () => {
@@ -298,7 +356,7 @@ export default function SubRecetaNuevaPage() {
       return;
     }
 
-    const cleanDetalle = (detalle: ModelSubDETCreate[]): ModelSubDETCreate[] =>
+    const cleanDetalle = (detalle: ModelDETCreate[]): ModelDETCreate[] =>
       (detalle ?? []).map((item) => ({
         ...(item.ingredienteId ? { ingredienteId: item.ingredienteId } : {}),
         ...(item.recetaId ? { recetaId: item.recetaId } : {}),
@@ -306,7 +364,7 @@ export default function SubRecetaNuevaPage() {
         medida: item.medida,
       }));
 
-    const cleanPayload: CreateSubDTO = {
+    const cleanPayload: CreateDTO = {
       ...formData,
       detalle: cleanDetalle(formData.detalle ?? []),
     };
@@ -319,29 +377,33 @@ export default function SubRecetaNuevaPage() {
           nombre: cleanPayload.nombre ?? "",
           descripcion: cleanPayload.descripcion ?? "",
           porciones: cleanPayload.porciones?.toString() ?? "",
-          rendimiento: cleanPayload.rendimiento ?? "",
-          familiaMenuId: cleanPayload.familiaMenuId ?? "",
+          costoPorcion: cleanPayload.costoPorcion?.toString() ?? "",
+          costoUnidad: cleanPayload.costoUnidad?.toString() ?? "",
+          precio: cleanPayload.precio?.toString() ?? "",
+          fecha: cleanPayload.fecha!,
+          urlImagen: cleanPayload.urlImagen ?? "",
+          categoriaId: cleanPayload.categoriaId ?? "",
           areaPreparacionId: cleanPayload.areaPreparacionId ?? "",
           detalle: cleanPayload.detalle ?? [],
           detPreparacion: cleanPayload.detPreparacion ?? [],
         });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: "La receta se actualizó correctamente.",
+          description: "El montaje se actualizó correctamente.",
         });
       } else {
         await crear(cleanPayload);
         sileo.success({
           title: "¡Operación exitosa!",
-          description: "La receta se guardó correctamente.",
+          description: "El montaje se guardó correctamente.",
         });
       }
       dirtyRef.current = false;
-      navigate("/sub-recetas");
+      navigate("/montajes");
     } catch (error) {
       sileo.error({
         title: "Error de sistema",
-        description: getErrorMessage(error, "No se pudo guardar la receta."),
+        description: getErrorMessage(error, "No se pudo guardar el montaje."),
       });
     } finally {
       setSaving(false);
@@ -356,10 +418,10 @@ export default function SubRecetaNuevaPage() {
   const renderStep = () => {
     if (currentStep === 1) {
       return (
-        <SubRecetaInfoBaseSection
+        <MontajeInfoBaseSection
           isDarkMode={isDarkMode}
           form={formData}
-          familias={familiasActivas}
+          categorias={categoriasActivas}
           areas={areasActivas}
           required={SECTION1_REQUIRED}
           onChange={handleFieldChange}
@@ -370,7 +432,7 @@ export default function SubRecetaNuevaPage() {
 
     if (currentStep === 2) {
       return (
-        <SubRecetaIngredientesSection
+        <MontajeIngredientesSection
           isDarkMode={isDarkMode}
           detalle={formData.detalle ?? []}
           ingredientes={ingredientesActivos}
@@ -381,13 +443,13 @@ export default function SubRecetaNuevaPage() {
           onRemove={removeIngrediente}
           onDirty={markDirty}
           readOnly={mode === "view"}
-          currentSubRecetaId={mode === "edit" ? id : undefined}
+          currentMontajeId={mode === "edit" ? id : undefined}
         />
       );
     }
 
     return (
-      <SubRecetaPreparacionSection
+      <MontajePreparacionSection
         isDarkMode={isDarkMode}
         pasos={formData.detPreparacion ?? []}
         onAdd={addPaso}
@@ -398,7 +460,13 @@ export default function SubRecetaNuevaPage() {
     );
   };
 
-  if (loading || loadingFamilias || loadingAreas || loadingIngredientes || loadingRecetas) {
+  if (
+    loading ||
+    loadingCategoria ||
+    loadingAreas ||
+    loadingIngredientes ||
+    loadingRecetas
+  ) {
     return (
       <AppLayout>
         <LoadingScreen message="Cargando..." isDarkMode={isDarkMode} />
@@ -407,15 +475,16 @@ export default function SubRecetaNuevaPage() {
   }
 
   const titles = {
-    create: "Nueva Sub-Receta",
-    edit: "Editar Sub-Receta",
-    view: "Ver Sub-Receta",
+    create: "Nuevo Montaje",
+    edit: "Editar Montaje",
+    view: "Ver Montaje",
   };
 
   const subtitles = {
-    create: "Define la información base, agrega los ingredientes y detalla el proceso de elaboración.",
-    edit: "Modifica la información de la receta.",
-    view: "Detalle de la receta seleccionada.",
+    create:
+      "Define la información base, agrega los ingredientes y detalla el proceso de elaboración.",
+    edit: "Modifica la información del montaje.",
+    view: "Detalle del montaje seleccionado.",
   };
 
   return (
@@ -431,10 +500,12 @@ export default function SubRecetaNuevaPage() {
             }`}
           >
             <MoveLeft size={28} />
-            Sub-Recetas
+            Montajes
           </button>
           <div className="mt-3 flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-(--primary)">{titles[mode]}</h1>
+            <h1 className="text-3xl font-bold text-(--primary)">
+              {titles[mode]}
+            </h1>
             {mode === "view" && (
               <button
                 type="button"
@@ -450,7 +521,7 @@ export default function SubRecetaNuevaPage() {
         </header>
 
         {/* STEPS */}
-        <RecetaWizardSteps
+        <MontajeWizardSteps
           currentStep={currentStep}
           onStepClick={handleStepClick}
         />
@@ -462,36 +533,32 @@ export default function SubRecetaNuevaPage() {
 
         {/* ACTIONS */}
         <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-5">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="btn-cancelar"
-          >
+          <button type="button" onClick={handleCancel} className="btn-cancelar">
             {mode === "view" ? "Volver" : "Cancelar"}
           </button>
-          
-          <div className="flex flex-col-reverse sm:flex-row gap-5">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="btn-guardar"
-                >
-                  <ArrowLeft size={18} /> Anterior
-                </button>
-              )}
 
-              {currentStep < 3 ? (
+          <div className="flex flex-col-reverse sm:flex-row gap-5">
+            {currentStep > 1 && (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="btn-guardar"
+              >
+                <ArrowLeft size={18} /> Anterior
+              </button>
+            )}
+
+            {currentStep < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="btn-guardar"
+              >
+                Siguiente <ArrowRight size={18} />
+              </button>
+            ) : (
+              mode !== "view" && (
                 <button
-                  type="button"
-                  onClick={handleNext}
-                  className="btn-guardar"
-                >
-                  Siguiente <ArrowRight size={18} />
-                </button>
-              ) : (
-                mode !== "view" && (
-                  <button
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
@@ -504,13 +571,14 @@ export default function SubRecetaNuevaPage() {
                     </>
                   ) : (
                     <>
-                      <CloudCheck size={18} /> {mode === "edit" ? "Actualizar" : "Guardar"}
+                      <CloudCheck size={18} />{" "}
+                      {mode === "edit" ? "Actualizar" : "Guardar"}
                     </>
                   )}
                 </button>
-                )              
-              )}
-            </div>
+              )
+            )}
+          </div>
         </div>
       </div>
     </AppLayout>

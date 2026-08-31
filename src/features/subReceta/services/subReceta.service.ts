@@ -3,7 +3,6 @@ import type { ModelSubDTO, CreateSubDTO } from "../types/subReceta.types";
 
 export const getAll = async () => {
   const { data } = await api.get("/SubReceta/lista");
-  console.log(data);
   return data;
 };
 
@@ -22,7 +21,6 @@ export const editar = async (
   data: ModelSubDTO
 ) => {
   data.subRecetaId = id;
-  console.log(data);
   const res = await api.put(`/SubReceta/Editar/${id}`, data);
   return res.data;
 };

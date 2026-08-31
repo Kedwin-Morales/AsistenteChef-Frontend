@@ -4,18 +4,18 @@ import {
   Pencil,
   Ban,
   CircleCheckBig,
-  ReceiptText,
   TrendingUp,
   Lightbulb,
+  HandPlatter,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
-import { useSubReceta } from "../hooks/useSubReceta";
-import { editar } from "../services/subReceta.service";
-import type { ModelSubDTO } from "../types/subReceta.types";
+import { useMontaje } from "../hooks/useMontaje";
+import { editar } from "../services/montaje.service";
+import type { ModelDTO } from "../types/montaje.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
@@ -25,11 +25,12 @@ import { useConsejo } from "@/features/consejo/hooks/useConsejo"
 import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
+import { BiDish } from "react-icons/bi";
 
 type ModelFilter = "nombre" | "descripcion";
 
 export default function AreaPreparacionPage() {
-  const { subRecetas, loading, refetch } = useSubReceta();
+  const { montajes, loading, refetch } = useMontaje();
   const { isDarkMode } = useLoginUI();
   const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ export default function AreaPreparacionPage() {
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
   const [showActivo, setShowActivo] = useState(false);
   const { consejos } = useConsejo();
-  const consejo = consejos.filter((a)=> a.modulo === "sub-recetas".toUpperCase() && a.activo );
+  const consejo = consejos.filter((a)=> a.modulo === "montajes".toUpperCase() && a.activo );
   
   // Función auxiliar para darle formato a la fecha en español
   const formatearFecha = (fechaString: string) => {
@@ -53,7 +54,7 @@ export default function AreaPreparacionPage() {
   };
   
   /* Anular */
-  const confirmarDelete = async (item: ModelSubDTO) => {
+  const confirmarDelete = async (item: ModelDTO) => {
     const result = await confirm({
       title: `${item.activo ? "Anular" : "Activar"}`,
       text: `¿Desea ${item.activo ? "Anular" : "Activar"}: ${item.nombre}?`,
@@ -65,14 +66,18 @@ export default function AreaPreparacionPage() {
     if (result.isConfirmed) {
       try {
         item.activo = !item.activo;
-        await editar(item.subRecetaId, {
-          subRecetaId: item.subRecetaId,
+        await editar(item.montajeId, {
+          montajeId: item.montajeId,
           nombre: item.nombre,
           descripcion: item.descripcion ?? "",
           porciones: item.porciones,
-          rendimiento: item.rendimiento,
-          familiaMenuId: item.familiaMenuId,
-          familiaMenu: item.familiaMenu ?? null,
+          costoUnidad: item.costoUnidad,
+          costoPorcion: item.costoPorcion,
+          precio: item.precio,
+          fecha: item.fecha,
+          urlImagen: item.urlImagen,
+          categoriaId: item.categoriaId,
+          CategoriasPlato: item.CategoriasPlato ?? null,
           areaPreparacionId: item.areaPreparacionId,
           areaPreparacion: item.areaPreparacion ?? null,
           detalle: item.detalle ?? [],
@@ -97,9 +102,9 @@ export default function AreaPreparacionPage() {
   };
 
   /* FILTER DATA */
-  const esActive = (a: ModelSubDTO) => a.activo === false;
+  const esActive = (a: ModelDTO) => a.activo === false;
 
-  const filtered = subRecetas
+  const filtered = montajes
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
       `${u.nombre} ${u.descripcion}`
@@ -108,7 +113,7 @@ export default function AreaPreparacionPage() {
     );
 
   /* TABLE */
-  const columns: TableColumn<ModelSubDTO>[] = [
+  const columns: TableColumn<ModelDTO>[] = [
     {
       key: "nombre",
       header: "Nombre",
@@ -138,14 +143,14 @@ export default function AreaPreparacionPage() {
         render: (row) => (
           <div className="flex justify-center gap-2">
             <button
-              onClick={() => navigate(`/sub-recetas/ver/${row.subRecetaId}`)}
+              onClick={() => navigate(`/montajes/ver/${row.montajeId}`)}
               className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
             >
               <Eye size={16} />
             </button>
             {row.activo ? (
               <button
-                onClick={() => navigate(`/sub-recetas/editar/${row.subRecetaId}`)}
+                onClick={() => navigate(`/montajes/editar/${row.montajeId}`)}
                 className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
               >
                 <Pencil size={16} />
@@ -180,15 +185,15 @@ export default function AreaPreparacionPage() {
       <div className="flex justify-between mb-8">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary) mb-2">
-            <ReceiptText size={30} />
-            Sub-Recetas
+            <BiDish size={30} />
+            Montajes
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión para las Sub-Recetas del sistema
+            Gestión para las Montajes del sistema
           </p>
         </div>
         <button
-          onClick={() => navigate("/sub-recetas/nueva")}
+          onClick={() => navigate("/montajes/nueva")}
           className="bg-gradient btn-gradient shadow-xl-secondary"
         >
           <PlusCircle size={18} /> Nuevo
@@ -198,18 +203,18 @@ export default function AreaPreparacionPage() {
             {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
-          title="Sub-Recetas Activas"
-          icon={ReceiptText}
-          value={subRecetas.filter((a) => a.activo).length}
+          title="Montajes Activos"
+          icon={HandPlatter}
+          value={montajes.filter((a) => a.activo).length}
           footerIcon={TrendingUp}
           footerText="Elementos más usados."
           trend="positive"
           delay={100}
         />
         <StatCard
-          title="Total Sub-Recetas"
-          icon={ReceiptText}
-          value={subRecetas.length}
+          title="Total Montajes"
+          icon={HandPlatter}
+          value={montajes.length}
           footerIcon={TrendingUp}
           footerText="Control total."
           trend="positive"
@@ -274,10 +279,10 @@ export default function AreaPreparacionPage() {
       </div>
       
       <div className="hidden md:block">
-        <DataTable<ModelSubDTO>
+        <DataTable<ModelDTO>
           data={filtered}
           columns={columns}
-          rowKey={(row) => row?.subRecetaId}
+          rowKey={(row) => row?.montajeId}
           emptyMessage="No se encontraron resultados."
           isDarkMode={isDarkMode}
         />
@@ -285,11 +290,11 @@ export default function AreaPreparacionPage() {
       
       {/* ================= MOBILE ================= */}
       <div className="block md:hidden">
-        <DataCardList<ModelSubDTO>
+        <DataCardList<ModelDTO>
           data={filtered}
           getKey={(row) =>
-            row.subRecetaId
-              ? row.subRecetaId.toString()
+            row.montajeId
+              ? row.montajeId.toString()
               : ""
           }
           title={(row) => row.nombre}
@@ -306,8 +311,8 @@ export default function AreaPreparacionPage() {
               {row.descripcion}
             </div>
           )}
-          onView={(row) =>navigate(`/sub-recetas/ver/${row.subRecetaId}`)} 
-          onEdit={(row) =>navigate(`/sub-recetas/editar/${row.subRecetaId}`)} 
+          onView={(row) =>navigate(`/montajes/ver/${row.montajeId}`)} 
+          onEdit={(row) =>navigate(`/montajes/editar/${row.montajeId}`)} 
           onDelete={(row) => {
             confirmarDelete(row);
           }}
