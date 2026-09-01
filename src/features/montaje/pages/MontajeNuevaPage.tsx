@@ -8,6 +8,7 @@ import { useCategoriaPlato } from "@/features/categoriaPlato/hooks/useCategoriaP
 import { useAreaPreparacion } from "@/features/areaPreparacion/hooks/useAreaPreparacion";
 import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
 import { useReceta } from "@/features/receta/hooks/useReceta";
+import {useSubReceta} from "@/features/subReceta/hooks/useSubReceta";
 import { sileo } from "sileo";
 import { confirm } from "@/shared/utils/swal";
 import { getErrorMessage } from "@/shared/services/error.utils";
@@ -131,6 +132,7 @@ function mapModelToForm(model: ModelDTO): CreateDTO {
     detalle: (model.detalle ?? []).map((d) => ({
       ingredienteId: d.ingredienteId ?? "",
       recetaId: d.recetaId ?? "",
+      subRecetaId: d.subRecetaId ?? "",
       cantidad: d.cantidad ?? 0,
       medida: d.medida ?? "",
     })),
@@ -154,7 +156,7 @@ export default function MontajeNuevaPage() {
     loading: loadingIngredientes,
   } = useIngrediente();
   const { recetas, loading: loadingRecetas } = useReceta();
-
+  const { subRecetas, loading: loadingSubRecetas } = useSubReceta();
   const isViewRoute = location.pathname.startsWith("/montajes/ver/");
   const isEditRoute = location.pathname.startsWith("/montajes/editar/");
   const mode: PageMode = isViewRoute ? "view" : isEditRoute ? "edit" : "create";
@@ -170,6 +172,7 @@ export default function MontajeNuevaPage() {
   const areasActivas = areas.filter((a) => a.activo);
   const ingredientesActivos = ingredientes.filter((i) => i.activo);
   const recetasActivos = recetas.filter((i) => i.activo);
+  const subRecetasActivos = subRecetas.filter((i) => i.activo);
   const [open, setOpen] = useState(false);
 
   const handleEdit = () => {
@@ -366,6 +369,7 @@ export default function MontajeNuevaPage() {
       (detalle ?? []).map((item) => ({
         ...(item.ingredienteId ? { ingredienteId: item.ingredienteId } : {}),
         ...(item.recetaId ? { recetaId: item.recetaId } : {}),
+        ...(item.subRecetaId ? { subRecetaId: item.subRecetaId } : {}),
         cantidad: item.cantidad,
         medida: item.medida,
       }));
@@ -429,6 +433,7 @@ export default function MontajeNuevaPage() {
           detalle={formData.detalle ?? []}
           ingredientes={ingredientesActivos}
           recetas={recetasActivos}
+          subRecetas={subRecetasActivos}
           unidades={unidades}
           onAdd={addIngrediente}
           onUpdate={updateIngrediente}
@@ -457,7 +462,8 @@ export default function MontajeNuevaPage() {
     loadingCategoria ||
     loadingAreas ||
     loadingIngredientes ||
-    loadingRecetas
+    loadingRecetas ||
+    loadingSubRecetas
   ) {
     return (
       <AppLayout>

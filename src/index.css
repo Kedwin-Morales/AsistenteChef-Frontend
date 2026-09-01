@@ -159,6 +159,17 @@ body {
 }
 
 /* ---------- ANIMACIÓN DE TRANSICIÓN ENTRE PASOS DEL WIZARD ---------- */
+@keyframes fade-in-up {
+  from {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @keyframes slide-in-right {
   from {
     transform: translateX(40px);

@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import { useState, useCallback } from "react";
 import {
   ShoppingBasket,
@@ -6,6 +7,8 @@ import {
   RulerDimensionLine,
   Search,
   X,
+  BookOpen,
+  Layers,
 } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import AutocompleteField from "@/components/ui/AutocompleteField";
@@ -35,6 +38,14 @@ interface Props {
 }
 
 type DetailType = "ingrediente" | "receta" | "subReceta";
+
+type ItemType = "ingrediente" | "receta" | "subReceta";
+
+interface TypeOption {
+  type: ItemType;
+  label: string;
+  icon: LucideIcon;
+}
 
 interface Draft {
   ingredienteId: string;
@@ -74,8 +85,8 @@ function getTipoBadge({ isDarkMode, tipo }: { isDarkMode: boolean; tipo: DetailT
       <span
         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
           isDarkMode
-            ? "bg-amber-900/30 text-amber-300 border border-amber-700/50"
-            : "bg-amber-100 text-amber-800 border border-amber-200"
+            ? "bg-purple-900/30 text-purple-300 border border-purple-700/50"
+            : "bg-purple-100 text-purple-800 border border-purple-200"
         }`}
       >
         <ShoppingBasket size={12} /> SubReceta
@@ -132,6 +143,28 @@ export default function MontajeIngredientesSection({
   currentMontajeId,
 }: Props) {
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [selectedType, setSelectedType] = useState<ItemType>("ingrediente");
+
+  const typeOptions: TypeOption[] = [
+    { type: "ingrediente", label: "Ingrediente", icon: ShoppingBasket },
+    { type: "receta", label: "Receta", icon: BookOpen },
+    { type: "subReceta", label: "Sub-Receta", icon: Layers },
+  ];
+
+  const handleTypeChange = useCallback(
+    (type: ItemType) => {
+      if (readOnly || type === selectedType) return;
+      setSelectedType(type);
+      setDraft((prev) => ({
+        ...prev,
+        ingredienteId: "",
+        recetaId: "",
+        subRecetaId: "",
+      }));
+      onDirty();
+    },
+    [readOnly, selectedType, onDirty],
+  );
 
   const ingredienteOptions = ingredientes.map((i) => ({
     value: i.ingredienteId,
@@ -336,9 +369,38 @@ export default function MontajeIngredientesSection({
 
       {!readOnly && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
-            <div className="col-span-2 lg:col-span-3 relative z-100">
-              <div className="relative">
+          {/* SEGMENTED CONTROL DE TIPO */}
+          <div
+            role="group"
+            aria-label="Tipo de elemento a agregar"
+            className="mb-5 grid grid-cols-3 gap-1.5 rounded-2xl border border-(--bordes) bg-(--bg-form) p-1.5"
+          >
+            {typeOptions.map((opt) => {
+              const Icon = opt.icon;
+              const active = selectedType === opt.type;
+              return (
+                <button
+                  key={opt.type}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => handleTypeChange(opt.type)}
+                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) ${
+                    active
+                      ? "bg-gradient btn-gradient shadow-md text-white scale-[1.02]"
+                      : "text-(--texto) hover:bg-(--secondary)/10 focus-visible:bg-(--secondary)/10 active:scale-95"
+                  }`}
+                >
+                  <Icon size={16} className={active ? "text-white" : "text-(--secondary)"} />
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* AUTOCOMPLETE DEL TIPO SELECCIONADO */}
+          <div className="relative grid gap-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 sm:items-end z-100 animate-[fade-in-up_0.3s_ease-out]">
+            {selectedType === "ingrediente" && (
+              <div className="relative col-span-1 sm:col-span-2 lg:col-span-5">
                 <AutocompleteField
                   label="Ingrediente: "
                   value={draft.ingredienteId}
@@ -359,9 +421,10 @@ export default function MontajeIngredientesSection({
                   </button>
                 )}
               </div>
-            </div>
-            <div className="col-span-2 lg:col-span-3 relative z-100">
-              <div className="relative">
+            )}
+
+            {selectedType === "receta" && (
+              <div className="relative col-span-1 sm:col-span-2 lg:col-span-5">
                 <AutocompleteField
                   label="Receta: "
                   value={draft.recetaId}
@@ -382,9 +445,10 @@ export default function MontajeIngredientesSection({
                   </button>
                 )}
               </div>
-            </div>
-            <div className="col-span-2 lg:col-span-3 relative z-100">
-              <div className="relative">
+            )}
+
+            {selectedType === "subReceta" && (
+              <div className="relative col-span-1 sm:col-span-2 lg:col-span-5">
                 <AutocompleteField
                   label="Sub-Receta: "
                   value={draft.subRecetaId}
@@ -405,9 +469,9 @@ export default function MontajeIngredientesSection({
                   </button>
                 )}
               </div>
-            </div>
+            )}
 
-            <div className="col-span-2 sm:col-span-1">
+            <div className="col-span-2">
               <InputField
                 label="Cantidad: "
                 type="number"
@@ -446,6 +510,7 @@ export default function MontajeIngredientesSection({
                 </select>
               </div>
             </div>
+
             <div className="col-span-2">
               <button
                 type="button"
