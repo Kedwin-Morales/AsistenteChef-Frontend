@@ -19,6 +19,7 @@ import SubRecetaNuevaPage from "@/features/subReceta/pages/SubRecetaNuevaPage";
 import ConsejoPage from "@/features/consejo/pages/ConsejoPage";
 import MontajePage from "@/features/montaje/pages/MontajePage";
 import MontajeNuevaPage from "@/features/montaje/pages/MontajeNuevaPage";
+import MermaPage  from "@/features/merma/pages/MermaPage";
 
 export default function AppRouter() {
   return (
@@ -50,6 +51,7 @@ export default function AppRouter() {
           <Route path="/montajes/nueva" element={<MontajeNuevaPage />} />
           <Route path="/montajes/editar/:id" element={<MontajeNuevaPage />} />
           <Route path="/montajes/ver/:id" element={<MontajeNuevaPage />} />
+          <Route path="/mermas" element={<MermaPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -189,7 +189,7 @@ export default function MontajeNuevaPage() {
 
   const categoriasActivas = categorias.filter((f) => f.activo);
   const areasActivas = areas.filter((a) => a.activo);
-  const ingredientesActivos = ingredientes.filter((i) => i.activo && i.tipoIngrediente?.nombre !== "Utensilios".toUpperCase());
+  const ingredientesActivos = ingredientes.filter((i) => i.activo && i.tipoIngrediente?.nombre.toUpperCase() !== "Utensilios".toUpperCase());
   const recetasActivos = recetas.filter((i) => i.activo);
   const subRecetasActivos = subRecetas.filter((i) => i.activo);
   const [open, setOpen] = useState(false);

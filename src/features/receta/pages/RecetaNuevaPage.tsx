@@ -104,7 +104,7 @@ export default function RecetaNuevaPage() {
 
   const familiasActivas = familias.filter((f) => f.activo);
   const areasActivas = areas.filter((a) => a.activo);
-  const ingredientesActivos = ingredientes.filter((i) => i.activo && i.tipoIngrediente?.nombre !== "Utensilios".toUpperCase());
+  const ingredientesActivos = ingredientes.filter((i) => i.activo && i.tipoIngrediente?.nombre.toUpperCase() !== "Utensilios".toUpperCase());
   const [open, setOpen] = useState(false);
 
   const handleEdit = () => {

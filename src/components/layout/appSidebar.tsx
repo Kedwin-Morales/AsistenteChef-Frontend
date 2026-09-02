@@ -5,6 +5,7 @@ import {
   Shield,
   HomeIcon,
   ReceiptText,
+  Scale,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/auth.store";
@@ -69,6 +70,12 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           to="/montajes"
           icon={BiDish}
           label="Montajes"
+          isDarkMode={isDarkMode}
+        />
+        <NavItem
+          to="/mermas"
+          icon={Scale}
+          label="Mermas"
           isDarkMode={isDarkMode}
         />
         <NavItem
