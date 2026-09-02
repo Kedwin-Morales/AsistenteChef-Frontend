@@ -104,7 +104,7 @@ export default function RecetaNuevaPage() {
 
   const familiasActivas = familias.filter((f) => f.activo);
   const areasActivas = areas.filter((a) => a.activo);
-  const ingredientesActivos = ingredientes.filter((i) => i.activo);
+  const ingredientesActivos = ingredientes.filter((i) => i.activo && i.tipoIngrediente?.nombre !== "Utensilios".toUpperCase());
   const [open, setOpen] = useState(false);
 
   const handleEdit = () => {
@@ -294,11 +294,16 @@ export default function RecetaNuevaPage() {
       return;
     }
 
-    const payload: CreateDTO = { ...formData };
+    const payload: CreateDTO = {
+      ...(formData ?? EMPTY_FORM),
+      detalle: formData?.detalle ?? [],
+      detPreparacion: formData?.detPreparacion ?? [],
+    };
+
     setSaving(true);
     try {
       if (mode === "edit" && id) {
-        await editar(id, {
+        const payloadEdit = {
           recetaId: id,
           nombre: payload.nombre ?? "",
           descripcion: payload.descripcion ?? "",
@@ -308,7 +313,10 @@ export default function RecetaNuevaPage() {
           areaPreparacionId: payload.areaPreparacionId ?? "",
           detalle: payload.detalle ?? [],
           detPreparacion: payload.detPreparacion ?? [],
-        });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any;
+
+        await editar(id, payloadEdit);
         sileo.success({
           title: "¡Operación exitosa!",
           description: "La receta se actualizó correctamente.",

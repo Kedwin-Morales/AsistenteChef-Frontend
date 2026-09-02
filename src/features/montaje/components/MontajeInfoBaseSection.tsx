@@ -272,7 +272,7 @@ export default function MontajeInfoBaseSection({
             <InputField
               label="Porciones:"
               icon={Users}
-              type="number"
+              type="text"
               value={form.porciones ?? ""}
               required={required.porciones}
               isDarkMode={isDarkMode}
@@ -285,7 +285,7 @@ export default function MontajeInfoBaseSection({
             <InputField
               label="Costo por Porcion:"
               icon={CircleDollarSign}
-              type="text"
+              type="number"
               value={form.costoPorcion ?? ""}
               required={required.costoPorcion}
               isDarkMode={isDarkMode}
@@ -301,7 +301,7 @@ export default function MontajeInfoBaseSection({
             <InputField
               label="Costo por Unidad:"
               icon={CircleDollarSign}
-              type="text"
+              type="number"
               value={form.costoUnidad ?? ""}
               required={required.costoUnidad}
               isDarkMode={isDarkMode}
@@ -317,7 +317,7 @@ export default function MontajeInfoBaseSection({
             <InputField
               label="Precio de venta:"
               icon={CircleDollarSign}
-              type="text"
+              type="number"
               value={form.precio ?? ""}
               required={required.precio}
               isDarkMode={isDarkMode}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { MoveLeft, ArrowLeft, ArrowRight, CloudCheck} from "lucide-react";
+import { MoveLeft, ArrowLeft, ArrowRight, CloudCheck } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
@@ -12,7 +12,11 @@ import { sileo } from "sileo";
 import { confirm } from "@/shared/utils/swal";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { crear, editar, getById } from "../services/subReceta.service";
-import type { CreateSubDTO, ModelSubDETCreate, ModelSubDTO } from "../types/subReceta.types";
+import type {
+  CreateSubDTO,
+  ModelSubDETCreate,
+  ModelSubDTO,
+} from "../types/subReceta.types";
 import RecetaWizardSteps from "../components/SubRecetaWizardSteps";
 import SubRecetaInfoBaseSection from "../components/SubRecetaInfoBaseSection";
 import SubRecetaIngredientesSection from "../components/SubRecetaIngredientesSection";
@@ -24,7 +28,12 @@ type WizardStep = 1 | 2 | 3;
 type PageMode = "create" | "edit" | "view";
 
 const SECTION1_REQUIRED: Record<
-  "nombre" | "descripcion" | "porciones" | "rendimiento" | "familiaMenuId" | "areaPreparacionId",
+  | "nombre"
+  | "descripcion"
+  | "porciones"
+  | "rendimiento"
+  | "familiaMenuId"
+  | "areaPreparacionId",
   boolean
 > = {
   nombre: true,
@@ -66,7 +75,12 @@ function mapModelToForm(model: ModelSubDTO): CreateSubDTO {
   return {
     nombre: model.nombre ?? "",
     descripcion: model.descripcion ?? "",
-    porciones: model.porciones !== null && model.porciones !== undefined && model.porciones !== "" ? Number(model.porciones) : undefined,
+    porciones:
+      model.porciones !== null &&
+      model.porciones !== undefined &&
+      model.porciones !== ""
+        ? Number(model.porciones)
+        : undefined,
     rendimiento: model.rendimiento ?? "",
     familiaMenuId: model.familiaMenu?.familiaMenuId ?? "",
     areaPreparacionId: model.areaPreparacion?.areaPreparacionId ?? "",
@@ -90,8 +104,11 @@ export default function SubRecetaNuevaPage() {
   const { isDarkMode } = useLoginUI();
   const { familias, loading: loadingFamilias } = useFamiliaMenu();
   const { areas, loading: loadingAreas } = useAreaPreparacion();
-  const { ingredientes, unidades, loading: loadingIngredientes } =
-    useIngrediente();
+  const {
+    ingredientes,
+    unidades,
+    loading: loadingIngredientes,
+  } = useIngrediente();
   const { recetas, loading: loadingRecetas } = useReceta();
 
   const isViewRoute = location.pathname.startsWith("/sub-recetas/ver/");
@@ -107,12 +124,14 @@ export default function SubRecetaNuevaPage() {
 
   const familiasActivas = familias.filter((f) => f.activo);
   const areasActivas = areas.filter((a) => a.activo);
-  const ingredientesActivos = ingredientes.filter((i) => i.activo);
+  const ingredientesActivos = ingredientes.filter(
+    (i) => i.activo && i.tipoIngrediente?.nombre !== "Utensilios".toUpperCase(),
+  );
   const recetasActivos = recetas.filter((i) => i.activo);
   const [open, setOpen] = useState(false);
 
   const handleEdit = () => {
-    setOpen(true);    
+    setOpen(true);
     setTimeout(() => {
       navigate(`/sub-recetas/editar/${id}`);
     }, 800);
@@ -133,7 +152,10 @@ export default function SubRecetaNuevaPage() {
           if (mounted) {
             sileo.error({
               title: "Error",
-              description: getErrorMessage(error, "No se pudo cargar la receta."),
+              description: getErrorMessage(
+                error,
+                "No se pudo cargar la receta.",
+              ),
             });
             navigate("/sub-recetas");
           }
@@ -173,11 +195,15 @@ export default function SubRecetaNuevaPage() {
     markDirty();
   };
 
-  const updateIngrediente = (index: number, cantidad: number, medida: string) => {
+  const updateIngrediente = (
+    index: number,
+    cantidad: number,
+    medida: string,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       detalle: (prev.detalle ?? []).map((item, i) =>
-        i === index ? { ...item, cantidad, medida } : item
+        i === index ? { ...item, cantidad, medida } : item,
       ),
     }));
     markDirty();
@@ -298,7 +324,7 @@ export default function SubRecetaNuevaPage() {
       return;
     }
 
-    const cleanDetalle = (detalle: ModelSubDETCreate[]): ModelSubDETCreate[] =>
+    const cleanDetalle = (detalle: ModelSubDETCreate[] = []): ModelSubDETCreate[] =>
       (detalle ?? []).map((item) => ({
         ...(item.ingredienteId ? { ingredienteId: item.ingredienteId } : {}),
         ...(item.recetaId ? { recetaId: item.recetaId } : {}),
@@ -306,31 +332,49 @@ export default function SubRecetaNuevaPage() {
         medida: item.medida,
       }));
 
-    const cleanPayload: CreateSubDTO = {
-      ...formData,
-      detalle: cleanDetalle(formData.detalle ?? []),
+    const safeFormData: CreateSubDTO = {
+      ...(formData ?? EMPTY_FORM),
+      detalle: cleanDetalle(formData?.detalle ?? []),
+      detPreparacion: formData?.detPreparacion ?? [],
     };
+
+    if (mode === "edit" && (!id || id.trim() === "")) {
+      sileo.error({
+        title: "Error de validación",
+        description: "No se pudo identificar la sub-receta a editar.",
+      });
+      return;
+    }
 
     setSaving(true);
     try {
       if (mode === "edit" && id) {
-        await editar(id, {
+        const payloadEdit = {
           recetaId: id,
-          nombre: cleanPayload.nombre ?? "",
-          descripcion: cleanPayload.descripcion ?? "",
-          porciones: cleanPayload.porciones?.toString() ?? "",
-          rendimiento: cleanPayload.rendimiento ?? "",
-          familiaMenuId: cleanPayload.familiaMenuId ?? "",
-          areaPreparacionId: cleanPayload.areaPreparacionId ?? "",
-          detalle: cleanPayload.detalle ?? [],
-          detPreparacion: cleanPayload.detPreparacion ?? [],
-        });
+          nombre: safeFormData.nombre ?? "",
+          descripcion: safeFormData.descripcion ?? "",
+          porciones: safeFormData.porciones?.toString() ?? "",
+          rendimiento: safeFormData.rendimiento ?? "",
+          familiaMenuId: safeFormData.familiaMenuId ?? "",
+          areaPreparacionId: safeFormData.areaPreparacionId ?? "",
+          detalle: safeFormData.detalle ?? [],
+          detPreparacion: safeFormData.detPreparacion ?? [],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any;
+
+        await editar(id, payloadEdit);
         sileo.success({
           title: "¡Operación exitosa!",
           description: "La receta se actualizó correctamente.",
         });
       } else {
-        await crear(cleanPayload);
+        const payloadCreate: CreateSubDTO = {
+          ...safeFormData,
+          detalle: safeFormData.detalle ?? [],
+          detPreparacion: safeFormData.detPreparacion ?? [],
+        };
+
+        await crear(payloadCreate);
         sileo.success({
           title: "¡Operación exitosa!",
           description: "La receta se guardó correctamente.",
@@ -398,7 +442,13 @@ export default function SubRecetaNuevaPage() {
     );
   };
 
-  if (loading || loadingFamilias || loadingAreas || loadingIngredientes || loadingRecetas) {
+  if (
+    loading ||
+    loadingFamilias ||
+    loadingAreas ||
+    loadingIngredientes ||
+    loadingRecetas
+  ) {
     return (
       <AppLayout>
         <LoadingScreen message="Cargando..." isDarkMode={isDarkMode} />
@@ -413,7 +463,8 @@ export default function SubRecetaNuevaPage() {
   };
 
   const subtitles = {
-    create: "Define la información base, agrega los ingredientes y detalla el proceso de elaboración.",
+    create:
+      "Define la información base, agrega los ingredientes y detalla el proceso de elaboración.",
     edit: "Modifica la información de la receta.",
     view: "Detalle de la receta seleccionada.",
   };
@@ -434,7 +485,9 @@ export default function SubRecetaNuevaPage() {
             Sub-Recetas
           </button>
           <div className="mt-3 flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-(--primary)">{titles[mode]}</h1>
+            <h1 className="text-3xl font-bold text-(--primary)">
+              {titles[mode]}
+            </h1>
             {mode === "view" && (
               <button
                 type="button"
@@ -462,36 +515,32 @@ export default function SubRecetaNuevaPage() {
 
         {/* ACTIONS */}
         <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-5">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="btn-cancelar"
-          >
+          <button type="button" onClick={handleCancel} className="btn-cancelar">
             {mode === "view" ? "Volver" : "Cancelar"}
           </button>
-          
-          <div className="flex flex-col-reverse sm:flex-row gap-5">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="btn-guardar"
-                >
-                  <ArrowLeft size={18} /> Anterior
-                </button>
-              )}
 
-              {currentStep < 3 ? (
+          <div className="flex flex-col-reverse sm:flex-row gap-5">
+            {currentStep > 1 && (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="btn-guardar"
+              >
+                <ArrowLeft size={18} /> Anterior
+              </button>
+            )}
+
+            {currentStep < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="btn-guardar"
+              >
+                Siguiente <ArrowRight size={18} />
+              </button>
+            ) : (
+              mode !== "view" && (
                 <button
-                  type="button"
-                  onClick={handleNext}
-                  className="btn-guardar"
-                >
-                  Siguiente <ArrowRight size={18} />
-                </button>
-              ) : (
-                mode !== "view" && (
-                  <button
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
@@ -504,13 +553,14 @@ export default function SubRecetaNuevaPage() {
                     </>
                   ) : (
                     <>
-                      <CloudCheck size={18} /> {mode === "edit" ? "Actualizar" : "Guardar"}
+                      <CloudCheck size={18} />{" "}
+                      {mode === "edit" ? "Actualizar" : "Guardar"}
                     </>
                   )}
                 </button>
-                )              
-              )}
-            </div>
+              )
+            )}
+          </div>
         </div>
       </div>
     </AppLayout>

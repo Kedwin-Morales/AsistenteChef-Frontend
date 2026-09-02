@@ -216,3 +216,11 @@ body {
   left: 100%;
   z-index: 1000;
 }
+
+/* Ajusta el ancho para que no ocupe toda la pantalla en móviles */
+.mi-sweetalert {
+  width: 90% !important;
+  max-width: 450px !important;
+  border-radius: 1rem !important;
+  background: var(--color-bg) !important; /* Si quieres redondearlo más a juego con tu diseño */
+}

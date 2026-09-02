@@ -29,7 +29,10 @@ export const confirm = (options: {
   confirmButtonText: options.confirmButtonText ?? 'Confirmar',
   cancelButtonText: options.cancelButtonText ?? 'Cancelar',
   reverseButtons: true,
-  theme: options.isDarkMode ? 'dark' : 'light'
+  theme: options.isDarkMode ? 'dark' : 'light',
+  customClass: {
+    popup: 'mi-sweetalert'
+  }
 })
 
 export const alert = (options: {

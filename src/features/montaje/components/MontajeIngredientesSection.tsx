@@ -354,7 +354,7 @@ export default function MontajeIngredientesSection({
 
   return (
     <section
-      className={`rounded-2xl border border-b-5 border-(--bordes) p-6 ${
+      className={`rounded-2xl border border-b-5 border-(--bordes) p-3 md:p-6 ${
         isDarkMode
           ? "bg-neutral-800/50 border-neutral-700/50"
           : "bg-(--bg-form) border-(--bordes)"
@@ -373,7 +373,7 @@ export default function MontajeIngredientesSection({
           <div
             role="group"
             aria-label="Tipo de elemento a agregar"
-            className="mb-5 grid grid-cols-3 gap-1.5 rounded-2xl border border-(--bordes) bg-(--bg-form) p-1.5"
+            className="mb-5 grid grid-cols-3 gap-1.5 rounded-2xl border border-(--bordes) bg-(--bg-form) p-1.5 place-items-center"
           >
             {typeOptions.map((opt) => {
               const Icon = opt.icon;
@@ -384,10 +384,10 @@ export default function MontajeIngredientesSection({
                   type="button"
                   aria-pressed={active}
                   onClick={() => handleTypeChange(opt.type)}
-                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) ${
-                    active
-                      ? "bg-gradient btn-gradient shadow-md text-white scale-[1.02]"
-                      : "text-(--texto) hover:bg-(--secondary)/10 focus-visible:bg-(--secondary)/10 active:scale-95"
+                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) w-full md:w-[60%] 
+                  ${active
+                      ? "bg-gradient shadow-xl-secondary text-white md:scale-[1.02]"
+                      : "text-(--texto) hover:bg-(--secondary)/10 focus-visible:bg-(--secondary)/10 md:active:scale-95"
                   }`}
                 >
                   <Icon size={16} className={active ? "text-white" : "text-(--secondary)"} />

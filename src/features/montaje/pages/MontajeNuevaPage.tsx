@@ -95,9 +95,28 @@ function parseDate(value: string | Date | null | undefined): Date | undefined {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-function mapModelToForm(model: ModelDTO): CreateDTO {
-  const categoria = model.CategoriasPlato ?? (model as Record<string, unknown>).categoriaPlato as typeof model.CategoriasPlato ?? null;
-  const area = model.areaPreparacion ?? (model as Record<string, unknown>).areaPreparacionObj as typeof model.areaPreparacion ?? null;
+function mapModelToForm(model?: Partial<ModelDTO> | null): CreateDTO{
+  if (!model) {
+    return EMPTY_FORM;
+  }
+
+  const categoria =
+    (model as {
+      CategoriasPlato?: { categoriaId?: string } | null;
+      categoriaPlato?: { categoriaId?: string } | null;
+    }).CategoriasPlato ??
+    (model as { categoriaPlato?: { categoriaId?: string } | null })
+      .categoriaPlato ??
+    null;
+
+  const area =
+    (model as {
+      areaPreparacion?: { areaPreparacionId?: string } | null;
+      areaPreparacionObj?: { areaPreparacionId?: string } | null;
+    }).areaPreparacion ??
+    (model as { areaPreparacionObj?: { areaPreparacionId?: string } | null })
+      .areaPreparacionObj ??
+    null;
 
   return {
     nombre: model.nombre ?? "",
@@ -170,7 +189,7 @@ export default function MontajeNuevaPage() {
 
   const categoriasActivas = categorias.filter((f) => f.activo);
   const areasActivas = areas.filter((a) => a.activo);
-  const ingredientesActivos = ingredientes.filter((i) => i.activo);
+  const ingredientesActivos = ingredientes.filter((i) => i.activo && i.tipoIngrediente?.nombre !== "Utensilios".toUpperCase());
   const recetasActivos = recetas.filter((i) => i.activo);
   const subRecetasActivos = subRecetas.filter((i) => i.activo);
   const [open, setOpen] = useState(false);

@@ -321,7 +321,7 @@ export default function SubRecetaIngredientesSection({
           <div
             role="group"
             aria-label="Tipo de elemento a agregar"
-            className="mb-5 grid grid-cols-2 gap-1.5 rounded-2xl border border-(--bordes) bg-(--bg-form) p-1.5"
+            className="mb-5 grid grid-cols-2 place-items-center gap-1.5 rounded-2xl border border-(--bordes) bg-(--bg-form) p-1.5"
           >
             {typeOptions.map((opt) => {
               const Icon = opt.icon;
@@ -332,8 +332,8 @@ export default function SubRecetaIngredientesSection({
                   type="button"
                   aria-pressed={active}
                   onClick={() => handleTypeChange(opt.type)}
-                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) ${
-                    active
+                  className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) w-full md:w-[50%]
+                    ${active
                       ? "bg-gradient btn-gradient shadow-md text-white scale-[1.02]"
                       : "text-(--texto) hover:bg-(--secondary)/10 focus-visible:bg-(--secondary)/10 active:scale-95"
                   }`}
