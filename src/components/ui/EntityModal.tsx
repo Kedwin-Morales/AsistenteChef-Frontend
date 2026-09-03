@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Trash2, Pencil, CloudCheck, CircleX } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useCallback, useState } from "react";
 import InputField from "@/components/ui/InputField";
 import type { LucideIcon } from "lucide-react";
 import type { InputHTMLAttributes } from "react";
@@ -82,6 +82,18 @@ export interface ModalDetailField<T> {
   };
 }
 
+export interface EntitySelectorOption<T> {
+  value: string;
+  label: string;
+  icon?: LucideIcon;
+  fieldName: keyof T;
+}
+
+export interface EntitySelectorConfig<T> {
+  options: EntitySelectorOption<T>[];
+  defaultValue?: string;
+}
+
 interface Props<T extends object, D extends object = any> {
   open: boolean;
   title: string;
@@ -104,6 +116,7 @@ interface Props<T extends object, D extends object = any> {
   viewActions?: ModalAction<T>[];
   mergeDetailBy?: keyof D;
   accumulateField?: keyof D;
+  entitySelectorConfig?: EntitySelectorConfig<T>;
 }
 
 const COL_SPAN_CLASS: Record<number, string> = {
@@ -132,6 +145,7 @@ export default function EntityModal<T extends object, D extends object = any>({
   isSubmitting = false,
   mergeDetailBy,
   accumulateField,
+  entitySelectorConfig,
 }: Props<T, D>) {
   const isReadOnly = mode === "view";
 
@@ -141,8 +155,60 @@ export default function EntityModal<T extends object, D extends object = any>({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const toast = useToast();
 
+  /* SELECTOR DE TIPO (opcional) */
+  const selectorOptionNames = useMemo(
+    () =>
+      new Set(
+        (entitySelectorConfig?.options ?? []).map((o) => String(o.fieldName)),
+      ),
+    [entitySelectorConfig],
+  );
+
+  const resolveInitialSelector = useCallback(
+    (source: Partial<T> | null | undefined): string => {
+      if (!entitySelectorConfig || entitySelectorConfig.options.length === 0) {
+        return "";
+      }
+      const found = entitySelectorConfig.options.find((o) => {
+        const v = source?.[o.fieldName];
+        if (typeof v === "string") return v.trim() !== "";
+        return v !== undefined && v !== null && v !== "";
+      });
+      if (found) return found.value;
+      return (
+        entitySelectorConfig.defaultValue ?? entitySelectorConfig.options[0].value
+      );
+    },
+    [entitySelectorConfig],
+  );
+
+  const [selectorValue, setSelectorValue] = useState<string>(() =>
+    resolveInitialSelector(data),
+  );
+
+  const activeSelectorOption = entitySelectorConfig?.options.find(
+    (o) => o.value === selectorValue,
+  );
+
+  const handleSelectorChange = (optionValue: string) => {
+    if (isReadOnly || !entitySelectorConfig) return;
+    if (optionValue === selectorValue) return;
+    setSelectorValue(optionValue);
+    setForm((prev) => {
+      const updated: Partial<T> = { ...prev };
+      entitySelectorConfig.options.forEach((o) => {
+        updated[o.fieldName] = undefined;
+      });
+      return updated;
+    });
+  };
+
   const visibleFields = fields.filter((field) => {
-    if (!field.permission) return true;
+    if (field.permission) return false;
+    if (!entitySelectorConfig) return true;
+    if (field.content !== undefined) return true;
+    if (!selectorOptionNames.has(String(field.name))) return true;
+    return activeSelectorOption?.fieldName === field.name;
   });
 
   const visibleFieldsDetails = detailFields?.filter((field) => {
@@ -350,6 +416,41 @@ export default function EntityModal<T extends object, D extends object = any>({
           className="flex-1 p-4 md:px-6 space-y-3 overflow-y-auto"
         >
           {/* MAIN FIELDS */}
+          {entitySelectorConfig && entitySelectorConfig.options.length > 0 && (
+            <div
+              role="group"
+              aria-label="Tipo de elemento"
+              className="grid gap-1.5 rounded-2xl border border-(--bordes) bg-(--bg-form) p-1.5"
+              style={{ gridTemplateColumns: `repeat(${entitySelectorConfig.options.length}, minmax(0, 1fr))` }}
+            >
+              {entitySelectorConfig.options.map((opt) => {
+                const OptIcon = opt.icon;
+                const active = opt.value === selectorValue;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    disabled={isReadOnly}
+                    aria-pressed={active}
+                    onClick={() => handleSelectorChange(opt.value)}
+                    className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-(--secondary) ${
+                      active
+                        ? "bg-gradient btn-gradient shadow-md text-white scale-[1.02]"
+                        : "text-(--texto) hover:bg-(--secondary)/10 focus-visible:bg-(--secondary)/10 active:scale-95"
+                    } ${isReadOnly ? "cursor-not-allowed opacity-70" : ""}`}
+                  >
+                    {OptIcon && (
+                      <OptIcon
+                        size={16}
+                        className={active ? "text-white" : "text-(--secondary)"}
+                      />
+                    )}
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3">
             {visibleFields.map((field) => {
               const value =
@@ -374,7 +475,15 @@ export default function EntityModal<T extends object, D extends object = any>({
                   isReadOnly || (field.dependsOn && !parentValue);
 
                 return (
-                  <div key={String(field.name)} className={colSpanClass}>
+                  <div
+                    key={String(field.name)}
+                    className={`${colSpanClass} ${
+                      entitySelectorConfig &&
+                      selectorOptionNames.has(String(field.name))
+                        ? "animate-[fade-in-up_0.3s_ease-out]"
+                        : ""
+                    }`}
+                  >
                     <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
                       {field.label}
                       {field.required && (

@@ -5,7 +5,7 @@ export default function HomePage() {
         <AppLayout>
             <div className="mb-8">
                 <h1 className="text-2xl font-bold">Dashboard</h1>
-                <p className="text-sm text-slate-500 mt-1">Resumen del negocio</p>
+                <p className="text-sm text-neutral-500 mt-1">Resumen del negocio</p>
             </div>
         </AppLayout>
     );

@@ -14,6 +14,7 @@ import {
   ReceiptText,
   LandPlot,
   Scale,
+  Layers,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -39,6 +40,7 @@ import { useAreaPreparacion } from "@/features/areaPreparacion/hooks/useAreaPrep
 import { useUnidad } from "@/features/unidadMedida/hooks/useUnidad";
 import { useReceta } from "@/features/receta/hooks/useReceta";
 import {useSubReceta} from "@/features/subReceta/hooks/useSubReceta";
+import { IoReceiptOutline } from "react-icons/io5";
 
 type ModelFilter = "fecha" | "receta" | "subReceta" | "areaPreparacion";
 type MermaFormData = Partial<ModelDTO> & {
@@ -47,6 +49,7 @@ type MermaFormData = Partial<ModelDTO> & {
   areaPreparacionId?: string;
   unidadMedidaId?: string;
 };
+
 
 export default function MermaPage() {
   const { mermas, loading, refetch } = useMerma();
@@ -85,7 +88,7 @@ export default function MermaPage() {
       name: "recetaId",
       label: "Receta: ",
       icon: ReceiptText,
-      colSpan: 3,
+      colSpan: 6,
       required: true,
       type: "select",
       options: recetasActivos.map((t) => ({
@@ -97,7 +100,7 @@ export default function MermaPage() {
       name: "subRecetaId",
       label: "Sub-Receta: ",
       icon: ReceiptText,
-      colSpan: 3,
+      colSpan: 6,
       required: false,
       type: "select",
       options: subRecetasActivos.map((t) => ({
@@ -285,7 +288,43 @@ export default function MermaPage() {
     {
       key: "Receta",
       header: "Receta / Subreceta",
-      render: (row) => <span className="font-semibold">{` ${row.receta?.nombre ?? row.subReceta?.nombre ?? "—"}`}</span>,
+      render: (row) => {
+        if (row.subReceta) {
+          return (
+            <>
+              <span className="mr-2 font-semibold">
+                {row.subReceta.nombre ?? "—"}
+              </span>
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs     font-medium ${
+                  isDarkMode
+                    ? "bg-purple-900/30 text-purple-300 border border-purple-700/50"
+                    : "bg-purple-100 text-purple-800 border border-purple-200"
+                }`}
+              >
+                <ReceiptText size={12} /> SubReceta
+              </span>
+            </>
+          );
+        }
+      
+        return (
+          <>
+            <span className="mr-2 font-semibold">
+              {row.receta?.nombre ?? "—"}
+            </span>
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs     font-medium ${
+                isDarkMode
+                  ? "bg-blue-900/30 text-blue-300 border border-blue-700/50"
+                  : "bg-blue-100 text-blue-800 border border-blue-200"
+              }`}
+            >
+              <IoReceiptOutline size={12} /> Receta
+            </span>
+          </>
+        );
+      },
     },
     {
       key: "Cantidad",
@@ -503,6 +542,10 @@ export default function MermaPage() {
           title={(row) => row.receta?.nombre ?? row.subReceta?.nombre ?? "—"}
           badges={(row) => [
             {
+              label: row.receta ? "Receta" : "Sub-Receta",
+              variant: row.receta ? "info" : "accent",
+            },
+            {
               label: row.activo ? "Activo" : "Inactivo",
               variant: row.activo ? "success" : "danger",
             },
@@ -551,6 +594,23 @@ export default function MermaPage() {
         }
         fields={fields}
         isDarkMode={isDarkMode}
+        entitySelectorConfig={{
+          defaultValue: "receta",
+          options: [
+            {
+              value: "receta",
+              label: "Receta",
+              icon: ReceiptText,
+              fieldName: "recetaId",
+            },
+            {
+              value: "subReceta",
+              label: "Sub-Receta",
+              icon: Layers,
+              fieldName: "subRecetaId",
+            },
+          ],
+        }}
         onClose={() => {
           setModalOpen(false);
           setSelected(null);

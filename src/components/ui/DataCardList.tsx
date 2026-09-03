@@ -3,12 +3,7 @@ import React from "react";
 
 /* ================= BADGE TYPES ================= */
 
-type BadgeVariant =
-  | "neutral"
-  | "success"
-  | "danger"
-  | "warning"
-  | "info";
+type BadgeVariant = "neutral" | "success" | "danger" | "warning" | "info" | "accent";
 
 interface BadgeItem {
   label: string | undefined;
@@ -36,7 +31,7 @@ interface DataCardListProps<T> {
 
 function getBadgeStyles(
   variant: BadgeVariant = "neutral",
-  isDarkMode?: boolean
+  isDarkMode?: boolean,
 ) {
   const base = "px-2.5 py-1 text-xs font-semibold rounded-lg border";
 
@@ -60,6 +55,10 @@ function getBadgeStyles(
     info: isDarkMode
       ? "bg-blue-900/40 border-blue-700 text-blue-300"
       : "bg-blue-50 border-blue-200 text-blue-700",
+
+    accent: isDarkMode
+      ? "bg-purple-900/30 text-purple-300 border border-purple-700/50"
+      : "bg-purple-100 text-purple-800 border border-purple-200",
   };
 
   return `${base} ${variants[variant]}`;
@@ -93,7 +92,9 @@ export default function DataCardList<T>({
     <div className="space-y-4">
       {data.map((row) => {
         const badgeData = badges?.(row);
-        const rowActivo = isActive ? isActive(row) : Boolean((row as Record<string, unknown>).activo);
+        const rowActivo = isActive
+          ? isActive(row)
+          : Boolean((row as Record<string, unknown>).activo);
 
         return (
           <div
@@ -106,14 +107,10 @@ export default function DataCardList<T>({
           >
             {/* HEADER */}
             <div>
-              <h3 className="font-semibold text-base">
-                {title(row)}
-              </h3>
+              <h3 className="font-semibold text-base">{title(row)}</h3>
 
               {subtitle && (
-                <p className="text-sm text-slate-500 mt-1">
-                  {subtitle(row)}
-                </p>
+                <p className="text-sm text-slate-500 mt-1">{subtitle(row)}</p>
               )}
             </div>
 
@@ -125,10 +122,7 @@ export default function DataCardList<T>({
                     return (
                       <span
                         key={index}
-                        className={getBadgeStyles(
-                          "neutral",
-                          isDarkMode
-                        )}
+                        className={getBadgeStyles("neutral", isDarkMode)}
                       >
                         {badge}
                       </span>
@@ -138,10 +132,7 @@ export default function DataCardList<T>({
                   return (
                     <span
                       key={index}
-                      className={getBadgeStyles(
-                        badge.variant,
-                        isDarkMode
-                      )}
+                      className={getBadgeStyles(badge.variant, isDarkMode)}
                     >
                       {badge.label}
                     </span>
@@ -152,7 +143,9 @@ export default function DataCardList<T>({
 
             {/* EXTRA CONTENT */}
             {renderExtra && (
-              <div className={`mt-4 text-sm ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}>
+              <div
+                className={`mt-4 text-sm ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}
+              >
                 {renderExtra(row)}
               </div>
             )}
@@ -183,11 +176,15 @@ export default function DataCardList<T>({
                     onClick={() => onDelete(row)}
                     className={`p-2 rounded-xl transition ${
                       rowActivo
-                        ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                        : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
+                        ? "text-red-500 bg-red-50 hover:bg-red-100"
+                        : "text-emerald-600 bg-emerald-50 hover:bg-emerald-100"
                     }`}
                   >
-                    {rowActivo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
+                    {rowActivo ? (
+                      <Ban size={16} />
+                    ) : (
+                      <CircleCheckBig size={16} />
+                    )}
                   </button>
                 )}
               </div>
