@@ -11,8 +11,7 @@ export default function MaestroPage() {
     <AppLayout>
       <header className="mb-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
-          <div>
-            
+          <div>            
             <h1 className="flex items-center gap-3 text-3xl md:text-4xl font-bold tracking-tight text-(--primary)">
               <GiCook size={32} />
               {MAESTRO_DASHBOARD_CONFIG.title}

@@ -84,7 +84,7 @@ export default function StatCard({
                 className={`
                   text-sm font-medium tracking-tight truncate transition-colors duration-200
                   ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}
-                  group-hover:text-(--texto)/80
+                  group-hover:text-(--secondary)/80
                 `}
               >
                 {title}
@@ -97,7 +97,7 @@ export default function StatCard({
                 ${isDarkMode
                   ? "bg-(--primary)/10 text-(--primary) border border-(--primary)/20"
                   : "bg-(--primary)/10 text-(--primary) border border-(--primary)/20"}
-                group-hover:scale-110
+                group-hover:scale-110 group-hover:bg-(--secondary)/20 group-hover:text-(--secondary)
               `}
               aria-hidden="true"
             >
@@ -109,7 +109,7 @@ export default function StatCard({
             <div
               className={`
                 text-3xl sm:text-4xl font-bold tracking-tight transition-colors duration-200
-                ${isDarkMode ? "text-(--texto)" : "text-(--texto)"}
+                ${isDarkMode ? "text-(--texto)" : "text-(--texto)"} group-hover:text-(--secondary)
               `}
             >
               {value}
