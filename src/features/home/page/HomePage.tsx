@@ -1,4 +1,4 @@
-import { BookOpen, Bot, TriangleAlert } from "lucide-react";
+import { BookOpen, Bot, ShoppingCart, TriangleAlert, Zap } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import StatCard from "@/components/ui/StatCard";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
@@ -72,7 +72,7 @@ export default function HomePage() {
     },
     {
       key: "uso",
-      header: "Uso",
+      header: "Costo",
       render: (row) => {
         const uso = deriveUso(Number(row.costo) || 0);
         return uso === "Alto" ? (
@@ -133,8 +133,21 @@ export default function HomePage() {
       {/* Contenido principal */}
       <div className="grid grid-cols-1 lg:grid-cols-[65%_1fr] gap-6">
         {/* Columna izquierda: tabla */}
-        <div className="flex flex-col rounded-3xl border border-b-5 border-(--bordes) bg-(--bg-form) p-5 shadow-sm">
-          <h2 className="mb-4 text-lg font-bold text-(--texto)">
+        <div className="flex flex-col rounded-3xl border border-b-5 border-(--bordes) bg-(--bg-form) p-5 shadow-sm h-fit">
+           <h2 className="flex items-center gap-3 mb-4 text-lg font-bold text-(--texto)   tracking-tight">
+            <div
+              className={`
+                flex items-center justify-center w-10 h-10 rounded-xl
+                transition-all duration-300 ease-out
+                ${isDarkMode
+                  ? "bg-(--primary)/10 text-(--primary) border border-(--primary)/20"
+                  : "bg-(--primary)/10 text-(--primary) border border-(--primary)/20"}
+              `}
+                aria-hidden="true"
+              >
+                <ShoppingCart size={20} />
+            </div> 
+            
             Últimos Ingredientes Creados
           </h2>
           <div className="hidden md:block">
@@ -169,12 +182,25 @@ export default function HomePage() {
         </div>
 
         {/* Columna derecha: acciones y alertas */}
-        <div className="flex flex-col gap-6">
-          <section aria-labelledby="acciones-titulo">
+        <div className="flex flex-col gap-3">
+          <section className="flex flex-col gap-2 bg-linear-to-t from-(--secondary)/60 to-transparent to-60% p-5 rounded-3xl border-b-5 border-(--bordes) shadow-sm" aria-labelledby="acciones-titulo">
+            
             <h2
               id="acciones-titulo"
-              className="mb-3 text-lg font-bold text-(--texto)"
+              className="flex items-center gap-3 text-lg font-bold text-(--texto)"
             >
+              <div
+              className={`
+                flex items-center justify-center w-10 h-10 rounded-xl
+                transition-all duration-300 ease-out
+                ${isDarkMode
+                  ? "bg-(--primary)/10 text-(--primary) border border-(--primary)/20"
+                  : "bg-(--primary)/10 text-(--primary) border border-(--primary)/20"}
+              `}
+                aria-hidden="true"
+              >
+                <Zap size={20} />
+              </div>              
               Acciones Rápidas
             </h2>
             <QuickActionsGrid />

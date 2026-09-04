@@ -1,4 +1,4 @@
-import { Scale, Tags, ChefHat, History } from "lucide-react";
+import { Tags, ShoppingBasket, Layers2, NotebookPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface QuickAction {
@@ -10,10 +10,10 @@ interface QuickAction {
 
 const actions: QuickAction[] = [
   {
-    label: "Pesar Merma",
-    description: "Registrar desperdicio",
-    to: "/mermas",
-    icon: Scale,
+    label: "Productos",
+    description: "Ingredientes y Utensilios",
+    to: "/ingredientes",
+    icon: ShoppingBasket,
   },
   {
     label: "Etiquetas",
@@ -22,16 +22,16 @@ const actions: QuickAction[] = [
     icon: Tags,
   },
   {
-    label: "Producción",
-    description: "Recetas y montajes",
-    to: "/recetas",
-    icon: ChefHat,
+    label: "Categorías",
+    description: "Categorías de Platos",
+    to: "/categoria-plato",
+    icon: Layers2,
   },
   {
-    label: "Historial",
-    description: "Registro de mermas",
-    to: "/mermas",
-    icon: History,
+    label: "Familias",
+    description: "Familias del Menú",
+    to: "/familia-menu",
+    icon: NotebookPen,
   },
 ];
 

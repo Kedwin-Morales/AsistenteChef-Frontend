@@ -1,4 +1,5 @@
-import { Eye, Pencil, Ban, CircleCheckBig } from "lucide-react";
+import { Eye, Pencil, Ban, CircleCheckBig, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import React from "react";
 
 /* ================= BADGE TYPES ================= */
@@ -25,6 +26,7 @@ interface DataCardListProps<T> {
   isActive?: (row: T) => boolean;
   emptyMessage?: string;
   isDarkMode?: boolean;
+  pageSize?: number;
 }
 
 /* ================= BADGE STYLE HELPER ================= */
@@ -79,7 +81,19 @@ export default function DataCardList<T>({
   isActive,
   emptyMessage = "No hay registros",
   isDarkMode,
+  pageSize = 4,
 }: DataCardListProps<T>) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+  const safePage = Math.min(currentPage, totalPages);
+  const start = (safePage - 1) * pageSize;
+  const end = start + pageSize;
+  const pageData = data.slice(start, end);
+
+  const goTo = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
   if (!data.length) {
     return (
       <div className="text-center text-sm text-slate-500 py-8">
@@ -90,7 +104,7 @@ export default function DataCardList<T>({
 
   return (
     <div className="space-y-4">
-      {data.map((row) => {
+      {pageData.map((row) => {
         const badgeData = badges?.(row);
         const rowActivo = isActive
           ? isActive(row)
@@ -192,6 +206,53 @@ export default function DataCardList<T>({
           </div>
         );
       })}
+
+      {data.length > pageSize && (
+        <div
+          className={`flex items-center justify-between mt-4 text-sm ${isDarkMode ? "text-neutral-400" : "text-neutral-500"}`}
+        >
+          <span>
+            {start + 1}-{Math.min(end, data.length)} de {data.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => goTo(safePage - 1)}
+              disabled={safePage === 1}
+              className={`p-2 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed ${
+                isDarkMode ? "hover:bg-neutral-600" : "hover:bg-neutral-300"
+              }`}
+              aria-label="Página anterior"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => goTo(p)}
+                className={`px-3 py-1.5 rounded-lg font-semibold transition ${
+                  p === safePage
+                    ? "bg-(--secondary) text-white"
+                    : isDarkMode
+                      ? "hover:bg-neutral-600"
+                      : "hover:bg-neutral-300"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              onClick={() => goTo(safePage + 1)}
+              disabled={safePage === totalPages}
+              className={`p-2 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed ${
+                isDarkMode ? "hover:bg-neutral-600" : "hover:bg-neutral-300"
+              }`}
+              aria-label="Página siguiente"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
