@@ -1,4 +1,4 @@
-import { Eye, Pencil, Ban, CircleCheckBig, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Pencil, Ban, CircleCheckBig, ChevronLeft, ChevronRight, FileText } from "lucide-react";
 import { useState } from "react";
 import React from "react";
 
@@ -23,6 +23,8 @@ interface DataCardListProps<T> {
   onView?: (row: T) => void;
   onEdit?: (row: T) => void;
   onDelete?: (row: T) => void;
+  /** Acción opcional "PDF" (genera/imprime reporte). Se muestra si se provee. */
+  onPdf?: (row: T) => void;
   isActive?: (row: T) => boolean;
   emptyMessage?: string;
   isDarkMode?: boolean;
@@ -78,6 +80,7 @@ export default function DataCardList<T>({
   onView,
   onEdit,
   onDelete,
+  onPdf,
   isActive,
   emptyMessage = "No hay registros",
   isDarkMode,
@@ -165,7 +168,7 @@ export default function DataCardList<T>({
             )}
 
             {/* ACTIONS */}
-            {(onView || onEdit || onDelete) && (
+            {(onView || onEdit || onPdf || onDelete) && (
               <div className="mt-5 flex justify-end gap-3">
                 {onView && (
                   <button
@@ -182,6 +185,15 @@ export default function DataCardList<T>({
                     className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-xl transition"
                   >
                     <Pencil size={18} />
+                  </button>
+                )}
+
+                {onPdf && (
+                  <button
+                    onClick={() => onPdf(row)}
+                    className="p-2 text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-xl transition"
+                  >
+                    <FileText size={16} />
                   </button>
                 )}
 

@@ -26,6 +26,10 @@ import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
 import { BiDish } from "react-icons/bi";
+import { ReportAction } from "@/features/reportes/components/ReportAction";
+import { generateReportPdf } from "@/features/reportes/utils/pdfActions";
+import { MontajeReport } from "@/features/reportes/documents/MontajeReport";
+import { createPdfFileName } from "@/features/reportes/utils/pdfFileName";
 
 type ModelFilter = "nombre" | "descripcion";
 
@@ -136,6 +140,10 @@ export default function MontajePage() {
           ) : (
             <></>
           )}
+          <ReportAction
+            document={<MontajeReport data={row} />}
+            fileName={createPdfFileName("Montaje", row.nombre, row.fecha)}
+          />
           <button
             onClick={() => confirmarAnular(row)}
             className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
@@ -284,6 +292,12 @@ export default function MontajePage() {
           )}
           onView={(row) => navigate(`/montajes/ver/${row.montajeId}`)}
           onEdit={(row) => navigate(`/montajes/editar/${row.montajeId}`)}
+          onPdf={(row) =>
+            generateReportPdf(
+              <MontajeReport data={row} />,
+              createPdfFileName("Montaje", row.nombre, row.fecha),
+            )
+          }
           onDelete={(row) => {
             confirmarAnular(row);
           }}

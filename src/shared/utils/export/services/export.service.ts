@@ -41,7 +41,7 @@ export function exportToExcel(
 }
 
 export async function exportEntities(
-  entityType: string,
+  _entityType: string,
   data: any[],
   config: ExportConfig,
   options: ExportOptions = { format: "xlsx", includeHeaders: true }

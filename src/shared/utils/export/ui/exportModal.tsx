@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   Download,
   FileSpreadsheet,
@@ -26,12 +26,10 @@ export default function ExportModal({
   onSuccess,
   format = false,
 }: Props) {
-  const [selectedFormat, setSelectedFormat] = useState<"xlsx" | "xls">("xlsx");
-  const [includeHeaders, setIncludeHeaders] = useState(true);
+  const [selectedFormat] = useState<"xlsx" | "xls">("xlsx");
+  const [includeHeaders] = useState(true);
   const [customFileName, setCustomFileName] = useState(config.fileName);
   const [isExporting, setIsExporting] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleExport = () => {
     setIsExporting(true);
@@ -58,7 +56,7 @@ export default function ExportModal({
       
       onSuccess?.();
       setTimeout(() => onClose(), 1500);
-    } catch (error) {
+    } catch {
       sileo.error({
         title: "Error de sistema",
         description: "Error al exportar el archivo.",
