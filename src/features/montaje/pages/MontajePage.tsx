@@ -8,20 +8,23 @@ import {
   Lightbulb,
   HandPlatter,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 import { useMontaje } from "../hooks/useMontaje";
 import { anular } from "../services/montaje.service";
-import type { ModelDTO } from "../types/montaje.types";
+import type { ModelDTO, ModelDET } from "../types/montaje.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useConsejo } from "@/features/consejo/hooks/useConsejo";
+import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
+import { useReceta } from "@/features/receta/hooks/useReceta";
+import { useSubReceta } from "@/features/subReceta/hooks/useSubReceta";
 import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
@@ -36,7 +39,34 @@ type ModelFilter = "nombre" | "descripcion";
 export default function MontajePage() {
   const { montajes, loading, refetch } = useMontaje();
   const { isDarkMode } = useLoginUI();
+  const { ingredientes } = useIngrediente();
+  const { recetas } = useReceta();
+  const { subRecetas } = useSubReceta();
   const navigate = useNavigate();
+
+  const resolveNombreDetalle = useCallback(
+    (detalle: ModelDET): string => {
+      if (detalle.ingredienteId) {
+        return (
+          ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)
+            ?.nombre ?? "—"
+        );
+      }
+      if (detalle.recetaId) {
+        return (
+          recetas.find((r) => r.recetaId === detalle.recetaId)?.nombre ?? "—"
+        );
+      }
+      if (detalle.subRecetaId) {
+        return (
+          subRecetas.find((r) => r.subRecetaId === detalle.subRecetaId)?.nombre ??
+          "—"
+        );
+      }
+      return "—";
+    },
+    [ingredientes, recetas, subRecetas],
+  );
 
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
@@ -141,7 +171,7 @@ export default function MontajePage() {
             <></>
           )}
           <ReportAction
-            document={<MontajeReport data={row} />}
+            document={<MontajeReport data={row} resolveNombre={resolveNombreDetalle} />}
             fileName={createPdfFileName("Montaje", row.nombre, row.fecha)}
           />
           <button
@@ -294,7 +324,7 @@ export default function MontajePage() {
           onEdit={(row) => navigate(`/montajes/editar/${row.montajeId}`)}
           onPdf={(row) =>
             generateReportPdf(
-              <MontajeReport data={row} />,
+              <MontajeReport data={row} resolveNombre={resolveNombreDetalle} />,
               createPdfFileName("Montaje", row.nombre, row.fecha),
             )
           }

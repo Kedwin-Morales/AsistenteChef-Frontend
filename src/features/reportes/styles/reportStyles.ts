@@ -49,9 +49,10 @@ const base = {
 /* ---------- Estilos de página ---------- */
 
 export const reportStyles: Record<string, Style> = {
-  page: {
+page: {
     ...base,
     fontFamily: FREE_FONT,
+    position: "relative",
     paddingTop: 40,
     paddingBottom: 50,
     paddingHorizontal: 40,
@@ -122,7 +123,7 @@ export const reportStyles: Record<string, Style> = {
 
   /* ---------- Secciones ---------- */
   section: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   sectionTitleBox: {
     backgroundColor: reportPalette.primary,
@@ -148,7 +149,7 @@ export const reportStyles: Record<string, Style> = {
     flexWrap: "wrap" as const,
   },
   infoCell: {
-    width: "49%",
+    width: "48%",
     flexDirection: "row" as const,
     paddingVertical: 4,
   },
@@ -162,6 +163,11 @@ export const reportStyles: Record<string, Style> = {
     fontSize: 9,
     color: reportPalette.ink,
     fontWeight: 500,
+  },
+  infoDesc: {
+    width: "90%",
+    flexDirection: "row" as const,
+    paddingVertical: 4,
   },
 
   /* ---------- Tablas ---------- */
@@ -208,8 +214,8 @@ export const reportStyles: Record<string, Style> = {
     objectFit: "fill" as const,
     borderWidth: 1,
     borderColor: reportPalette.line,
-    borderRadius: 6,
-    padding: 4,
+    borderRadius: 10 as const,
+    padding: 6,
   },
 
   /* ---------- Footer ---------- */

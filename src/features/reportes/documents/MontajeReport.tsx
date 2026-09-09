@@ -10,11 +10,14 @@ import { ReportTable } from "../components/ReportTable";
 import type { ReportColumn } from "../types/report.types";
 import reportStyles, { PAGE, REPORT_METADATA } from "../styles/reportStyles";
 import { formatDateOnly } from "../utils/dateUtils";
-import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
-import { useReceta } from "@/features/receta/hooks/useReceta";
-import {useSubReceta} from "@/features/subReceta/hooks/useSubReceta";
 interface MontajeReportProps {
   data: ModelDTO;
+  /**
+   * Resuelve el nombre de un elemento del detalle (ingrediente/receta/sub-receta).
+   * Si no se provee, o el elemento no se encuentra en el catálogo, se muestra
+   * el ID abreviado como respaldo (no se inventan nombres).
+   */
+  resolveNombre?: (detalle: ModelDET) => string;
 }
 
 const ESTADO_LABELS: Record<string, string> = {
@@ -35,22 +38,35 @@ function asText(value: unknown): string {
 }
 
 /**
- * Resuelve una etiqueta descriptiva para cada detalle de un montaje.
- * El DTO de `detalle` solo contiene IDs (sin nombres), por lo que NO se
- * inventan nombres: se indica el tipo de referencia y el ID abreviado.
- * Se usa String() porque el backend puede devolver IDs como string o number.
+ * Resuelve la etiqueta descriptiva para cada detalle de un montaje.
+ * Intenta primero el nombre real (vía `resolveNombre`, alimentado desde los
+ * catálogos en la página que usa el reporte). Si no es posible, indica el tipo
+ * de referencia y el ID abreviado como respaldo. Se usa String() porque el
+ * backend puede devolver IDs como string o number.
  */
-function resolveDetailLabel(detalle: ModelDET): string {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const {  ingredientes } = useIngrediente();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { recetas } = useReceta();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { subRecetas } = useSubReceta();
-  if (detalle.ingredienteId) return `Ingrediente · ${String(ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)?.nombre).slice(0, 8)}…`;
-  if (detalle.recetaId) return `Receta · ${String(recetas.find((r) => r.recetaId === detalle.recetaId)?.nombre).slice(0, 8)}…`;
-  if (detalle.subRecetaId) return `Sub-receta · ${String(subRecetas.find((sr) => sr.subRecetaId === detalle.subRecetaId)?.nombre).slice(0, 8)}…`;
-  return "—";
+function resolveDetailLabel(
+  detalle: ModelDET,
+  resolveNombre?: (detalle: ModelDET) => string,
+): string {
+  const tipo = detalle.ingredienteId
+    ? "Ingrediente"
+    : detalle.recetaId
+      ? "Receta"
+      : detalle.subRecetaId
+        ? "Sub-receta"
+        : null;
+
+  if (!tipo) return "—";
+
+  if (resolveNombre) {
+    const nombre = resolveNombre(detalle);
+    if (nombre && nombre !== "—") return `${tipo} - ${nombre}`;
+  }
+
+  const id = String(
+    detalle.ingredienteId ?? detalle.recetaId ?? detalle.subRecetaId ?? "",
+  );
+  return `${tipo} - ${id.slice(0, 8)}…`;
 }
 
 /** Ordena los pasos por número (menor primero). Los sin número van al final. */
@@ -63,7 +79,7 @@ function ordenarPasos(pasos: DetPreparacion[] | undefined): DetPreparacion[] {
   });
 }
 
-export function MontajeReport({ data }: MontajeReportProps) {
+export function MontajeReport({ data, resolveNombre }: MontajeReportProps) {
   const fecha = data.fecha ? formatDateOnly(data.fecha) : "—";
   const detalles = data.detalle ?? [];
   const pasos = ordenarPasos(data.detPreparacion);
@@ -72,10 +88,10 @@ export function MontajeReport({ data }: MontajeReportProps) {
     { label: "Nombre", value: asText(data.nombre).toUpperCase() },
     { label: "Categoría", value: data.CategoriasPlato?.nombre?.toUpperCase() ?? "—" },
     { label: "Área de preparación", value: data.areaPreparacion?.nombre?.toUpperCase() ?? "—" },
-    { label: "Descripción", value: asText(data.descripcion).toUpperCase() },
     { label: "Porciones", value: asText(data.porciones).toUpperCase() },
     { label: "Fecha", value: fecha },
     { label: "Estado", value: estadoLabel(data.activo) },
+    { label: "Descripción", value: asText(data.descripcion).toUpperCase() },
   ];
 
   const costos: { label: string; value: string }[] = [
@@ -88,13 +104,13 @@ export function MontajeReport({ data }: MontajeReportProps) {
     {
       key: "detalle",
       label: "Detalle",
-      width: "38%",
-      render: (d) => resolveDetailLabel(d),
+      width: "60%",
+      render: (d) => resolveDetailLabel(d, resolveNombre),
     },
     {
       key: "cantidad",
       label: "Cantidad",
-      width: "22%",
+      width: "20%",
       align: "center",
       render: (d) => asText(d.cantidad),
     },

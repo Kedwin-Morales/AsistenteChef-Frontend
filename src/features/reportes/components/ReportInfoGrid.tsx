@@ -26,7 +26,9 @@ export function ReportInfoGrid({ items }: ReportInfoGridProps) {
   return (
     <View style={reportStyles.infoGrid}>
       {items.map((item) => (
-        <View key={item.label} style={reportStyles.infoCell}>
+        <View 
+          key={item.label} 
+          style={item.label.toLowerCase() === "descripción" ? reportStyles.infoDesc : reportStyles.infoCell}>
           <Text style={reportStyles.infoLabel}>{item.label}</Text>
           <Text style={reportStyles.infoValue}>{displayValue(item.value)}</Text>
         </View>
