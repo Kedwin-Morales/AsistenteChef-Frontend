@@ -24,11 +24,11 @@ export function ReportHeader({ title, subtitle }: ReportHeaderProps) {
         <Text style={reportStyles.headerCompany}>{companyName}</Text>
       </View>
 
-      <View style={reportStyles.headerRight}>
-        <Text style={reportStyles.headerTitle}>{title}</Text>
+      <View style={reportStyles.headerRight}>        
         {subtitle ? (
-          <Text style={reportStyles.headerSubtitle}>{subtitle}</Text>
+          <Text style={reportStyles.headerTitle}>{subtitle}</Text>
         ) : null}
+        <Text style={reportStyles.headerSubtitle}>{title}</Text>
         <Text style={reportStyles.headerSubtitle}>
           {`Generado: ${formatDateOnly(new Date())}`}
         </Text>

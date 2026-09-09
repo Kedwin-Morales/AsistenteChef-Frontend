@@ -10,7 +10,9 @@ import { ReportTable } from "../components/ReportTable";
 import type { ReportColumn } from "../types/report.types";
 import reportStyles, { PAGE, REPORT_METADATA } from "../styles/reportStyles";
 import { formatDateOnly } from "../utils/dateUtils";
-
+import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
+import { useReceta } from "@/features/receta/hooks/useReceta";
+import {useSubReceta} from "@/features/subReceta/hooks/useSubReceta";
 interface MontajeReportProps {
   data: ModelDTO;
 }
@@ -39,9 +41,15 @@ function asText(value: unknown): string {
  * Se usa String() porque el backend puede devolver IDs como string o number.
  */
 function resolveDetailLabel(detalle: ModelDET): string {
-  if (detalle.ingredienteId) return `Ingrediente · ${String(detalle.ingredienteId).slice(0, 8)}…`;
-  if (detalle.recetaId) return `Receta · ${String(detalle.recetaId).slice(0, 8)}…`;
-  if (detalle.subRecetaId) return `Sub-receta · ${String(detalle.subRecetaId).slice(0, 8)}…`;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const {  ingredientes } = useIngrediente();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { recetas } = useReceta();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { subRecetas } = useSubReceta();
+  if (detalle.ingredienteId) return `Ingrediente · ${String(ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)?.nombre).slice(0, 8)}…`;
+  if (detalle.recetaId) return `Receta · ${String(recetas.find((r) => r.recetaId === detalle.recetaId)?.nombre).slice(0, 8)}…`;
+  if (detalle.subRecetaId) return `Sub-receta · ${String(subRecetas.find((sr) => sr.subRecetaId === detalle.subRecetaId)?.nombre).slice(0, 8)}…`;
   return "—";
 }
 
@@ -57,17 +65,16 @@ function ordenarPasos(pasos: DetPreparacion[] | undefined): DetPreparacion[] {
 
 export function MontajeReport({ data }: MontajeReportProps) {
   const fecha = data.fecha ? formatDateOnly(data.fecha) : "—";
-
   const detalles = data.detalle ?? [];
   const pasos = ordenarPasos(data.detPreparacion);
 
   const infoGeneral: { label: string; value: string }[] = [
-    { label: "Nombre", value: asText(data.nombre) },
-    { label: "Descripción", value: asText(data.descripcion) },
-    { label: "Porciones", value: asText(data.porciones) },
+    { label: "Nombre", value: asText(data.nombre).toUpperCase() },
+    { label: "Categoría", value: data.CategoriasPlato?.nombre?.toUpperCase() ?? "—" },
+    { label: "Área de preparación", value: data.areaPreparacion?.nombre?.toUpperCase() ?? "—" },
+    { label: "Descripción", value: asText(data.descripcion).toUpperCase() },
+    { label: "Porciones", value: asText(data.porciones).toUpperCase() },
     { label: "Fecha", value: fecha },
-    { label: "Categoría", value: data.CategoriasPlato?.nombre ?? "—" },
-    { label: "Área de preparación", value: data.areaPreparacion?.nombre ?? "—" },
     { label: "Estado", value: estadoLabel(data.activo) },
   ];
 
@@ -116,7 +123,7 @@ export function MontajeReport({ data }: MontajeReportProps) {
         />
 
         {/* Información general */}
-        <ReportSection title="Información general">
+        <ReportSection title="Información Base">
           <ReportInfoGrid items={infoGeneral} />
         </ReportSection>
 
@@ -133,13 +140,13 @@ export function MontajeReport({ data }: MontajeReportProps) {
         </ReportSection>
 
         {/* Ingredientes */}
-        <ReportSection title="Ingredientes">
+        <ReportSection title="Ingredientes - recetas - sub-recetas">
           <ReportTable columns={columns} data={detalles} rowKey={(d) => d.montajeDetId} idPrefix="det" />
         </ReportSection>
 
         {/* Preparación */}
         {pasos.length > 0 && (
-          <ReportSection title="Preparación">
+          <ReportSection title="Métodos para la Preparación">
             {pasos.map((paso, index) => (
               <View key={paso.preparacionId || index} style={{ flexDirection: "row", marginBottom: 4 }} wrap={false}>
                 <Text style={{ width: 28, color: "gray", fontSize: 9 }}>

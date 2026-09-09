@@ -24,7 +24,7 @@ export function useMontaje() {
         urlImagen: t.urlImagen,
         activo: t.activo,
         categoriaId: t.categoriaId ?? "",
-        CategoriasPlato: t.CategoriasPlato ?? t.categoriaPlato ?? null,
+        CategoriasPlato: t.CategoriasPlato ?? t.categoriasPlato ?? null,
         areaPreparacionId: t.areaPreparacionId ?? "",
         areaPreparacion: t.areaPreparacion ?? null,
         detalle: t.detalle,

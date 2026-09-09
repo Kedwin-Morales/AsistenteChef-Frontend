@@ -12,11 +12,11 @@ import { FREE_FONT } from "./reportFonts";
 /** Paleta propia del documento (gastronómico/administrativo). */
 export const reportPalette = {
   primary: "#7A1E1E", // rojo vino corporativo
-  accent: "#B8860B", // dorado
+  accent: "#ae8625", // dorado
   ink: "#1F2937", // texto principal
   muted: "#6B7280", // texto secundario
   line: "#E5E7EB", // bordes suaves
-  headerFill: "#7A1E1E", // fondo de cabecera de tabla
+  headerFill: "#ae8625", // fondo de cabecera de tabla
   headerText: "#FFFFFF", // texto de cabecera de tabla
   zebra: "#FAF7F2", // filas alternadas
   white: "#FFFFFF",
@@ -43,7 +43,7 @@ const base = {
   fontFamily: FREE_FONT,
   color: reportPalette.ink,
   fontSize: 9,
-  lineHeight: 1.4,
+  lineHeight: 1.2,
 } as const;
 
 /* ---------- Estilos de página ---------- */
@@ -64,8 +64,8 @@ export const reportStyles: Record<string, Style> = {
     justifyContent: "space-between",
     borderBottomWidth: 2,
     borderBottomColor: reportPalette.primary,
-    paddingBottom: 12,
-    marginBottom: 20,
+    paddingBottom: 6,
+    marginBottom: 10,
   },
   headerLeft: {
     flexDirection: "row",
@@ -126,10 +126,10 @@ export const reportStyles: Record<string, Style> = {
   },
   sectionTitleBox: {
     backgroundColor: reportPalette.primary,
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 4,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   sectionTitle: {
     color: reportPalette.white,
@@ -178,7 +178,7 @@ export const reportStyles: Record<string, Style> = {
     color: reportPalette.headerText,
     fontSize: 8,
     fontWeight: 700 as const,
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 6,
     textTransform: "uppercase" as const,
   },
@@ -204,11 +204,12 @@ export const reportStyles: Record<string, Style> = {
   },
   image: {
     width: 300,
-    height: 200,
-    objectFit: "contain" as const,
+    height: 250,
+    objectFit: "fill" as const,
     borderWidth: 1,
     borderColor: reportPalette.line,
     borderRadius: 6,
+    padding: 4,
   },
 
   /* ---------- Footer ---------- */

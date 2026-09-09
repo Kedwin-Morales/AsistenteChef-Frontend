@@ -11,10 +11,9 @@
 
 export const REPORT_CONFIG = {
   /** Nombre de la empresa mostrado en el encabezado de los reportes. */
-  companyName: "CLOVERCUBE",
-
+  companyName: "ASISTENTEPRO",
   company: {
-    name: "CLOVERCUBE",
+    name: "ASISTENTEPRO",
     address: "Av. Principal #123, Ciudad",
     phone: "+51 999 999 999",
     email: "contacto@clovercube.com",
@@ -31,7 +30,7 @@ export const REPORT_CONFIG = {
 
   /** Logo principal del reporte (ruta pública). */
   logo: {
-    src: "/Clovercube.png",
+    src: "/icons-sombrero-96.png",
     height: 46,
     width: 46,
   },
