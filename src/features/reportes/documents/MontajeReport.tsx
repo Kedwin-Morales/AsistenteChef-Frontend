@@ -146,7 +146,7 @@ export function MontajeReport({ data, resolveNombre }: MontajeReportProps) {
         {/* Imagen del montaje */}
         {resolveReportImageUrl(data.urlImagen) && (
           <ReportSection title="Imagen del montaje">
-            <ReportImage src={data.urlImagen} />
+            <ReportImage src={"montaje/"+ data.urlImagen} />
           </ReportSection>
         )}
 

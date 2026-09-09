@@ -52,9 +52,8 @@ export const reportStyles: Record<string, Style> = {
 page: {
     ...base,
     fontFamily: FREE_FONT,
-    position: "relative",
-    paddingTop: 40,
-    paddingBottom: 50,
+    paddingTop: 10,
+    paddingBottom: 10,
     paddingHorizontal: 40,
   },
 
@@ -220,10 +219,7 @@ page: {
 
   /* ---------- Footer ---------- */
   footer: {
-    position: "absolute" as const,
-    left: 40,
-    right: 40,
-    bottom: 25,
+    marginTop: "auto" as const,
     borderTopWidth: 1,
     borderTopColor: reportPalette.line,
     paddingTop: 8,

@@ -14,10 +14,10 @@ export const REPORT_CONFIG = {
   companyName: "ASISTENTEPRO",
   company: {
     name: "ASISTENTEPRO",
-    address: "Av. Principal #123, Ciudad",
-    phone: "+51 999 999 999",
-    email: "contacto@clovercube.com",
-    website: "www.clovercube.com",
+    address: "Caracas, Venezuela",
+    phone: "+58 424 281 6485",
+    email: "kedwin.morales@gmail.com",
+    website: "",
   },
 
   /**
@@ -26,7 +26,7 @@ export const REPORT_CONFIG = {
    *   REPORT_IMAGE_BASE_URL + urlImagen
    * Cuando `urlImagen` ya viene completa (http/https) se usa tal cual.
    */
-  REPORT_IMAGE_BASE_URL: "https://localhost:7256/montaje/",
+  REPORT_IMAGE_BASE_URL: "https://localhost:7256/",
 
   /** Logo principal del reporte (ruta pública). */
   logo: {
