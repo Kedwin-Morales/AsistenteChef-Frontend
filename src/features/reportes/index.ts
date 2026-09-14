@@ -22,6 +22,8 @@ export { resolveReportImageUrl } from "./utils/imageUtils";
 export { ReportTable } from "./components/ReportTable";
 export { ReportAction } from "./components/ReportAction";
 export { MontajeReport } from "./documents/MontajeReport";
+export { RecetaReport } from "./documents/RecetaReport";
+export { SubRecetaReport } from "./documents/SubrecetaReport";
 
 export { createPdfFileName, toPdfFile } from "./utils/pdfFileName";
 export { openPdf, downloadPdf, printPdf } from "./utils/pdfGenerator";

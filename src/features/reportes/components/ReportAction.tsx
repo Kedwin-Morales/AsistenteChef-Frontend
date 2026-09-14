@@ -37,11 +37,11 @@ export function ReportAction({ document, fileName }: ReportActionProps) {
       type="button"
       onClick={handleClick}
       disabled={busy}
-      title="Generar / imprimir PDF"
+      title="Generar PDF"
       className={`p-2 text-purple-600 hover:bg-purple-100 rounded-lg transition
         ${busy ? "opacity-50 cursor-wait" : ""}`}
       data-bs-toggle="tooltip"
-      aria-label="Generar / imprimir PDF"
+      aria-label="Generar PDF"
     >
       <FileText size={16} />
     </button>

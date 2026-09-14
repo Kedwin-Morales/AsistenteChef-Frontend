@@ -8,14 +8,14 @@ import {
   TrendingUp,
   Lightbulb,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 import { useReceta } from "../hooks/useReceta";
 import { editar } from "../services/receta.service";
-import type { ModelDTO } from "../types/receta.types";
+import type { ModelDET, ModelDTO } from "../types/receta.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
@@ -26,12 +26,18 @@ import { useConsejo } from "@/features/consejo/hooks/useConsejo"
 import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
+import { ReportAction } from "@/features/reportes/components/ReportAction";
+import { generateReportPdf } from "@/features/reportes/utils/pdfActions";
+import { RecetaReport } from "@/features/reportes/documents/RecetaReport";
+import { createPdfFileName } from "@/features/reportes/utils/pdfFileName";
+import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
 
 type ModelFilter = "nombre" | "descripcion";
 
 export default function AreaPreparacionPage() {
   const { recetas, loading, refetch } = useReceta();
   const { isDarkMode } = useLoginUI();
+  const { ingredientes } = useIngrediente();
   const navigate = useNavigate();
 
   /* FILTER */
@@ -52,6 +58,19 @@ export default function AreaPreparacionPage() {
       year: "numeric",
     });
   };
+  
+    const resolveNombreDetalle = useCallback(
+      (detalle: ModelDET): string => {
+        if (detalle.ingredienteId) {
+          return (
+            ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)
+              ?.nombre ?? "—"
+          );
+        }
+        return "—";
+      },
+      [ingredientes],
+    );
 
   /* Anular */
   const confirmarDelete = async (item: ModelDTO) => {
@@ -154,6 +173,10 @@ export default function AreaPreparacionPage() {
             ) : (
               <></>
             )}
+            <ReportAction
+              document={<RecetaReport data={row} resolveNombre={resolveNombreDetalle} />}
+              fileName={createPdfFileName("Receta", row.nombre)}
+            />
             <button
               onClick={() => confirmarDelete(row)}
               className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
@@ -308,7 +331,13 @@ export default function AreaPreparacionPage() {
             </div>
           )}
           onView={(row) =>navigate(`/recetas/ver/${row.recetaId}`)}
-          onEdit={(row) =>navigate(`/recetas/editar/${row.recetaId}`)} 
+          onEdit={(row) =>navigate(`/recetas/editar/${row.recetaId}`)}
+          onPdf={(row) =>
+            generateReportPdf(
+              <RecetaReport data={row} resolveNombre={resolveNombreDetalle} />,
+              createPdfFileName("Receta", row.nombre),
+            )
+          }
           onDelete={(row) => {
             confirmarDelete(row);
           }}

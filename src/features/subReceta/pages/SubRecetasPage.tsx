@@ -8,23 +8,29 @@ import {
   TrendingUp,
   Lightbulb,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import SearchFilter from "@/components/ui/SearchFilter";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 import { useSubReceta } from "../hooks/useSubReceta";
 import { editar } from "../services/subReceta.service";
-import type { ModelSubDTO } from "../types/subReceta.types";
+import type { ModelSubDTO, ModelSubDET } from "../types/subReceta.types";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
-import { useConsejo } from "@/features/consejo/hooks/useConsejo"
+import { useConsejo } from "@/features/consejo/hooks/useConsejo";
 import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
+import { ReportAction } from "@/features/reportes/components/ReportAction";
+import { generateReportPdf } from "@/features/reportes/utils/pdfActions";
+import { SubRecetaReport } from "@/features/reportes/documents/SubrecetaReport";
+import { createPdfFileName } from "@/features/reportes/utils/pdfFileName";
+import { useIngrediente } from "@/features/ingrediente/hooks/useIngrediente";
+import { useReceta } from "@/features/receta/hooks/useReceta";
 
 type ModelFilter = "nombre" | "descripcion";
 
@@ -32,18 +38,21 @@ export default function AreaPreparacionPage() {
   const { subRecetas, loading, refetch } = useSubReceta();
   const { isDarkMode } = useLoginUI();
   const navigate = useNavigate();
-
+  const { ingredientes } = useIngrediente();
+  const { recetas } = useReceta();
   /* FILTER */
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
   const [showActivo, setShowActivo] = useState(false);
   const { consejos } = useConsejo();
-  const consejo = consejos.filter((a)=> a.modulo === "sub-recetas".toUpperCase() && a.activo );
-  
+  const consejo = consejos.filter(
+    (a) => a.modulo === "sub-recetas".toUpperCase() && a.activo,
+  );
+
   // Función auxiliar para darle formato a la fecha en español
   const formatearFecha = (fechaString: string) => {
     if (!fechaString) return "";
-    
+
     const fecha = new Date(fechaString);
     return fecha.toLocaleDateString("es-ES", {
       day: "numeric",
@@ -51,7 +60,25 @@ export default function AreaPreparacionPage() {
       year: "numeric",
     });
   };
-  
+
+  const resolveNombreDetalle = useCallback(
+    (detalle: ModelSubDET): string => {
+      if (detalle.ingredienteId) {
+        return (
+          ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)
+            ?.nombre ?? "—"
+        );
+      }
+      if (detalle.recetaId) {
+        return (
+          recetas.find((r) => r.recetaId === detalle.recetaId)?.nombre ?? "—"
+        );
+      }
+      return "—";
+    },
+    [ingredientes, recetas],
+  );
+
   /* Anular */
   const confirmarDelete = async (item: ModelSubDTO) => {
     const result = await confirm({
@@ -81,7 +108,7 @@ export default function AreaPreparacionPage() {
         });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
+          description: `El registro se ${item.activo ? "activo" : "anuló"} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -131,39 +158,48 @@ export default function AreaPreparacionPage() {
         </span>
       ),
     },
-{
-        key: "acciones",
-        header: "Acciones",
-        align: "center",
-        render: (row) => (
-          <div className="flex justify-center gap-2">
+    {
+      key: "acciones",
+      header: "Acciones",
+      align: "center",
+      render: (row) => (
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={() => navigate(`/sub-recetas/ver/${row.subRecetaId}`)}
+            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+          >
+            <Eye size={16} />
+          </button>
+          {row.activo ? (
             <button
-              onClick={() => navigate(`/sub-recetas/ver/${row.subRecetaId}`)}
-              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+              onClick={() => navigate(`/sub-recetas/editar/${row.subRecetaId}`)}
+              className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
             >
-              <Eye size={16} />
+              <Pencil size={16} />
             </button>
-            {row.activo ? (
-              <button
-                onClick={() => navigate(`/sub-recetas/editar/${row.subRecetaId}`)}
-                className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
-              >
-                <Pencil size={16} />
-              </button>
-            ) : (
-              <></>
-            )}
-            <button
-              onClick={() => confirmarDelete(row)}
-              className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
-              data-bs-toggle="tooltip"
-              title={`${row.activo ? "Anular" : "Activar"}`}
-            >
-              {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
-            </button>
-          </div>
-        ),
-      },
+          ) : (
+            <></>
+          )}
+          <ReportAction
+            document={
+              <SubRecetaReport
+                data={row}
+                resolveNombre={resolveNombreDetalle}
+              />
+            }
+            fileName={createPdfFileName("SubReceta", row.nombre)}
+          />
+          <button
+            onClick={() => confirmarDelete(row)}
+            className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
+            data-bs-toggle="tooltip"
+            title={`${row.activo ? "Anular" : "Activar"}`}
+          >
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
+          </button>
+        </div>
+      ),
+    },
   ];
 
   if (loading) {
@@ -194,8 +230,8 @@ export default function AreaPreparacionPage() {
           <PlusCircle size={18} /> Nuevo
         </button>
       </div>
-      
-            {/* StatCard y TipCard */}
+
+      {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Sub-Recetas Activas"
@@ -218,13 +254,17 @@ export default function AreaPreparacionPage() {
         {consejo.map((c) => (
           <TipCard
             key={c.nombre}
-            title={`${c.nombre ? c.nombre : "Regla de Oro" } `} 
+            title={`${c.nombre ? c.nombre : "Regla de Oro"} `}
             icon={Lightbulb}
-            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha." } `}  
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha."} `}
             linkText="Ver más"
             href={c.valor}
             delay={400}
-            fecha={c.fechaDesde ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}` : ""}
+            fecha={
+              c.fechaDesde
+                ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}`
+                : ""
+            }
           />
         ))}
       </div>
@@ -272,7 +312,7 @@ export default function AreaPreparacionPage() {
           </span>
         </div>
       </div>
-      
+
       <div className="hidden md:block">
         <DataTable<ModelSubDTO>
           data={filtered}
@@ -282,32 +322,31 @@ export default function AreaPreparacionPage() {
           isDarkMode={isDarkMode}
         />
       </div>
-      
+
       {/* ================= MOBILE ================= */}
       <div className="block md:hidden">
         <DataCardList<ModelSubDTO>
           data={filtered}
-          getKey={(row) =>
-            row.subRecetaId
-              ? row.subRecetaId.toString()
-              : ""
-          }
+          getKey={(row) => (row.subRecetaId ? row.subRecetaId.toString() : "")}
           title={(row) => row.nombre}
           badges={(row) => [
             {
               label: row.activo ? "Activo" : "Inactivo",
-              variant: row.activo
-                ? "success"
-                : "danger",
+              variant: row.activo ? "success" : "danger",
             },
           ]}
-          renderExtra={(row) => (
-            <div className="">
-              {row.descripcion}
-            </div>
-          )}
-          onView={(row) =>navigate(`/sub-recetas/ver/${row.subRecetaId}`)} 
-          onEdit={(row) =>navigate(`/sub-recetas/editar/${row.subRecetaId}`)} 
+          renderExtra={(row) => <div className="">{row.descripcion}</div>}
+          onView={(row) => navigate(`/sub-recetas/ver/${row.subRecetaId}`)}
+          onEdit={(row) => navigate(`/sub-recetas/editar/${row.subRecetaId}`)}
+          onPdf={(row) =>
+            generateReportPdf(
+              <SubRecetaReport
+                data={row}
+                resolveNombre={resolveNombreDetalle}
+              />,
+              createPdfFileName("SubReceta", row.nombre),
+            )
+          }
           onDelete={(row) => {
             confirmarDelete(row);
           }}
@@ -315,7 +354,6 @@ export default function AreaPreparacionPage() {
           isDarkMode={isDarkMode}
         />
       </div>
-
     </AppLayout>
   );
 }
