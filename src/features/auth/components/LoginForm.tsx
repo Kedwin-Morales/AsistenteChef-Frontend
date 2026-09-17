@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { User, Lock, ChefHat } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import InputField from "./InputField";
+import { Link, useNavigate } from "react-router-dom";
+import InputField from "../../../components/ui/InputField";
 import { loginRequest } from "@/features/auth/services/auth.service";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 import type { LoginRequest } from "@/features/auth/types/auth.types";
@@ -53,7 +53,7 @@ export default function LoginForm({ isDarkMode }: Props) {
 
   return (
     <div
-      className={`bg-linear-to-t from-(--bg-form) via-transparent via-5% to-(--bg-form) w-full p-8 sm:p-10`}
+      className={`bg-linear-to-t from-(--bg-form) to-transparent w-full p-8 sm:p-10`}
     >
       <div className="flex flex-col items-center text-center mb-8">
         <div className="w-16 h-16 bg-gradient shadow-xl-secondary rounded-2xl flex items-center justify-center mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
@@ -85,12 +85,12 @@ export default function LoginForm({ isDarkMode }: Props) {
           {...register("password")}
         />
         <div className="flex justify-end mb-6 pt-2">
-          <a
-            href="#"
-            className={`text-xs font-medium hover:underline text-(--primary)`}
+          <Link
+            to="/forgot-password"
+            className={`text-sm font-medium hover:underline text-(--primary)`}
           >
             ¿Olvidaste tu contraseña?
-          </a>
+          </Link>
         </div>
 
         <button
@@ -114,7 +114,7 @@ export default function LoginForm({ isDarkMode }: Props) {
 
       <footer className="mt-8 text-center mb-1">
         <p
-          className={`text-[11px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-neutral-400" : "text-neutral-300"}`}
+          className={`text-[11px] uppercase tracking-widest font-semibold ${isDarkMode ? "text-neutral-400" : "text-neutral-400"}`}
         >
           © Elaborado por Kedwin Morales - 2026. Todos los derechos reservados.
         </p>

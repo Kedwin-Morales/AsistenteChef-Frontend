@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "@/features/auth/pages/LoginPage";
+import ForgotPasswordForm from "@/features/auth/components/ForgotPasswordForm";
+import ResetPasswordRoute from "@/features/auth/components/ResetPasswordRoute";
 import HomePage from "@/features/home/page/HomePage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RolePage from "@/features/role/pages/RolePage";
@@ -26,6 +28,8 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+        <Route path="/reset-password" element={<ResetPasswordRoute />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/maestro" element={<MaestroPage />} />

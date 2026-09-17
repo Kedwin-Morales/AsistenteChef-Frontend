@@ -6,3 +6,13 @@ export interface LoginRequest {
 export interface LoginResponse {
   token: string;
 }
+
+export interface SolicitarCodigoDTO {
+  correo: string;
+}
+
+export interface VerificarCodigoDTO {
+  correo: string;
+  codigo: string;
+  nuevaPassword: string;
+}
