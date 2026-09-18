@@ -127,7 +127,7 @@ export default function ForgotPasswordForm() {
         <div className="flex justify-center mb-2">
           <Link
             to="/login"
-            className="flex gap-3 text-sm font-medium hover:bg-(--secondary)/30 p-2 rounded-3xl text-(--primary) hover:scale-105"
+            className="flex gap-3 text-sm font-medium hover:bg-(--secondary)/20 p-2 rounded-3xl text-(--primary) hover:scale-105"
           >
             <UndoDot size={18}/>
             Volver al inicio de sesión

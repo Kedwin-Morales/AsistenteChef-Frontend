@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { KeyRound, Lock } from "lucide-react";
+import { KeyRound, Lock, UndoDot } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { sileo } from "sileo";
 import InputField from "../../../components/ui/InputField";
@@ -76,7 +76,7 @@ export default function ResetPasswordForm({ correo }: Props) {
 
   return (
     <AuthFormLayout>
-      <div className="bg-linear-to-t from-(--bg-form) via-transparent via-5% to-(--bg-form) w-full p-8 sm:p-10">
+      <div className="bg-linear-to-t from-(--bg-form) to-transparent w-full p-8 sm:p-10">
         <div className="flex flex-col items-center text-center mb-6">
           <div className="w-16 h-16 bg-gradient shadow-xl-secondary rounded-2xl flex items-center justify-center mb-4 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
             <KeyRound size={32} className="text-white" />
@@ -86,7 +86,7 @@ export default function ResetPasswordForm({ correo }: Props) {
           </h1>
           <p
             className={`mt-2 text-sm ${
-              isDarkMode ? "text-neutral-400" : "text-neutral-500"
+              isDarkMode ? "text-neutral-400" : "text-neutral-300"
             }`}
           >
             Ingresa el código recibido y define tu nueva contraseña.
@@ -94,7 +94,7 @@ export default function ResetPasswordForm({ correo }: Props) {
         </div>
 
         <div className="mb-6 rounded-xl border border-(--bordes) px-4 py-3 text-center">
-          <p className="mb-1 text-[11px] uppercase tracking-widest font-semibold text-neutral-400">
+          <p className="mb-1 text-[11px] uppercase tracking-widest font-semibold text-neutral-300">
             Correo de recuperación
           </p>
           <p className="break-all text-md font-bold text-(--primary)">
@@ -166,8 +166,9 @@ export default function ResetPasswordForm({ correo }: Props) {
         <div className="flex justify-center mb-2">
           <Link
             to="/login"
-            className="text-xs font-medium hover:underline text-(--primary)"
+            className="flex gap-3 text-sm font-medium hover:bg-(--secondary)/20 p-2 rounded-3xl text-(--primary) hover:scale-105"
           >
+            <UndoDot size={18}/>
             Volver al inicio de sesión
           </Link>
         </div>
