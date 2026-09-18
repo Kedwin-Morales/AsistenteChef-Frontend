@@ -59,7 +59,7 @@ export default function WasteAlertList({ mermas }: { mermas: MermaDTO[] }) {
         </span>
         <div>
           <h3 className="text-sm font-bold text-(--texto)">
-            Alertas de Desperdicio
+            Alertas de Mermas
           </h3>
           <p className={`text-xs text-neutral-500`}>
             Picos de merma detectados
@@ -83,7 +83,7 @@ export default function WasteAlertList({ mermas }: { mermas: MermaDTO[] }) {
         ))}
       </ul>
       
-      <div className="flex justify-center">
+      {/* <div className="flex justify-center">
         <button
           type="button"
           onClick={() => navigate("/mermas")}
@@ -92,7 +92,7 @@ export default function WasteAlertList({ mermas }: { mermas: MermaDTO[] }) {
           <FileText size={18} />
           Generar Reporte
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

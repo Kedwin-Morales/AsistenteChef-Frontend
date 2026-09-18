@@ -63,7 +63,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
         <NavItem
           to="/sub-recetas"
           icon={ReceiptText}
-          label="SubRecetas"
+          label="Sub-Recetas"
           isDarkMode={isDarkMode}
         />
         <NavItem

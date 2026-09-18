@@ -115,5 +115,5 @@ export const MAESTRO_DASHBOARD_CONFIG = {
   title: "Maestro de Cocina",
   subtitle: "Centro de configuración del sistema gastronómico",
   description:
-    "Administra los datos bases que sustentan la funcionalidad del sistema.",
+    "Administra los datos bases que sustentan la funcionalidad de la Cocina.",
 } as const;

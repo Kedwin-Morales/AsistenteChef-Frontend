@@ -281,7 +281,7 @@ export default function UnidadPage() {
             Unidad de Medida
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión de medidas del sistema.
+            Gestión de medidas del Sistema Gastronómico.
           </p>
         </div>
         <button

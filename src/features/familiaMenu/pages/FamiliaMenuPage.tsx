@@ -282,7 +282,7 @@ export default function FamiliaMenuPage() {
             Familia de Menú
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión para Familias de Menú del sistema.
+            Gestión para Familias de Menú del del Sistema Gastronómico.
           </p>
         </div>
         <button

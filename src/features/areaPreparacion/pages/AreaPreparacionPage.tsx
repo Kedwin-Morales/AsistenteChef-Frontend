@@ -325,7 +325,7 @@ export default function AreaPreparacionPage() {
             Áreas de Preparación
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión para las Áreas de Preparación del sistema
+            Gestión para las Áreas de Preparación del Sistema Gastronómico
           </p>
         </div>
         <button

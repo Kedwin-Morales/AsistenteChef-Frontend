@@ -314,7 +314,7 @@ export default function UserPage() {
             Usuarios
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión de usuarios del sistema.
+            Gestión de usuarios del Sistema Gastronómico.
           </p>
         </div>
         <button

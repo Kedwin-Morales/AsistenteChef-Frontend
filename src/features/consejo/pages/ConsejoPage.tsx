@@ -339,7 +339,7 @@ export default function ProveedorPage() {
             Consejos
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión de consejos para cada modulo del sistema.
+            Gestión de consejos para cada modulo del Sistema Gastronómico.
           </p>
         </div>
         <button

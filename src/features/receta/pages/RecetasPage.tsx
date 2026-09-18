@@ -208,7 +208,7 @@ export default function AreaPreparacionPage() {
             Recetas
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión para las Recetas del sistema
+            Gestión para las Recetas del Sistema Gastronómico
           </p>
         </div>
         <button

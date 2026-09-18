@@ -209,7 +209,7 @@ export default function RolePage() {
             Roles
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión de roles del sistema.
+            Gestión de roles del Sistema Gastronómico.
           </p>
         </div>
         <button

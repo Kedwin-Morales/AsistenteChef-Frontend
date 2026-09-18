@@ -374,7 +374,7 @@ export default function IngredientePage() {
             Ingredientes o Utensilios
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión para Ingredientes del sistema.
+            Gestión para Ingredientes del Sistema Gastronómico.
           </p>
         </div>
 

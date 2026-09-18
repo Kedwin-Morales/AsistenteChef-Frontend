@@ -203,7 +203,7 @@ export default function MontajePage() {
             Montajes
           </h1>
           <p className="text-sm text-neutral-500">
-            Gestión para los Montajes del sistema
+            Gestión para los Montajes del Sistema Gastronómico
           </p>
         </div>
         <button

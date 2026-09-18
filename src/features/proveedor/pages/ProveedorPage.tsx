@@ -335,7 +335,7 @@ const result = await confirm({
             Proveedores
           </h1>
           <p className="text-sm ml-15 text-neutral-500">
-            Gestión de proveedores del sistema.
+            Gestión de proveedores del Sistema Gastronómico.
           </p>
         </div>
         <button
