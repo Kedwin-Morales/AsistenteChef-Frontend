@@ -484,7 +484,7 @@ export default function EntityModal<T extends object, D extends object = any>({
                         : ""
                     }`}
                   >
-                    <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
+                    <label className="block mb-1 font-semibold text-(--texto)">
                       {field.label}
                       {field.required && (
                         <span className="text-red-500 ml-1">*</span>
@@ -633,7 +633,7 @@ export default function EntityModal<T extends object, D extends object = any>({
 
                 return (
                   <div key={String(field.name)} className={colSpanClass}>
-                    <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
+                    <label className="block mb-1 font-semibold text-(--texto)">
                       {field.label}
                       {field.required && <span className="text-red-500 ml-1">*</span>}
                     </label>
@@ -675,7 +675,7 @@ export default function EntityModal<T extends object, D extends object = any>({
 
                 return (
                   <div key={String(field.name)} className={colSpanClass}>
-                    <label className="block mb-1 font-semibold text-(--texto) dark:text-neutral-100">
+                    <label className="block mb-1 font-semibold text-(--texto)">
                       {field.label}
                       {field.required && (
                         <span className="text-red-500 ml-1">*</span>
