@@ -18,7 +18,7 @@ function App() {
   useAuthInit();
   return (
     <ToastProvider>
-      <Toaster position="bottom-right" options={{
+      <Toaster position="top-center" options={{
         fill: isDarkMode ? '#E5E5E5' : '#404040',
         styles: { 
           description: isDarkMode ? 'text-neutral-800' : 'text-neutral-200',

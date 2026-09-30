@@ -22,10 +22,12 @@ import ConsejoPage from "@/features/consejo/pages/ConsejoPage";
 import MontajePage from "@/features/montaje/pages/MontajePage";
 import MontajeNuevaPage from "@/features/montaje/pages/MontajeNuevaPage";
 import MermaPage  from "@/features/merma/pages/MermaPage";
+import FloatingHelpButton from "@/components/ui/FloatingHelpBtn";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <FloatingHelpButton />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />
