@@ -1,11 +1,4 @@
-import {
-  WholeWord,
-  SquareDashedText,
-  Users,
-  Scale,
-  UtensilsCrossed,
-  LandPlot,
-} from "lucide-react";
+import { WholeWord, SquareDashedText, Users, Scale } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import { toNumber } from "../utils/number.utils";
@@ -113,6 +106,7 @@ export default function RecetaInfoBaseSection({
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
         <div className="md:col-span-6">
           <InputField
+            data-tour="receta-nombre"
             label="Nombre: "
             icon={WholeWord}
             type="text"
@@ -131,8 +125,10 @@ export default function RecetaInfoBaseSection({
               isDarkMode ? "text-(--texto)" : "text-(--texto)"
             }`}
           >
-            Descripción: 
-            {required.descripcion && <span className="text-red-500 ml-1">*</span>}
+            Descripción:
+            {required.descripcion && (
+              <span className="text-red-500 ml-1">*</span>
+            )}
           </label>
           <div className="relative">
             <SquareDashedText
@@ -159,9 +155,7 @@ export default function RecetaInfoBaseSection({
             value={form.porciones ?? ""}
             required={required.porciones}
             isDarkMode={isDarkMode}
-            onChange={(e) =>
-              onChange({ porciones: toNumber(e.target.value) })
-            }
+            onChange={(e) => onChange({ porciones: toNumber(e.target.value) })}
             disabled={readOnly}
           />
         </div>
@@ -180,35 +174,33 @@ export default function RecetaInfoBaseSection({
           />
         </div>
 
-        <div className="md:col-span-3">
+        <div data-tour="receta-familia-menu" className="md:col-span-3">
           <SelectField
             id="familiaMenuId"
             label="Familia del Menú"
-            icon={UtensilsCrossed}
+            isDarkMode={isDarkMode}
             required={required.familiaMenuId}
             value={form.familiaMenuId ?? ""}
             options={familias.map((f) => ({
               value: f.familiaMenuId,
               label: f.nombre,
             }))}
-            isDarkMode={isDarkMode}
             onChange={(value) => onChange({ familiaMenuId: value })}
             disabled={readOnly}
           />
         </div>
 
-        <div className="md:col-span-3">
+        <div data-tour="receta-area-preparacion" className="md:col-span-3">
           <SelectField
             id="areaPreparacionId"
             label="Área de Preparación"
-            icon={LandPlot}
+            isDarkMode={isDarkMode}
             required={required.areaPreparacionId}
             value={form.areaPreparacionId ?? ""}
             options={areas.map((a) => ({
               value: a.areaPreparacionId,
               label: a.nombre ?? "",
             }))}
-            isDarkMode={isDarkMode}
             onChange={(value) => onChange({ areaPreparacionId: value })}
             disabled={readOnly}
           />

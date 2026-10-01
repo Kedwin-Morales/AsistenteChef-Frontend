@@ -385,6 +385,7 @@ export default function IngredientePage() {
               setModalMode("create");
               setModalOpen(true);
             }}
+            data-tour="ingrediente-nuevo"
             className="bg-gradient btn-gradient shadow-xl-secondary"
           >
             <PlusCircle size={18} /> Nuevo

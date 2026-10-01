@@ -270,6 +270,7 @@ export default function TipoIngredientePage() {
             <button
               type="button"
               onClick={() => {navigate("/maestro");}}
+              data-tour="tipo-ingrediente-volver"
               className={`flex items-center mr-5 text-sm hover:text-(--texto)
                 ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
               data-bs-toggle="tooltip"
@@ -290,6 +291,7 @@ export default function TipoIngredientePage() {
             setModalMode("create");
             setModalOpen(true);
           }}
+          data-tour="tipo-ingrediente-nuevo"
           className="bg-gradient btn-gradient shadow-xl-secondary"
         >
           <PlusCircle size={18} /> Nuevo

@@ -129,9 +129,10 @@ export default function RecetaIngredientesSection({
       {!readOnly && (
         <>
           {/* ADD ROW */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-12 gap-3 items-end">
+      <div data-tour="receta-ingredientes-area" className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-12 gap-3 items-end">
           <div className="sm:col-span-2 lg:col-span-5 relative z-100">
             <AutocompleteField
+              data-tour="receta-ingrediente-select"
               label="Ingrediente"
               value={draft.ingredienteId}
               options={ingredienteOptions}
@@ -144,6 +145,7 @@ export default function RecetaIngredientesSection({
 
           <div className="sm:col-span-1 lg:col-span-2">
             <InputField
+              data-tour="receta-ingrediente-cantidad"
               label="Cantidad"
               type="number"
               value={draft.cantidad}
@@ -169,7 +171,8 @@ export default function RecetaIngredientesSection({
               <select
                 value={draft.medida}
                 onChange={(e) => handleChange("medida", e.target.value)}
-                className={`${SELECT_CLASS} pl-10 items-center`}
+                data-tour="receta-ingrediente-medida"
+              className={`${SELECT_CLASS} pl-10 items-center`}
               >
                 <option value="">Seleccione...</option>
                 {unidadOptions.map((o) => (
@@ -183,6 +186,7 @@ export default function RecetaIngredientesSection({
 
           <div className="sm:col-span-1 lg:col-span-2">
             <button
+              data-tour="receta-ingrediente-agregar"
               type="button"
               onClick={handleAdd}
               // className="bg-gradient btn-gradient shadow-xl-secondary w-full"
@@ -196,7 +200,7 @@ export default function RecetaIngredientesSection({
       )}
 
       {/* TABLE - Responsive: horizontal en desktop, cards en móvil */}
-      <div className="hidden md:block mt-6 w-full overflow-hidden rounded-xl border border-(--bordes)">
+        <div data-tour="receta-ingredientes-lista" className="hidden md:block mt-6 w-full overflow-hidden rounded-xl border border-(--bordes)">
         <table className="w-full text-sm ">
           <thead className="hidden md:table-header-group">
             <tr

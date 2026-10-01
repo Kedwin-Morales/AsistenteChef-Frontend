@@ -52,6 +52,7 @@ export default function AppLayout({ children }: Props) {
             {/* BOTÓN HAMBURGUESA (solo móvil) */}
             <button
               onClick={() => setIsSidebarOpen(true)}
+              data-tour="menu-hamburguesa"
               className="md:hidden p-2 rounded-lg text-(--primary) hover:bg-slate-200 dark:hover:bg-slate-800"
             >
               <Menu size={22} />

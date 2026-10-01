@@ -83,8 +83,8 @@ export default function RecetaPreparacionSection({
           </div>
           <button
             type="button"
+            data-tour="receta-preparacion-agregar"
             onClick={handleAdd}
-            // className="bg-gradient btn-gradient shadow-xl-secondary md:h-10"
             className="px-4 h-10 flex items-center justify-center gap-2 rounded-xl bg-neutral-500 shadow-lg shadow-teal-500 hover:bg-teal-500 text-white font-bold"
           >
             <Plus size={18} /> Agregar
@@ -92,41 +92,43 @@ export default function RecetaPreparacionSection({
         </div>
       )}
 
-      {pasos.length > 0 ? (
-        <ol className="mt-2 space-y-1">
-          {pasos.map((paso, i) => (
-            <li
-              key={i}
-              className={`flex items-center gap-3 rounded-xl border border-(--bordes) p-3 ${
-                isDarkMode
-                  ? "bg-neutral-800/30 border-neutral-700/50"
-                  : "bg-(--bg-form)"
-              }`}
-            >
-              <span className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-(--secondary) text-white font-bold">
-                {paso.nroPaso}
-              </span>
-              <p className="flex-1 text-(--texto) leading-relaxed">
-                {paso.Descripcion}
-              </p>
-              {!readOnly && (
-                <button
-                  type="button"
-                  onClick={() => onRemove(i)}
-                  aria-label={`Eliminar paso ${paso.nroPaso}`}
-                  className="shrink-0 p-2 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition"
-                >
-                  <Trash2 size={16} />
-                </button>
-              )}
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="mt-6 text-sm text-neutral-500">
-          Aún no has agregado pasos de preparación.
-        </p>
-      )}
+      <div data-tour="receta-preparacion-lista">
+        {pasos.length > 0 ? (
+          <ol className="mt-2 space-y-1">
+            {pasos.map((paso, i) => (
+              <li
+                key={i}
+                className={`flex items-center gap-3 rounded-xl border border-(--bordes) p-3 ${
+                  isDarkMode
+                    ? "bg-neutral-800/30 border-neutral-700/50"
+                    : "bg-(--bg-form)"
+                }`}
+              >
+                <span className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-(--secondary) text-white font-bold">
+                  {paso.nroPaso}
+                </span>
+                <p className="flex-1 text-(--texto) leading-relaxed">
+                  {paso.Descripcion}
+                </p>
+                {!readOnly && (
+                  <button
+                    type="button"
+                    onClick={() => onRemove(i)}
+                    aria-label={`Eliminar paso ${paso.nroPaso}`}
+                    className="shrink-0 p-2 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 transition"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="mt-6 text-sm text-neutral-500">
+            Aún no has agregado pasos de preparación.
+          </p>
+        )}
+      </div>
     </section>
   );
 }

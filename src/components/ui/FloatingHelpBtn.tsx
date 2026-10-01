@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Headphones, Download, BookOpen, X, ChevronRight } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Headphones, Download, BookOpen, X, ChevronRight, MessageCircleQuestionMark } from "lucide-react";
+
+import { startTour } from "@/shared/utils/tours";
 
 export default function FloatingHelpButton() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -46,7 +45,10 @@ export default function FloatingHelpButton() {
               <ChevronRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 transition-colors" />
             </button>
             <button
-              //onClick={() => }
+              onClick={() => {
+                setOpen(false);
+                void startTour("nuevoIngrediente");
+              }}
               className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200"
               role="menuitem"
               style={{ animation: open ? "slideIn 0.25s ease-out 0.1s both" : "none" }}
@@ -61,7 +63,10 @@ export default function FloatingHelpButton() {
               <ChevronRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 transition-colors" />
             </button>
             <button
-              //onClick={() => }
+              onClick={() => {
+                setOpen(false);
+                void startTour("nuevaReceta");
+              }}
               className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200"
               role="menuitem"
               style={{ animation: open ? "slideIn 0.25s ease-out 0.1s both" : "none" }}
@@ -101,7 +106,8 @@ export default function FloatingHelpButton() {
             {open ? (
               <X size={26} className="text-white animate-rotate-in" />
             ) : (
-              <Headphones size={26} className="text-white" />
+              // <Headphones size={26} className="text-white" />
+              <MessageCircleQuestionMark size={26} className="text-white" />
             )}
           </div>
           <div className={`absolute inset-0 rounded-full bg-white/10 opacity-0 transition-opacity duration-300 ${open ? "opacity-100 animate-pulse" : ""}`} />

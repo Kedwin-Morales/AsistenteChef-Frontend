@@ -59,6 +59,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           icon={IoReceiptOutline}
           label="Recetas"
           isDarkMode={isDarkMode}
+          tourId="nav-recetas"
         />
         <NavItem
           to="/sub-recetas"
@@ -83,6 +84,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
           icon={GiCook}
           label="Maestro de Cocina"
           isDarkMode={isDarkMode}
+          tourId="nav-maestro"
         />
         {/* <SidebarGroup
           title="Maestro de Cocina"
@@ -166,6 +168,7 @@ export default function AppSidebar({ isDarkMode, onClose }: Props) {
       {onClose && (
         <button
           onClick={onClose}
+          data-tour="menu-cerrar"
           className="absolute top-4 right-4 md:hidden p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800"
         >
           <X size={20} />
@@ -207,12 +210,14 @@ interface NavItemProps {
   label: string;
   icon: React.ElementType;
   isDarkMode: boolean;
+  tourId?: string;
 }
 
-function NavItem({ to, label, icon: Icon, isDarkMode }: NavItemProps) {
+function NavItem({ to, label, icon: Icon, isDarkMode, tourId }: NavItemProps) {
   return (
     <NavLink
       to={to}
+      data-tour={tourId}
       className={({ isActive }) =>
         `w-full flex text-[15px] items-center gap-3 px-4 py-2 rounded-xl transition-all ${isActive ? (isDarkMode ? "bg-(--secondary) text-neutral-200" : "bg-(--secondary) text-neutral-100") : isDarkMode ? "text-neutral-400 hover:bg-neutral-600 hover:text-neutral-200" : "text-neutral-500 hover:bg-neutral-300 hover:text-neutral-500"}`
       }

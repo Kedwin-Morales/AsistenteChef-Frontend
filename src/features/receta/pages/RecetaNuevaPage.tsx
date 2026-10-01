@@ -412,7 +412,7 @@ export default function RecetaNuevaPage() {
     <AppLayout>
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <header className="mb-8">
+        <header className="mb-8" data-tour="receta-wizard">
           <button
             type="button"
             onClick={handleCancel}
@@ -474,6 +474,7 @@ export default function RecetaNuevaPage() {
               {currentStep < 3 ? (
                 <button
                   type="button"
+                  data-tour="receta-siguiente"
                   onClick={handleNext}
                   className="btn-guardar"
                 >
@@ -482,11 +483,12 @@ export default function RecetaNuevaPage() {
               ) : (
                 mode !== "view" && (
                   <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="btn-guardar disabled:opacity-60 disabled:cursor-not-allowed"
-                >
+                    type="button"
+                    data-tour="receta-guardar"
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="btn-guardar disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
                   {saving ? (
                     <>
                       <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

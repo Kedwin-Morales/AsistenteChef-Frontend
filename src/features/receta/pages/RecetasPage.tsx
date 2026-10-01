@@ -213,6 +213,7 @@ export default function AreaPreparacionPage() {
         </div>
         <button
           onClick={() => navigate("/recetas/nueva")}
+          data-tour="receta-nueva"
           className="bg-gradient btn-gradient shadow-xl-secondary"
         >
           <PlusCircle size={18} /> Nuevo

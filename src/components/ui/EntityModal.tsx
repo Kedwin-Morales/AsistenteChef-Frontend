@@ -386,6 +386,7 @@ export default function EntityModal<T extends object, D extends object = any>({
 
   return (
     <div
+      data-tour="entity-modal"
       className={`fixed inset-0 z-100 flex items-end md:items-center justify-center 
         ${isDarkMode ? "bg-neutral-600/50" : "bg-neutral-900/80"}`}
     >

@@ -23,10 +23,12 @@ import MontajePage from "@/features/montaje/pages/MontajePage";
 import MontajeNuevaPage from "@/features/montaje/pages/MontajeNuevaPage";
 import MermaPage  from "@/features/merma/pages/MermaPage";
 import FloatingHelpButton from "@/components/ui/FloatingHelpBtn";
+import TourBridge from "@/shared/utils/tours/core/TourBridge";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <TourBridge />
       <FloatingHelpButton />
       <Routes>
         <Route path="/login" element={<LoginPage />} />

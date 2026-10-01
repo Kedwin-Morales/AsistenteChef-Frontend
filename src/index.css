@@ -224,3 +224,141 @@ body {
   border-radius: 1rem !important;
   background: var(--color-bg) !important; /* Si quieres redondearlo más a juego con tu diseño */
 }
+
+/* ============================================================
+   Tours interactivos (Driver.js)
+   Solo se adaptan colores, tipografía y tamaños. Sin paleta nueva.
+   ============================================================ */
+
+.driver-overlay {
+  fill: var(--color-neutral-900);
+  fill-opacity: 0.55;
+}
+
+:root.dark .driver-overlay {
+  fill-opacity: 0.7;
+}
+
+.driver-active-element {
+  stroke: var(--secondary);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--secondary) 45%, transparent));
+}
+
+/* Mayor especificidad que .driver-popover de driver.css */
+.driver-popover.driver-popover-asistente {
+  --driver-popover-font-family: inherit;
+  background-color: var(--bg-form);
+  color: var(--texto);
+  border: 1px solid var(--bordes);
+  border-radius: 0.9rem;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-neutral-900) 25%, transparent);
+}
+
+.driver-popover-asistente .driver-popover-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--texto);
+  padding-right: 1.75rem;
+}
+
+.driver-popover-asistente .driver-popover-description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--texto) 85%, transparent);
+}
+
+.driver-popover-asistente .driver-popover-close-btn {
+  color: color-mix(in srgb, var(--texto) 45%, transparent);
+  width: 28px;
+  height: 28px;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.driver-popover-asistente .driver-popover-close-btn:hover,
+.driver-popover-asistente .driver-popover-close-btn:focus {
+  color: var(--primary);
+}
+
+.driver-popover-asistente .driver-popover-progress-text {
+  color: color-mix(in srgb, var(--texto) 60%, transparent);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.driver-popover-asistente .driver-popover-footer-btn {
+  background-color: transparent;
+  color: var(--texto);
+  border: 1px solid var(--bordes);
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.driver-popover-asistente .driver-popover-prev-btn:hover,
+.driver-popover-asistente .driver-popover-prev-btn:focus {
+  background-color: color-mix(in srgb, var(--secondary) 12%, transparent);
+}
+
+.driver-popover-asistente .driver-popover-next-btn {
+  background-color: var(--secondary);
+  color: #fff;
+  border-color: var(--secondary);
+}
+
+.driver-popover-asistente .driver-popover-next-btn:hover,
+.driver-popover-asistente .driver-popover-next-btn:focus {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.driver-popover-asistente .driver-popover-footer .driver-popover-btn-disabled {
+  opacity: 0.45;
+}
+
+.driver-popover-asistente .driver-popover-arrow {
+  border-color: var(--bg-form);
+}
+
+.driver-popover-asistente .driver-popover-arrow-side-left {
+  border-left-color: transparent;
+}
+
+.driver-popover-asistente .driver-popover-arrow-side-right {
+  border-right-color: transparent;
+}
+
+.driver-popover-asistente .driver-popover-arrow-side-top {
+  border-top-color: transparent;
+}
+
+.driver-popover-asistente .driver-popover-arrow-side-bottom {
+  border-bottom-color: transparent;
+}
+
+/* Responsive: en móvil el popover ocupa el ancho disponible */
+@media (max-width: 767px) {
+  .driver-popover.driver-popover-asistente {
+    min-width: 0;
+    width: calc(100vw - 2rem);
+    max-width: none;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .driver-popover-asistente .driver-popover-footer-btn {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .driver-popover-asistente .driver-popover-close-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
