@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Headphones, Download, BookOpen, X, ChevronRight, MessageCircleQuestionMark } from "lucide-react";
+import { Download, BookOpen, X, ChevronRight, MessageCircleQuestionMark } from "lucide-react";
 
 import { startTour } from "@/shared/utils/tours";
 
