@@ -6,7 +6,7 @@ const api = axios.create({
   baseURL: "https://localhost:7256/api", //URL de API en C#
   // headers: {
   //   "Content-Type": "application/json",
-  // },
+  // },sss
 });
 
 // Interceptor para inyectar el token automaticamente

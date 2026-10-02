@@ -94,7 +94,7 @@ export const nuevaReceta: TourDefinition = {
     },
     {
       id: "paso1-siguiente",
-      mode: "info",
+      mode: "action",
       route: "/recetas/nueva",
       target: SELECTORS.recetaSiguiente,
       title: "Siguiente",
@@ -121,7 +121,7 @@ export const nuevaReceta: TourDefinition = {
     },
     {
       id: "paso2-siguiente",
-      mode: "info",
+      mode: "action",
       route: "/recetas/nueva",
       target: SELECTORS.recetaSiguiente,
       title: "Siguiente",
@@ -148,7 +148,7 @@ export const nuevaReceta: TourDefinition = {
     },
     {
       id: "fin",
-      mode: "info",
+      mode: "action",
       route: "/recetas/nueva",
       target: SELECTORS.recetaGuardar,
       title: "¡Listo!",

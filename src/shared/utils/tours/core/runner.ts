@@ -39,9 +39,8 @@ export async function startTour(id: TourId): Promise<void> {
   activeController = controller;
 
   const unlockedActions = new Set<number>();
-  let driverInstance = createTourDriver();
+  let driverInstance = buildTourDriver(controller);
   activeDriver = driverInstance;
-  attachLifecycle(driverInstance, controller);
 
   function buildSteps(): DriveStep[] {
     return steps.map((step, index) =>
@@ -57,9 +56,8 @@ export async function startTour(id: TourId): Promise<void> {
   function restartAt(index: number): void {
     const previous = driverInstance;
 
-    driverInstance = createTourDriver();
+    driverInstance = buildTourDriver(controller);
     activeDriver = driverInstance;
-    attachLifecycle(driverInstance, controller);
 
     driverInstance.setSteps(buildSteps());
     driverInstance.drive(index);
@@ -115,15 +113,15 @@ async function confirmLeavingEditor(): Promise<boolean> {
   return result.isConfirmed;
 }
 
-function attachLifecycle(driverInstance: Driver, controller: AbortController) {
-  driverInstance.setConfig({
-    onDestroyed: () => {
-      if (activeDriver !== driverInstance) return;
-      controller.abort();
-      if (activeController === controller) activeController = null;
-      activeDriver = null;
-    },
+function buildTourDriver(controller: AbortController): Driver {
+  const driverInstance = createTourDriver(() => {
+    if (activeDriver !== driverInstance) return;
+    controller.abort();
+    if (activeController === controller) activeController = null;
+    activeDriver = null;
   });
+
+  return driverInstance;
 }
 
 function buildDriveStep({

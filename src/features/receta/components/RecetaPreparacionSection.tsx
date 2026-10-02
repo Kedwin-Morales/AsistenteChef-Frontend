@@ -53,7 +53,7 @@ export default function RecetaPreparacionSection({
       </h2>
 
       {!readOnly && (
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
+        <div data-tour="receta-preparacion-area" className="flex flex-col md:flex-row md:items-center gap-3">
           <div className="flex-1">
             <label
               htmlFor="paso-descripcion"

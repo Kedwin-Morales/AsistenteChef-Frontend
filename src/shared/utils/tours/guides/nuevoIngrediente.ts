@@ -50,7 +50,7 @@ export const nuevoIngrediente: TourDefinition = {
     },
     {
       id: "tipo-nuevo",
-      mode: "info",
+      mode: "action",
       route: "/tipo-ingredientes",
       target: SELECTORS.tipoNuevo,
       title: "Crea primero el tipo",
