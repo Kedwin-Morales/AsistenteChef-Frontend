@@ -151,9 +151,9 @@ export function MontajeReport({ data, resolveNombre }: MontajeReportProps) {
         )}
 
         {/* Información de costos */}
-        <ReportSection title="Información de costos">
+        {/* <ReportSection title="Información de costos">
           <ReportInfoGrid items={costos} />
-        </ReportSection>
+        </ReportSection> */}
 
         {/* Ingredientes */}
         <ReportSection title="Ingredientes - recetas - sub-recetas">
