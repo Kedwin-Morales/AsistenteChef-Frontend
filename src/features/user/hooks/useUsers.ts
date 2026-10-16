@@ -21,7 +21,18 @@ export function useUsers() {
   }, []);
 
   useEffect(() => {
-    refetch();
+    let alive = true;
+
+    const load = async () => {
+      if (!alive) return;
+      await refetch();
+    };
+
+    load();
+
+    return () => {
+      alive = false;
+    };
   }, [refetch]);
 
   return { users, roles, loading, refetch };

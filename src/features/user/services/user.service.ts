@@ -17,6 +17,7 @@ export async function createUser(dto: CreateUserDTO): Promise<void> {
         documento: dto.documento,
         nombre: dto.nombre,
         apellido: dto.apellido,
+        correo: dto.correo,
         password: dto.password,
         rolId: dto.rolId,
     });
@@ -28,6 +29,7 @@ export async function updateUser(id: string, dto: UpdateUserDTO): Promise<void> 
         documento: dto.documento,
         nombre: dto.nombre,
         apellido: dto.apellido,
+        correo: dto.correo,
         activo: dto.activo,
         rolId: dto.rolId,
     });

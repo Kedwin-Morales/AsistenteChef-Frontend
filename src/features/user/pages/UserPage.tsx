@@ -11,6 +11,7 @@ import {
   User,
   Ban,
   TrendingUp,
+  Mail,
 } from "lucide-react";
 import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
@@ -87,6 +88,14 @@ export default function UserPage() {
       type: "select",
       options: roles.map((r) => ({ label: r.name, value: r.id })),
     },
+    {
+      name: "correo",
+      label: "Correo electrónico: ",
+      icon: Mail,
+      colSpan: 6,
+      required: true,
+      type: "email",
+    },
     ...(modalMode === "create"
       ? [
           {
@@ -128,6 +137,7 @@ export default function UserPage() {
         await createUser({
           documento: data.documento,
           nombre: data.nombre,
+          correo: data.correo ?? undefined,
           apellido: data.apellido,
           password,
           rolId: data.rolId ?? "",
@@ -150,6 +160,7 @@ export default function UserPage() {
           documento: data.documento,
           nombre: data.nombre,
           apellido: data.apellido,
+          correo: data.correo ?? undefined,
           activo: data.activo ?? true,
           rolId: data.rolId,
         });
