@@ -22,7 +22,7 @@ export default function FloatingHelpButton() {
     <div className="fixed bottom-7 right-4 z-50">
       <div ref={menuRef} className="relative">
         <div
-          className={`absolute bottom-16 right-0 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300 ease-out ${open ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 translate-y-2 pointer-events-none"}`}
+          className={`absolute bottom-16 right-0 w-64 bg-(--bg-form) rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300 ease-out ${open ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 translate-y-2 pointer-events-none"}`}
           role="menu"
           style={{ transformOrigin: "bottom right" }}
         >

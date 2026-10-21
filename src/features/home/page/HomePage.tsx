@@ -45,7 +45,8 @@ export default function HomePage() {
       key: "familia",
       header: "Tipo",
       render: (row) => (
-        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+        <span className={`px-2 py-1 rounded-full text-xs
+        ${ isDarkMode ? " bg-blue-500/20 text-blue-300" : "bg-blue-100 text-blue-900" }`}>
           {row.tipoIngrediente?.nombre ?? "—"}
         </span>
       ),
@@ -54,7 +55,8 @@ export default function HomePage() {
       key: "unidad",
       header: "Ud. Medida",
       render: (row) => (
-        <span className="px-2 py-1 rounded-full text-xs bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300">
+        <span className={`px-2 py-1 rounded-full text-xs
+        ${ isDarkMode ? " bg-teal-500/20 text-teal-500" : "bg-teal-100 text-teal-700" }`}>
           {row.unidadMedida?.nombre ?? "—"}
         </span>
       ),
@@ -76,11 +78,13 @@ export default function HomePage() {
       render: (row) => {
         const uso = deriveUso(Number(row.costo) || 0);
         return uso === "Alto" ? (
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
+          <span className={`px-2 py-1 rounded-full text-xs font-bold
+          ${ isDarkMode ? "bg-red-100 text-red-500" : "bg-red-100 text-red-500" }`}>
             {uso}
           </span>
         ) : (
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300">
+          <span className={`px-2 py-1 rounded-full text-xs font-bold
+          ${ isDarkMode ? " bg-amber-500/20 text-amber-300" : "bg-amber-100 text-amber-900" }`}>
             {uso}
           </span>
         );
