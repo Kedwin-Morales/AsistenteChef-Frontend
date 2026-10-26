@@ -158,6 +158,26 @@ body {
       background-size: 400% 400%;
       animation: moveBackground 10s ease infinite;
   }
+  
+  /* Clase para el contenedor de la tabla */
+  .scrollbar-tabla::-webkit-scrollbar {
+    height: 6px; /* Altura delgada para el scroll horizontal */
+  }
+
+  .scrollbar-tabla::-webkit-scrollbar-track {
+    background: transparent; /* Fondo transparente o usa var(--bg-form) */
+    border-radius: 10px;
+  }
+
+  .scrollbar-tabla::-webkit-scrollbar-thumb {
+    background: var(--bordes); /* Un gris sutil para que no distraiga */
+    border-radius: 10px;
+  }
+
+  /* Opcional: Que el scroll "brille" un poco al pasar el mouse */
+  .scrollbar-tabla::-webkit-scrollbar-thumb:hover {
+    background: var(--primary); 
+  }
 }
 
 /* ---------- ANIMACIÓN DE TRANSICIÓN ENTRE PASOS DEL WIZARD ---------- */
