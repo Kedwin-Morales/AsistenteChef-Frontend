@@ -18,6 +18,7 @@
   --secondary: #ae8625;
   --texto: var(--color-neutral-900);
   --bordes: var(--color-neutral-200);
+  --text-info: var(--color-neutral-600);
 }
 
 /* ---------- PALETA DE COLORES - TEMA OSCURO ---------- */
@@ -28,6 +29,7 @@
   --secondary: var(--color-emerald-500);
   --texto: var(--color-neutral-100);
   --bordes: var(--color-neutral-600);
+  --text-info: var(--color-neutral-300);
 }
 
 html {

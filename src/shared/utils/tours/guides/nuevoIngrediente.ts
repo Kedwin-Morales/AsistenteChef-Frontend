@@ -8,9 +8,9 @@ export const nuevoIngrediente: TourDefinition = {
     {
       id: "intro",
       mode: "info",
-      title: "Nuevo ingrediente",
+      title: "Nuevo Ingrediente",
       description:
-        "Te guío en pocos pasos: primero crea el tipo y después registra el ingrediente.",
+        "Te guío en pocos pasos: primero crea el tipo de ingrediente, la unidad de medida y después registra el ingrediente.",
     },
     {
       id: "abrir-maestro",
@@ -65,7 +65,7 @@ export const nuevoIngrediente: TourDefinition = {
       target: SELECTORS.modalFormulario,
       title: "Formulario de tipo de ingrediente",
       description:
-        "Aquí completas los datos y guardas. La guía no registra nada por ti.",
+        "Aquí completas los datos y guardas.",
     },
     {
       id: "tipo-volver",
@@ -73,7 +73,7 @@ export const nuevoIngrediente: TourDefinition = {
       route: "/tipo-ingredientes",
       target: SELECTORS.tipoVolver,
       title: "Vuelve al Maestro",
-      description: "Pulsa la flecha para regresar a los módulos del Maestro.",
+      description: "Del mismo modo puedes crear las Unidades de Medidas. Pulsa la flecha para regresar a los módulos del Maestro.",
     },
     {
       id: "maestro-ingrediente",
@@ -90,7 +90,7 @@ export const nuevoIngrediente: TourDefinition = {
       route: "/ingredientes",
       target: SELECTORS.ingredienteNuevo,
       title: "Nuevo ingrediente",
-      description: "Pulsa «Nuevo» para abrir el formulario de alta.",
+      description: "Pulsa «Nuevo» para abrir el formulario.",
     },
     {
       id: "formulario-ingrediente",
@@ -101,14 +101,6 @@ export const nuevoIngrediente: TourDefinition = {
       title: "Formulario de ingrediente",
       description:
         "Aquí completas los datos y guardas. La guía no registra nada por ti.",
-    },
-    {
-      id: "cierre-movil",
-      mode: "info",
-      when: isMobile,
-      title: "Listo",
-      description:
-        "Llegaste a Ingredientes y/o Utensilios. El botón «Nuevo» solo está disponible en pantallas grandes.",
     },
   ],
 };

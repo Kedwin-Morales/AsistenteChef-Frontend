@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Download, BookOpen, X, ChevronRight, MessageCircleQuestionMark } from "lucide-react";
-
+import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import { startTour } from "@/shared/utils/tours";
 
 export default function FloatingHelpButton() {
+  const { isDarkMode } = useLoginUI();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -19,66 +20,66 @@ export default function FloatingHelpButton() {
 
 
   return (
-    <div className="fixed bottom-7 right-4 z-50">
+    <div className="fixed bottom-5 right-2 z-50">
       <div ref={menuRef} className="relative">
         <div
-          className={`absolute bottom-16 right-0 w-64 bg-(--bg-form) rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300 ease-out ${open ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 translate-y-2 pointer-events-none"}`}
+          className={`absolute bottom-14 right-0 w-64 bg-(--bg-form) rounded-2xl shadow-lg shadow-neutral-700 border border-(--bordes) overflow-hidden transition-all duration-300 ease-out ${open ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-95 translate-y-2 pointer-events-none"}`}
           role="menu"
           style={{ transformOrigin: "bottom right" }}
         >
-          <div className="p-3 space-y-2">
+          <div className="p-1 space-y-2">
             <button
               onClick={() => {
                 setOpen(false);
               }}
-              className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200"
+              className={`group w-full flex items-center gap-3 px-2 py-3 rounded-xl ${isDarkMode ? "text-(--texto)/70 hover:bg-(--secondary)/20" : "text-(--texto)/40 hover:bg-(--secondary)/20"} transition-all duration-200`}
               role="menuitem"
               style={{ animation: open ? "slideIn 0.25s ease-out 0.05s both" : "none" }}
             >
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <Download size={20} className="text-blue-500" />
+              <div className={`shrink-0 w-10 h-10 rounded-lg ${isDarkMode ? "bg-(--secondary)/40" : "bg-(--secondary)/70"} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                <Download size={20} className="text-white" />
               </div>
               <div className="flex-1 text-left">
-                <span className="font-semibold block">Manual de usuario</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500 block mt-0.5">Próximamente</span>
+                <span className="text-sm font-semibold text-(--text-info) group-hover:text-(--secondary) block">Manual de Usuario</span>
+                <span className={`text-xs ${isDarkMode ? 'text-(--text-info)/60' : 'text-(--text-info)/80'} block mt-0.5`}>Guía de uso paso a paso</span>
               </div>
-              <ChevronRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 transition-colors" />
+              <ChevronRight size={16} className="text-(--text-info) group-hover:text-(--secondary) transition-colors" />
             </button>
             <button
               onClick={() => {
                 setOpen(false);
                 void startTour("nuevoIngrediente");
               }}
-              className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200"
+              className={`group w-full flex items-center gap-3 px-2 py-3 rounded-xl ${isDarkMode ? "text-(--texto)/70 hover:bg-(--secondary)/20" : "text-(--texto)/40 hover:bg-(--secondary)/20"} transition-all duration-200`}
               role="menuitem"
               style={{ animation: open ? "slideIn 0.25s ease-out 0.1s both" : "none" }}
             >
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <BookOpen size={20} className="text-green-500" />
+              <div className={`shrink-0 w-10 h-10 rounded-lg ${isDarkMode ? "bg-(--secondary)/40" : "bg-(--secondary)/70"} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                <BookOpen size={20} className="text-white" />
               </div>
               <div className="flex-1 text-left">
-                <span className="font-semibold block">¿Nuevo Ingrediente?</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500 block mt-0.5">Guía rápida interactiva</span>
+                <span className="text-sm font-semibold text-(--text-info) group-hover:text-(--secondary) block">¿Nuevo Ingrediente?</span>
+                <span className={`text-xs ${isDarkMode ? 'text-(--text-info)/60' : 'text-(--text-info)/80'} block mt-0.5`}>Guía rápida interactiva</span>
               </div>
-              <ChevronRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 transition-colors" />
+              <ChevronRight size={16} className="text-(--text-info) group-hover:text-(--secondary) transition-colors" />
             </button>
             <button
               onClick={() => {
                 setOpen(false);
                 void startTour("nuevaReceta");
               }}
-              className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200"
+              className={`group w-full flex items-center gap-3 px-2 py-3 rounded-xl ${isDarkMode ? "text-(--texto)/70 hover:bg-(--secondary)/20" : "text-(--texto)/40 hover:bg-(--secondary)/20"} transition-all duration-200`}
               role="menuitem"
               style={{ animation: open ? "slideIn 0.25s ease-out 0.1s both" : "none" }}
             >
-              <div className="shrink-0 w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <BookOpen size={20} className="text-green-500" />
+              <div className={`shrink-0 w-10 h-10 rounded-lg ${isDarkMode ? "bg-(--secondary)/40" : "bg-(--secondary)/70"} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                <BookOpen size={20} className="text-white" />
               </div>
               <div className="flex-1 text-left">
-                <span className="font-semibold block">¿Nueva Receta?</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500 block mt-0.5">Guía rápida interactiva</span>
+                <span className="text-sm font-semibold text-(--text-info) group-hover:text-(--secondary) block">¿Nueva Receta?</span>
+                <span className={`text-xs ${isDarkMode ? 'text-(--text-info)/60' : 'text-(--text-info)/80'} block mt-0.5`}>Guía rápida interactiva</span>
               </div>
-              <ChevronRight size={16} className="text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 transition-colors" />
+              <ChevronRight size={16} className="text-(--text-info) group-hover:text-(--secondary) transition-colors" />
             </button>
           </div>
           <style>{`
@@ -93,20 +94,18 @@ export default function FloatingHelpButton() {
             .animate-rotate-in { animation: rotateIn 0.3s ease-out forwards; }
           `}</style>
         </div>
-
         <button
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-haspopup="menu"
           aria-label={open ? "Cerrar ayuda" : "Abrir ayuda"}
           id="ayuda-flotante"
-          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl border-2 transition-all duration-300 bg-linear-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-blue-400/50 hover:shadow-2xl ${open ? "scale-110 rotate-90" : "hover:scale-105"}`}
+          className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-xl border-2 transition-all duration-300 bg-linear-to-br from-blue-500 to-blue-800 hover:from-blue-700 hover:to-blue-800 text-white border-blue-400/50 hover:shadow-2xl ${open ? "scale-110 rotate-90" : "hover:scale-105"}`}
         >
           <div className="transition-all duration-300 ease-out">
             {open ? (
               <X size={26} className="text-white animate-rotate-in" />
             ) : (
-              // <Headphones size={26} className="text-white" />
               <MessageCircleQuestionMark size={26} className="text-white" />
             )}
           </div>

@@ -45,16 +45,16 @@ export const nuevaReceta: TourDefinition = {
       route: "/recetas",
       target: SELECTORS.recetaNueva,
       title: "Crear receta",
-      description: "Pulsa «Nuevo» para abrir el asistente de recetas.",
+      description: "Pulsa «Nuevo» para abrir el asistente de Recetas.",
     },
     {
       id: "intro-wizard",
       mode: "info",
       route: "/recetas/nueva",
       target: SELECTORS.recetaWizard,
-      title: "Asistente de recetas (3 pasos)",
+      title: "Crear Receta - Dividido en 3 secciones",
       description:
-        "Este asistente se divide en: 1) Información base, 2) Ingredientes y 3) Preparación. No realiza acciones por ti: tú completas cada paso.",
+        "1) Información base, 2) Ingredientes y 3) Método de Preparación.",
     },
     {
       id: "paso1-titulo",
@@ -63,7 +63,7 @@ export const nuevaReceta: TourDefinition = {
       target: SELECTORS.recetaWizard,
       title: "1. Información base",
       description:
-        "En esta sección defines la información principal de la receta. Los campos marcados con * son obligatorios para poder continuar.",
+        "En esta sección defines la información principal de la receta. Los campos marcados con (*) son obligatorios para poder continuar.",
     },
     {
       id: "paso1-nombre",
@@ -71,7 +71,8 @@ export const nuevaReceta: TourDefinition = {
       route: "/recetas/nueva",
       target: SELECTORS.recetaNombre,
       title: "Nombre",
-      description: "Completa el nombre con el que identificarás esta receta (*).",
+      description:
+        "Completa el nombre con el que identificarás esta receta (Campo Requerido).",
       waitFor: 180,
     },
     {
@@ -80,7 +81,8 @@ export const nuevaReceta: TourDefinition = {
       route: "/recetas/nueva",
       target: SELECTORS.recetaFamiliaMenu,
       title: "Familia del Menú",
-      description: "Selecciona la familia a la que pertenece la receta (*).",
+      description:
+        "Selecciona la familia a la que pertenece la receta (Campo Requerido).",
       waitFor: 180,
     },
     {
@@ -89,7 +91,8 @@ export const nuevaReceta: TourDefinition = {
       route: "/recetas/nueva",
       target: SELECTORS.recetaAreaPreparacion,
       title: "Área de Preparación",
-      description: "Indica el área donde se prepara esta receta (*).",
+      description:
+        "Indica el Área donde se prepara esta receta (Campo Requerido).",
       waitFor: 180,
     },
     {
@@ -99,7 +102,7 @@ export const nuevaReceta: TourDefinition = {
       target: SELECTORS.recetaSiguiente,
       title: "Siguiente",
       description:
-        "Cuando hayas completado los 3 campos obligatorios, pulsa «Siguiente» para pasar a Ingredientes.",
+        "Cuando hayas completado los campos obligatorios, pulsa «Siguiente» para pasar al siguiente paso.",
     },
     {
       id: "paso2-titulo",
@@ -108,7 +111,7 @@ export const nuevaReceta: TourDefinition = {
       target: SELECTORS.recetaWizard,
       title: "2. Ingredientes",
       description:
-        "Aquí agregas los ingredientes que forman parte de la receta. Para cada uno indica una cantidad mayor a 0 y su unidad de medida.",
+        "Aquí agregas los Ingredientes que forman parte de la Receta.",
     },
     {
       id: "paso2-area",
@@ -117,7 +120,7 @@ export const nuevaReceta: TourDefinition = {
       target: SELECTORS.recetaIngredientes,
       title: "Agregar ingrediente",
       description:
-        "Selecciona un ingrediente, indica la cantidad > 0, elige la unidad de medida y agrégalo a la receta.",
+        "Selecciona un ingrediente, para cada uno indica una cantidad mayor a 0, elige la unidad de medida y agrégalo a la receta.",
     },
     {
       id: "paso2-siguiente",
@@ -126,16 +129,16 @@ export const nuevaReceta: TourDefinition = {
       target: SELECTORS.recetaSiguiente,
       title: "Siguiente",
       description:
-        "Cuando exista al menos un ingrediente agregado, pulsa «Siguiente» para continuar con la Preparación.",
+        "Cuando exista al menos un ingrediente agregado, pulsa «Siguiente» para continuar con los Métodos de Preparación.",
     },
     {
       id: "paso3-titulo",
       mode: "info",
       route: "/recetas/nueva",
       target: SELECTORS.recetaWizard,
-      title: "3. Preparación",
+      title: "3. Métodos de Preparación",
       description:
-        "En esta sección defines el proceso de elaboración. Agrega los pasos en el orden en que deben realizarse. No es obligatorio agregar un paso para guardar.",
+        "En esta sección defines el proceso de elaboración: agrega los pasos en el orden en que deben realizarse. No es obligatorio agregar un paso para guardar.",
     },
     {
       id: "paso3-area",
@@ -153,7 +156,7 @@ export const nuevaReceta: TourDefinition = {
       target: SELECTORS.recetaGuardar,
       title: "¡Listo!",
       description:
-        "Ya conoces los tres pasos para crear una receta. Cuando completes la preparación, pulsa «Guardar» para registrar la receta. La guía termina aquí.",
+        "Ya conoces los tres pasos para crear una receta de la misma manera puedes crear una Sub-Receta y Montaje. Cuando completes la Preparación, pulsa «Guardar» para registrar la receta. La guía termina aquí.",
     },
   ],
 };
