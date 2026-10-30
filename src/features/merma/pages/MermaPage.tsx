@@ -329,7 +329,20 @@ export default function MermaPage() {
     {
       key: "Cantidad",
       header: "Cantidad",
-      render: (row) => <span>{row.cantidad}</span>,
+      render: (row) => 
+      //  <span>{row.cantidad}</span>,
+      { 
+        return (
+            <>
+              <span>
+                {row.cantidad ?? "—"}
+              </span>
+              <span className={`px-2 py-1 rounded-full text-sm bg-teal-100 text-teal-700 mx-2 font-semibold`}> 
+                {row.unidadMedida?.simbolo ?? "—"}
+              </span>
+            </>
+          );
+      }
     },
     {
       key: "Fecha",

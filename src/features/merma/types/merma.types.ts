@@ -31,6 +31,7 @@ export interface ModelDTO {
   unidadMedida: {
     unidadMedidaId: string;
     nombre: string;
+    simbolo: string;
     descripcion: string;
     activo: boolean;
   } | null;

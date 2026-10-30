@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { Download, BookOpen, X, ChevronRight, MessageCircleQuestionMark } from "lucide-react";
 import { useLoginUI } from "@/features/auth/hooks/useLoginUI";
 import { startTour } from "@/shared/utils/tours";
 
+const HIDDEN_ROUTES = ["/login", "/forgot-password", "/reset-password"];
+
 export default function FloatingHelpButton() {
+  const { pathname } = useLocation();
   const { isDarkMode } = useLoginUI();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -17,6 +21,8 @@ export default function FloatingHelpButton() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
+
+  if (HIDDEN_ROUTES.includes(pathname)) return null;
 
 
   return (

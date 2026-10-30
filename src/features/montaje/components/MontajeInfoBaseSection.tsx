@@ -9,6 +9,8 @@ import {
   CalendarArrowDown,
   ImagePlus,
   Trash2,
+  Maximize2,
+  X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import InputField from "@/components/ui/InputField";
@@ -111,6 +113,7 @@ export default function MontajeInfoBaseSection({
   readOnly = false,
 }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -119,6 +122,23 @@ export default function MontajeInfoBaseSection({
       }
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isLightboxOpen]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -159,6 +179,7 @@ export default function MontajeInfoBaseSection({
       URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
     }
+    setIsLightboxOpen(false);
     onChange({
       file: undefined,
       urlImagen: "",
@@ -175,7 +196,8 @@ export default function MontajeInfoBaseSection({
     return null;
   };
 
-  const hasImage = !!getPreviewSrc();
+  const previewSrc = getPreviewSrc();
+  const hasImage = !!previewSrc;
 
   return (
     <section
@@ -360,9 +382,12 @@ export default function MontajeInfoBaseSection({
             {hasImage ? (
               <div className="relative w-full h-full min-h-37 flex items-center justify-center">
                 <img
-                  src={`${getPreviewSrc()!}`}
+                  src={previewSrc!}
                   alt="Vista previa del plato"
-                  className="max-h-full max-w-full rounded-lg object-cover"
+                  onClick={readOnly ? () => setIsLightboxOpen(true) : undefined}
+                  className={`max-h-full max-w-full rounded-lg object-cover ${
+                    readOnly ? "cursor-zoom-in" : ""
+                  }`}
                 />
                 {!readOnly && (
                   <>
@@ -379,6 +404,19 @@ export default function MontajeInfoBaseSection({
                     </button>
                   </>
                 )}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsLightboxOpen(true);
+                  }}
+                  className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/80"
+                  aria-label="Ver imagen ampliada"
+                >
+                  <Maximize2 size={14} />
+                  Ampliar
+                </button>
               </div>
             ) : (
               <>
@@ -404,6 +442,30 @@ export default function MontajeInfoBaseSection({
           </label>
         </div>
       </div>
+      {isLightboxOpen && previewSrc && (
+        <div
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Imagen ampliada del plato"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setIsLightboxOpen(false)}
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+            aria-label="Cerrar imagen ampliada"
+          >
+            <X size={24} />
+          </button>
+          <img
+            src={previewSrc}
+            alt="Imagen ampliada del plato"
+            className="max-h-[85vh] max-w-[90vw] rounded-xl object-contain shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </section>
   );
 }
