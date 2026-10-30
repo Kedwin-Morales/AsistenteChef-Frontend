@@ -38,7 +38,7 @@ export default function DataTable<T>({
   return (
     <ScrollReveal>
       <div>
-        <div className={`w-full overflow-x-auto rounded-xl border-b-5 border-(--bordes) ${isDarkMode ? "border-neutral-600" : "border-neutral-200"} scrollbar-tabla`}>
+        <div className={`w-full overflow-x-auto rounded-xl border-b-5 border-(--bordes) ${isDarkMode ? "border-neutral-600" : "border-neutral-200"}`}>
           <table className="min-w-0 md:min-w-162.5 w-full text-sm">
             <thead className="hidden md:table-header-group">
               <tr
