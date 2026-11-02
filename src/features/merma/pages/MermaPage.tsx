@@ -349,15 +349,15 @@ export default function MermaPage() {
       header: "Fecha Registro",
       render: (row) => <span>{formatearFecha(row.fecha.toString())}</span>,
     },
-    {
-      key: "AreaPreparacion",
-      header: "Área de Preparación",
-      render: (row) => (
-        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
-          {row.areaPreparacion?.nombre ?? "—"}
-        </span>
-      ),
-    },
+    // {
+    //   key: "AreaPreparacion",
+    //   header: "Área de Preparación",
+    //   render: (row) => (
+    //     <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+    //       {row.areaPreparacion?.nombre ?? "—"}
+    //     </span>
+    //   ),
+    // },
     {
       key: "activo",
       header: "Estado",
@@ -436,7 +436,6 @@ export default function MermaPage() {
             Gestión para Mermas de Recetas y Sub-Recetas.
           </p>
         </div>
-
         <div className="hidden md:flex gap-3">
           <button
             onClick={() => {
@@ -450,7 +449,18 @@ export default function MermaPage() {
           </button>
         </div>
       </div>
-
+      <div className="md:hidden">
+        <button
+          onClick={() => {
+            setSelected(null);
+            setModalMode("create");
+            setModalOpen(true);
+          }}
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
+        >
+          <PlusCircle size={24} />
+        </button>
+      </div>
       {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard

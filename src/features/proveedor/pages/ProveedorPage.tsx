@@ -34,7 +34,7 @@ import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
-import { useConsejo } from "@/features/consejo/hooks/useConsejo"
+import { useConsejo } from "@/features/consejo/hooks/useConsejo";
 import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
@@ -52,12 +52,14 @@ export default function ProveedorPage() {
   const [showActivo, setShowActivo] = useState(false);
   const navigate = useNavigate();
   const { consejos } = useConsejo();
-  const consejo = consejos.filter((a)=> a.modulo === "proveedores".toUpperCase() && a.activo );
-  
+  const consejo = consejos.filter(
+    (a) => a.modulo === "proveedores".toUpperCase() && a.activo,
+  );
+
   // Función auxiliar para darle formato a la fecha en español
   const formatearFecha = (fechaString: string) => {
     if (!fechaString) return "";
-    
+
     const fecha = new Date(fechaString);
     return fecha.toLocaleDateString("es-ES", {
       day: "numeric",
@@ -186,9 +188,9 @@ export default function ProveedorPage() {
   };
 
   const confirmarDelete = async (item: ModelDTO) => {
-const result = await confirm({
-      title: `${item.activo ? 'Anular' : 'Activar'}`,
-      text: `¿Desea ${item.activo ? 'anular' : 'activar'}: ${item.razonSocial}?`,
+    const result = await confirm({
+      title: `${item.activo ? "Anular" : "Activar"}`,
+      text: `¿Desea ${item.activo ? "anular" : "activar"}: ${item.razonSocial}?`,
       icon: "question",
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
@@ -207,10 +209,10 @@ const result = await confirm({
           direccion: item.direccion ?? "",
           tipo: item.tipo ?? "",
           activo: item.activo,
-        });         
+        });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
+          description: `El registro se ${item.activo ? "activo" : "anuló"} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -278,7 +280,7 @@ const result = await confirm({
           >
             <Eye size={16} />
           </button>
-          {row.activo ? 
+          {row.activo ? (
             <button
               onClick={() => {
                 setSelected(row);
@@ -288,16 +290,17 @@ const result = await confirm({
               className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
             >
               <Pencil size={16} />
-            </button> : <></> 
-          }          
+            </button>
+          ) : (
+            <></>
+          )}
           <button
-            onClick={() =>              
-              confirmarDelete(row)}
-            className={`p-2 ${row.activo ? 'text-red-500 hover:bg-red-100' : 'text-emerald-600 hover:bg-emerald-100'} rounded-lg`}
+            onClick={() => confirmarDelete(row)}
+            className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
             data-bs-toggle="tooltip"
-            title={`${row.activo ? 'Anular' : 'Activar'}`}
+            title={`${row.activo ? "Anular" : "Activar"}`}
           >
-            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}            
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
           </button>
         </div>
       ),
@@ -323,12 +326,14 @@ const result = await confirm({
           <h1 className="flex items-center gap-2 text-2xl font-bold text-(--primary)">
             <button
               type="button"
-              onClick={() => {navigate("/maestro");}}
+              onClick={() => {
+                navigate("/maestro");
+              }}
               className={`flex items-center mr-5 text-sm hover:text-(--texto)
                 ${isDarkMode ? "text-(--primary)" : "text-(--secondary)"}`}
               data-bs-toggle="tooltip"
               title="Volver"
-             >
+            >
               <MoveLeft size={30} />
             </button>
             <Truck size={30} />
@@ -338,19 +343,32 @@ const result = await confirm({
             Gestión de proveedores del Sistema Gastronómico.
           </p>
         </div>
+        <div className="hidden md:flex items-center">
+          <button
+            onClick={() => {
+              setSelected(null);
+              setModalMode("create");
+              setModalOpen(true);
+            }}
+            className="bg-gradient btn-gradient shadow-xl-secondary"
+          >
+            <PlusCircle size={18} /> Nuevo
+          </button>
+        </div>
+      </div>
+      <div className="md:hidden">
         <button
           onClick={() => {
             setSelected(null);
             setModalMode("create");
             setModalOpen(true);
           }}
-          className="bg-gradient btn-gradient shadow-xl-secondary"
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
         >
-          <PlusCircle size={18} /> Nuevo
+          <PlusCircle size={24} />
         </button>
       </div>
-      
-            {/* StatCard y TipCard */}
+      {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Proveedores Activos"
@@ -373,13 +391,17 @@ const result = await confirm({
         {consejo.map((c) => (
           <TipCard
             key={c.nombre}
-            title={`${c.nombre ? c.nombre : "Regla de Oro" } `} 
+            title={`${c.nombre ? c.nombre : "Regla de Oro"} `}
             icon={Lightbulb}
-            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha." } `}  
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha."} `}
             linkText="Ver más"
             href={c.valor}
             delay={400}
-            fecha={c.fechaDesde ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}` : ""}
+            fecha={
+              c.fechaDesde
+                ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}`
+                : ""
+            }
           />
         ))}
       </div>
@@ -428,7 +450,7 @@ const result = await confirm({
           </span>
         </div>
       </div>
-      
+
       <div className="hidden md:block">
         <DataTable<ModelDTO>
           data={filtered}
@@ -438,30 +460,20 @@ const result = await confirm({
           isDarkMode={isDarkMode}
         />
       </div>
-      
+
       {/* ================= MOBILE ================= */}
       <div className="block md:hidden">
         <DataCardList<ModelDTO>
           data={filtered}
-          getKey={(row) =>
-            row.proveedorId
-              ? row.proveedorId.toString()
-              : ""
-          }
+          getKey={(row) => (row.proveedorId ? row.proveedorId.toString() : "")}
           title={(row) => row.razonSocial}
           badges={(row) => [
             {
               label: row.activo ? "Activo" : "Inactivo",
-              variant: row.activo
-                ? "success"
-                : "danger",
+              variant: row.activo ? "success" : "danger",
             },
           ]}
-          renderExtra={(row) => (
-            <div className="">
-              {row.email}
-            </div>
-          )}
+          renderExtra={(row) => <div className="">{row.email}</div>}
           onView={(row) => {
             setSelected(row);
             setModalMode("view");

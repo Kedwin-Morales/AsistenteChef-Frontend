@@ -52,10 +52,10 @@ export default function CategoriaPlatoPage() {
     (a) => a.modulo === "categoría de plato".toUpperCase() && a.activo,
   );
 
-    // Función auxiliar para darle formato a la fecha en español
+  // Función auxiliar para darle formato a la fecha en español
   const formatearFecha = (fechaString: string) => {
     if (!fechaString) return "";
-    
+
     const fecha = new Date(fechaString);
     return fecha.toLocaleDateString("es-ES", {
       day: "numeric",
@@ -289,18 +289,31 @@ export default function CategoriaPlatoPage() {
             Gestión para Familias de Menú del Sistema Gastronómico.
           </p>
         </div>
+        <div className="hidden md:flex items-center">
+          <button
+            onClick={() => {
+              setSelected(null);
+              setModalMode("create");
+              setModalOpen(true);
+            }}
+            className="bg-gradient btn-gradient shadow-xl-secondary"
+          >
+            <PlusCircle size={18} /> Nuevo
+          </button>
+        </div>
+      </div>
+      <div className="md:hidden">
         <button
           onClick={() => {
             setSelected(null);
             setModalMode("create");
             setModalOpen(true);
           }}
-          className="bg-gradient btn-gradient shadow-xl-secondary"
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
         >
-          <PlusCircle size={18} /> Nuevo
+          <PlusCircle size={24} />
         </button>
       </div>
-
       {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard

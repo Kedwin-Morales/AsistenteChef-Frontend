@@ -59,8 +59,8 @@ export default function MontajePage() {
       }
       if (detalle.subRecetaId) {
         return (
-          subRecetas.find((r) => r.subRecetaId === detalle.subRecetaId)?.nombre ??
-          "—"
+          subRecetas.find((r) => r.subRecetaId === detalle.subRecetaId)
+            ?.nombre ?? "—"
         );
       }
       return "—";
@@ -122,7 +122,9 @@ export default function MontajePage() {
   const filtered = montajes
     .filter((a) => (showActivo ? esActive(a) : !esActive(a)))
     .filter((u) =>
-      `${u.nombre} ${u.descripcion}`.toLowerCase().includes(search.toLowerCase()),
+      `${u.nombre} ${u.descripcion}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
     );
 
   const columns: TableColumn<ModelDTO>[] = [
@@ -171,7 +173,9 @@ export default function MontajePage() {
             <></>
           )}
           <ReportAction
-            document={<MontajeReport data={row} resolveNombre={resolveNombreDetalle} />}
+            document={
+              <MontajeReport data={row} resolveNombre={resolveNombreDetalle} />
+            }
             fileName={createPdfFileName("Montaje", row.nombre, row.fecha)}
           />
           <button
@@ -206,14 +210,23 @@ export default function MontajePage() {
             Gestión para los Montajes del Sistema Gastronómico
           </p>
         </div>
+        <div className="hidden md:flex items-center">
+          <button
+            onClick={() => navigate("/montajes/nueva")}
+            className="bg-gradient btn-gradient shadow-xl-secondary"
+          >
+            <PlusCircle size={18} /> Nuevo
+          </button>
+        </div>
+      </div>
+      <div className="md:hidden">
         <button
           onClick={() => navigate("/montajes/nueva")}
-          className="bg-gradient btn-gradient shadow-xl-secondary"
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
         >
-          <PlusCircle size={18} /> Nuevo
+          <PlusCircle size={24} />
         </button>
       </div>
-
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Montajes Activos"
@@ -307,9 +320,7 @@ export default function MontajePage() {
       <div className="block md:hidden">
         <DataCardList<ModelDTO>
           data={filtered}
-          getKey={(row) =>
-            row.montajeId ? row.montajeId.toString() : ""
-          }
+          getKey={(row) => (row.montajeId ? row.montajeId.toString() : "")}
           title={(row) => row.nombre}
           badges={(row) => [
             {
@@ -317,9 +328,7 @@ export default function MontajePage() {
               variant: row.activo ? "success" : "danger",
             },
           ]}
-          renderExtra={(row) => (
-            <div className="">{row.descripcion}</div>
-          )}
+          renderExtra={(row) => <div className="">{row.descripcion}</div>}
           onView={(row) => navigate(`/montajes/ver/${row.montajeId}`)}
           onEdit={(row) => navigate(`/montajes/editar/${row.montajeId}`)}
           onPdf={(row) =>

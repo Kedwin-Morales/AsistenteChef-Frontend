@@ -377,7 +377,6 @@ export default function IngredientePage() {
             Gestión para Ingredientes del Sistema Gastronómico.
           </p>
         </div>
-
         <div className="hidden md:flex gap-3">
           <button
             onClick={() => {
@@ -404,7 +403,18 @@ export default function IngredientePage() {
           )}
         </div>
       </div>
-
+      <div className="md:hidden">
+        <button
+          onClick={() => {
+            setSelected(null);
+            setModalMode("create");
+            setModalOpen(true);
+          }}
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
+        >
+          <PlusCircle size={24} />
+        </button>
+      </div>
       {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
@@ -497,7 +507,7 @@ export default function IngredientePage() {
           />
         </div>
       </div>
-      
+
       <div className="hidden md:block">
         <DataTable<ModelDTO>
           data={filtered}

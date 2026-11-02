@@ -223,14 +223,23 @@ export default function AreaPreparacionPage() {
             Gestión para las Sub-Recetas del Sistema Gastronómico
           </p>
         </div>
+        <div className="hidden md:flex items-center">
+          <button
+            onClick={() => navigate("/sub-recetas/nueva")}
+            className="bg-gradient btn-gradient shadow-xl-secondary"
+          >
+            <PlusCircle size={18} /> Nuevo
+          </button>
+        </div>
+      </div>
+      <div className="md:hidden">
         <button
           onClick={() => navigate("/sub-recetas/nueva")}
-          className="bg-gradient btn-gradient shadow-xl-secondary"
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
         >
-          <PlusCircle size={18} /> Nuevo
+          <PlusCircle size={24} />
         </button>
       </div>
-
       {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard

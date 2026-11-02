@@ -22,7 +22,7 @@ import { getErrorMessage } from "@/shared/services/error.utils";
 import { confirm } from "@/shared/utils/swal";
 import { sileo } from "sileo";
 import { IoReceiptOutline } from "react-icons/io5";
-import { useConsejo } from "@/features/consejo/hooks/useConsejo"
+import { useConsejo } from "@/features/consejo/hooks/useConsejo";
 import StatCard from "@/components/ui/StatCard";
 import TipCard from "@/components/ui/TipCard";
 import DataCardList from "@/components/ui/DataCardList";
@@ -45,12 +45,14 @@ export default function AreaPreparacionPage() {
   const [filterBy, setFilterBy] = useState<ModelFilter>("nombre");
   const [showActivo, setShowActivo] = useState(false);
   const { consejos } = useConsejo();
-  const consejo = consejos.filter((a)=> a.modulo === "recetas".toUpperCase() && a.activo );
-  
+  const consejo = consejos.filter(
+    (a) => a.modulo === "recetas".toUpperCase() && a.activo,
+  );
+
   // Función auxiliar para darle formato a la fecha en español
   const formatearFecha = (fechaString: string) => {
     if (!fechaString) return "";
-    
+
     const fecha = new Date(fechaString);
     return fecha.toLocaleDateString("es-ES", {
       day: "numeric",
@@ -58,19 +60,19 @@ export default function AreaPreparacionPage() {
       year: "numeric",
     });
   };
-  
-    const resolveNombreDetalle = useCallback(
-      (detalle: ModelDET): string => {
-        if (detalle.ingredienteId) {
-          return (
-            ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)
-              ?.nombre ?? "—"
-          );
-        }
-        return "—";
-      },
-      [ingredientes],
-    );
+
+  const resolveNombreDetalle = useCallback(
+    (detalle: ModelDET): string => {
+      if (detalle.ingredienteId) {
+        return (
+          ingredientes.find((i) => i.ingredienteId === detalle.ingredienteId)
+            ?.nombre ?? "—"
+        );
+      }
+      return "—";
+    },
+    [ingredientes],
+  );
 
   /* Anular */
   const confirmarDelete = async (item: ModelDTO) => {
@@ -101,7 +103,7 @@ export default function AreaPreparacionPage() {
         });
         sileo.success({
           title: "¡Operación exitosa!",
-          description: `El registro se ${item.activo ? 'activo' : 'anuló'} correctamente.`,
+          description: `El registro se ${item.activo ? "activo" : "anuló"} correctamente.`,
         });
         await refetch();
       } catch (error) {
@@ -151,43 +153,45 @@ export default function AreaPreparacionPage() {
         </span>
       ),
     },
-{
-        key: "acciones",
-        header: "Acciones",
-        align: "center",
-        render: (row) => (
-          <div className="flex justify-center gap-2">
+    {
+      key: "acciones",
+      header: "Acciones",
+      align: "center",
+      render: (row) => (
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={() => navigate(`/recetas/ver/${row.recetaId}`)}
+            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+          >
+            <Eye size={16} />
+          </button>
+          {row.activo ? (
             <button
-              onClick={() => navigate(`/recetas/ver/${row.recetaId}`)}
-              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
+              onClick={() => navigate(`/recetas/editar/${row.recetaId}`)}
+              className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
             >
-              <Eye size={16} />
+              <Pencil size={16} />
             </button>
-            {row.activo ? (
-              <button
-                onClick={() => navigate(`/recetas/editar/${row.recetaId}`)}
-                className="p-2 text-amber-600 hover:bg-amber-100 rounded-lg"
-              >
-                <Pencil size={16} />
-              </button>
-            ) : (
-              <></>
-            )}
-            <ReportAction
-              document={<RecetaReport data={row} resolveNombre={resolveNombreDetalle} />}
-              fileName={createPdfFileName("Receta", row.nombre)}
-            />
-            <button
-              onClick={() => confirmarDelete(row)}
-              className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
-              data-bs-toggle="tooltip"
-              title={`${row.activo ? "Anular" : "Activar"}`}
-            >
-              {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
-            </button>
-          </div>
-        ),
-      },
+          ) : (
+            <></>
+          )}
+          <ReportAction
+            document={
+              <RecetaReport data={row} resolveNombre={resolveNombreDetalle} />
+            }
+            fileName={createPdfFileName("Receta", row.nombre)}
+          />
+          <button
+            onClick={() => confirmarDelete(row)}
+            className={`p-2 ${row.activo ? "text-red-500 hover:bg-red-100" : "text-emerald-600 hover:bg-emerald-100"} rounded-lg`}
+            data-bs-toggle="tooltip"
+            title={`${row.activo ? "Anular" : "Activar"}`}
+          >
+            {row.activo ? <Ban size={16} /> : <CircleCheckBig size={16} />}
+          </button>
+        </div>
+      ),
+    },
   ];
 
   if (loading) {
@@ -211,16 +215,25 @@ export default function AreaPreparacionPage() {
             Gestión para las Recetas del Sistema Gastronómico
           </p>
         </div>
+        <div className="hidden md:flex items-center">
+          <button
+            onClick={() => navigate("/recetas/nueva")}
+            data-tour="receta-nueva"
+            className="bg-gradient btn-gradient shadow-xl-secondary"
+          >
+            <PlusCircle size={18} /> Nuevo
+          </button>
+        </div>
+      </div>
+      <div className="md:hidden">
         <button
           onClick={() => navigate("/recetas/nueva")}
-          data-tour="receta-nueva"
-          className="bg-gradient btn-gradient shadow-xl-secondary"
+          className="fixed bottom-20 right-3 bg-gradient shadow-xl-secondary btn-nuevo-mobile"
         >
-          <PlusCircle size={18} /> Nuevo
+          <PlusCircle size={24} />
         </button>
       </div>
-      
-            {/* StatCard y TipCard */}
+      {/* StatCard y TipCard */}
       <div className="my-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Recetas Activas"
@@ -243,13 +256,17 @@ export default function AreaPreparacionPage() {
         {consejo.map((c) => (
           <TipCard
             key={c.nombre}
-            title={`${c.nombre ? c.nombre : "Regla de Oro" } `} 
+            title={`${c.nombre ? c.nombre : "Regla de Oro"} `}
             icon={Lightbulb}
-            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha." } `}  
+            description={`${c.descripcion ? c.descripcion : "Una cocina profesional no improvisa: organiza, estandariza y limpia sobre la marcha."} `}
             linkText="Ver más"
             href={c.valor}
             delay={400}
-            fecha={c.fechaDesde ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}` : ""}
+            fecha={
+              c.fechaDesde
+                ? `${formatearFecha(c.fechaDesde.toString())}${c.fechaHasta ? ` al ${formatearFecha(c.fechaHasta.toString())}` : ""}`
+                : ""
+            }
           />
         ))}
       </div>
@@ -307,32 +324,22 @@ export default function AreaPreparacionPage() {
           isDarkMode={isDarkMode}
         />
       </div>
-      
+
       {/* ================= MOBILE ================= */}
       <div className="block md:hidden">
         <DataCardList<ModelDTO>
           data={filtered}
-          getKey={(row) =>
-            row.recetaId
-              ? row.recetaId.toString()
-              : ""
-          }
+          getKey={(row) => (row.recetaId ? row.recetaId.toString() : "")}
           title={(row) => row.nombre}
           badges={(row) => [
             {
               label: row.activo ? "Activo" : "Inactivo",
-              variant: row.activo
-                ? "success"
-                : "danger",
+              variant: row.activo ? "success" : "danger",
             },
           ]}
-          renderExtra={(row) => (
-            <div className="">
-              {row.descripcion}
-            </div>
-          )}
-          onView={(row) =>navigate(`/recetas/ver/${row.recetaId}`)}
-          onEdit={(row) =>navigate(`/recetas/editar/${row.recetaId}`)}
+          renderExtra={(row) => <div className="">{row.descripcion}</div>}
+          onView={(row) => navigate(`/recetas/ver/${row.recetaId}`)}
+          onEdit={(row) => navigate(`/recetas/editar/${row.recetaId}`)}
           onPdf={(row) =>
             generateReportPdf(
               <RecetaReport data={row} resolveNombre={resolveNombreDetalle} />,
@@ -346,7 +353,6 @@ export default function AreaPreparacionPage() {
           isDarkMode={isDarkMode}
         />
       </div>
-
     </AppLayout>
   );
 }
